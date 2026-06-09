@@ -5,16 +5,25 @@ class Rational {
     private:
         int num = 0;
         int denom = 1;
+        void normalize() {
+            int g = std::gcd(num, denom);
 
+            num /= g;
+            denom /= g;
+
+            if (denom < 0) {
+                num = -num;
+                denom = -denom;
+            }
+        }
     public:
         Rational() = default;
         Rational(int n, int d);
         Rational(const Rational& other);
 
-        int GetNum() const;
-        int GetDenom() const;
         int Numerator() const;
         int Denominator() const;
+
 
         Rational& operator += (const Rational& other);
         Rational& operator -= (const Rational& other);
@@ -46,6 +55,36 @@ class Rational {
         bool operator!=(int other) const;
 
 };
+Rational Rational::operator+(int a) const {
+    Rational res(*this);
+    return res += a;
+}
+
+Rational Rational::operator-(int a) const {
+    Rational res(*this);
+    return res -= a;
+}
+
+Rational Rational::operator*(int a) const {
+    Rational res(*this);
+    return res *= a;
+}
+
+Rational Rational::operator/(int a) const {
+    Rational res(*this);
+ 
+    return res /= a;
+}
+Rational Rational:: operator/(const Rational& other) const {
+    Rational res(*this);
+    return res /= other;
+}
+
+Rational Rational:: operator*(const Rational& other) const {
+    Rational res(*this);
+    return res *= other;
+}
+
 Rational Rational:: operator -(const Rational& other)const{
     Rational res(*this);
     return res -=other;
@@ -99,63 +138,76 @@ Rational& Rational::operator /= (int a){
 
 
 Rational& Rational:: operator *= (const Rational& other){
-    this->num *= other.GetNum();
-    this->denom *= other.GetDenom();
+    this->num *= other.Numerator();
+    this->denom *= other.Denominator();
+     normalize();
     return *this;
 }
 
 Rational& Rational:: operator /= (const Rational& other){
-    this->num *= other.GetDenom();
-    this->denom *= other.GetNum();
+    this->num *= other.Denominator();
+    this->denom *= other.Numerator();
+    normalize();
     return *this;
 }
 
 Rational& Rational:: operator += (const Rational& other){
-    int genDenom = std::abs(this->denom * other.GetDenom()) / std::gcd(this->denom, other.GetDenom());
+    int genDenom = std::abs(this->denom * other.Denominator()) / std::gcd(this->denom, other.Denominator());
     int newNumThis = this->num * genDenom / this->denom;
-    int newNumOther = other.GetNum() * genDenom / other.GetDenom();
+    int newNumOther = other.Numerator() * genDenom / other.Denominator();
     this->num = newNumThis + newNumOther;
     this -> denom = genDenom;
+    normalize();
     return *this;
 }
 Rational& Rational:: operator -= (const Rational& other){
-     int genDenom = std::abs(this->denom * other.GetDenom()) / std::gcd(this->denom, other.GetDenom());
+     int genDenom = std::abs(this->denom * other.Denominator()) / std::gcd(this->denom, other.Denominator());
     int newNumThis = this->num * genDenom / this->denom;
-    int newNumOther = other.GetNum() * genDenom / other.GetDenom();
+    int newNumOther = other.Numerator() * genDenom / other.Denominator();
     this->num = newNumThis - newNumOther;
     this -> denom = genDenom;
+    normalize();
     return *this;
 }
 
-Rational::Rational(const Rational& other): num(other.GetNum()), denom(other.GetDenom()) {}
+Rational::Rational(const Rational& other): num(other.Numerator()), denom(other.Denominator()) {}
 
 Rational::Rational(int n, int d) {
-    num = 0;
-    denom = 1;
-    if (d == 0) return;
+    if (d == 0) {
+        num = 0;
+        denom = 1;
+        return;
+    }
+
     num = n;
     denom = d;
-    if (denom < 0) {
-        num = -num;
-        denom = -denom;
-    }
-}
 
-int Rational:: GetDenom() const {
-    return denom;
-}
-int Rational:: GetNum() const {
-    return num;
+    normalize();
 }
 
 int Rational::Numerator() const{
-    int d = std::gcd(num, denom);
-    return num / d;
+    return num ;
 }
 int Rational::Denominator() const{
-    int d = std::gcd(num, denom);
-    return denom / d;
+    return denom;
 }
+
+Rational operator+(int a, Rational& r) {
+    return r+a;
+}
+Rational operator-(int a, Rational& r) {
+    return r-a;
+}
+
+Rational operator*(int a, Rational& r) {
+    return r*a;
+}
+
+Rational operator/(int a, Rational& r) {
+    return r/a;
+}
+
+
 
 int main() {
     Rational r(3, 10);
@@ -165,6 +217,6 @@ int main() {
     std::cout<<"\n";
     r += r2;
     
-    std::cout<<r.GetNum()<<"/";
-    std::cout<<r.GetDenom();
+    std::cout<<r.Numerator()<<"/";
+    std::cout<<r.Denominator();
 }
