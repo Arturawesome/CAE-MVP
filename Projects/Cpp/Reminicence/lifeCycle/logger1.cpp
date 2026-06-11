@@ -80,3 +80,11 @@ int main(){
     Logger x4 = std::move(x1);
     return 0;
 }
+
+
+
+
+
+
+
+
