@@ -9,6 +9,7 @@ class AdvancedVector {
     public: 
         AdvancedVector();
         AdvancedVector(const AdvancedVector* other);
+        
         template<typename inputIt>
         AdvancedVector(inputIt first, inputIt second);
 };
