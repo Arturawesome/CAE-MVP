@@ -1,0 +1,3 @@
+/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build/CMakeFiles/heatTask.dir
+/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build/CMakeFiles/edit_cache.dir
+/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build/CMakeFiles/rebuild_cache.dir
