@@ -17,22 +17,22 @@ struct Element{
     
 };
 
-enum class BoundaryType {
-    Dirichlet, // 1 род: T = задано
-    Neumann,   // 2 род: поток
-    Robin      // 3 род: теплообмен
-};
+// enum class BoundaryType {
+//     Dirichlet, // 1 род: T = задано
+//     Neumann,   // 2 род: поток
+//     Robin      // 3 род: теплообмен
+// };
 
 struct BoundaryEdge {
     std::vector<int> nodes_id;
-    BoundaryType type;
+    std::vector<int> markers;
 };
 
 class Mesh {
     public:
         std::vector<Node> nodes;
         std::vector<Element> elements;
-        std::vector<BoundaryEdge> boundaryEdges;
+        BoundaryEdge boundaryEdges;
         void saveToSTL(const std::string& filename) const;
         void saveToVTK(const std::string& filename) const;
 };

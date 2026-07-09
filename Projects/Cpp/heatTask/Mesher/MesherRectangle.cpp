@@ -11,16 +11,19 @@ Mesh MesherRectangle::generateMesh(const Rectangle& r) {
     double h = r.getHeight(), w = r.getWidth();
     double dx = w / (nx-1), dy = h / (ny-1);
     Mesh mesh;
-    mesh.nodes = std::vector<Node>((nx+1) * (ny+1));
+    mesh.nodes = std::vector<Node>(nx * ny);
+    mesh.boundaryEdges.nodes_id.reserve(int(pow(1.5*nx*ny, 0.5)));
     mesh.elements = std::vector<Element>((ny-1)*(nx-1) * 2);
 
     for(int i = 0; i < ny; i++ ){
         for(int j = 0; j < nx; j++){
             mesh.nodes[nx*i + j] = {.x = dx * j, .y = dy * i, .id = nx*i + j};
-            //std::cout<<std::setw(5)<<mesh.nodes[nx*i + j].id
-            //<<"("<<mesh.nodes[nx*i + j].x<<"; "<<mesh.nodes[nx*i + j].y<<")"<<" ";
+            if(i == 0 || j == 0 || i == ny-1 || j == nx-1){
+                mesh.boundaryEdges.nodes_id.push_back(nx*i + j);
+                mesh.boundaryEdges.markers.push_back(1);
+            }
+
         }
-        //std::cout<<"\n";
     }
     std::cout<<"MesherRectangle: mesh.nodes.size() = "<<mesh.nodes.size()<<std::endl;
 
@@ -45,10 +48,7 @@ Mesh MesherRectangle::generateMesh(const Rectangle& r) {
         }
     }
     std::cout<<"MesherRectangle: mesh.elements.size() = "<<mesh.elements.size()<<std::endl;
-
-    // for(const auto el: mesh.elements){
-    //     std::cout<<"("<<el.nodes_id[0]<<"; "<<el.nodes_id[1]<<"; "<<el.nodes_id[2]<<").   ";
-    // }
+    
     return mesh;
 }  
 

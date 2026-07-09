@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iomanip>
-
+#include <cmath>
 #include "../Geometry/Rectangle.h"
 #include "../Mesh/Mesh.h"
 

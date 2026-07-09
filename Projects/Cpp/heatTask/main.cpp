@@ -3,8 +3,7 @@
 #include "Mesher/MesherRectangle.h"
 #include "Mesh/Mesh.h"
 
-int main(int argc, char** argv)
-{
+int main() {
     Rectangle rect = Rectangle(5, 5);
     MesherRectangle mesher = MesherRectangle(5, 3);
     Mesh mesh = mesher.generateMesh(rect);
