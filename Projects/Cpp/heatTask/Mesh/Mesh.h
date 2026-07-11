@@ -33,6 +33,9 @@ public:
     std::vector<Node> nodes;
     std::vector<Element> elements;
     std::vector<BoundaryEdge> boundaryEdges;
+public:
+    int NumNodes() const;
+    int NumEl() const;
     void saveToSTL(const std::string &filename) const;
     void saveToVTK(const std::string &filename) const;
     bool hasBoundaryMarker(int marker) const;

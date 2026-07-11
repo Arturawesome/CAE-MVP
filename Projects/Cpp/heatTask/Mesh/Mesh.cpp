@@ -3,6 +3,14 @@
 #include <fstream>
 #include <stdexcept>
 
+int Mesh::NumNodes() const{
+    return nodes.size();
+}
+int Mesh::NumEl() const{
+    return elements.size();
+}
+
+
 bool Mesh::hasBoundaryMarker(int marker) const{
     for(const BoundaryEdge& be: boundaryEdges){
         if(be.marker == marker){
