@@ -4,10 +4,10 @@
 #include <iostream>
 #include <stdexcept>
 
-SetterBoundaryCondition::SetterBoundaryCondition(BoundaryType type_,
+SetterBoundaryCondition::SetterBoundaryCondition(int type_,
                                                  const std::vector<int> &markers_,
                                                  const std::vector<double> &values_)
-    : type(type_), markers(markers_), values(values_)
+    : type(static_cast<BoundaryType>(type_)), markers(markers_), values(values_)
 {
     std::cout << "SetterBoundaryCondition::SetterBoundaryCondition\n";
     if (markers.empty())

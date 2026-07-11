@@ -6,7 +6,7 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask
 
-CXX_FLAGSarm64 = -std=c++17 -arch arm64 -Wall
+CXX_FLAGSarm64 = -std=c++17 -arch arm64 -Wall -Wextra -Werror
 
-CXX_FLAGS = -std=c++17 -arch arm64 -Wall
+CXX_FLAGS = -std=c++17 -arch arm64 -Wall -Wextra -Werror
 

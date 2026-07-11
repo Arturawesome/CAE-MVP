@@ -136,6 +136,30 @@ heatTask/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/build
 .PHONY : heatTask/fast
 
+HeatProblem/HeatProblem.o: HeatProblem/HeatProblem.cpp.o
+.PHONY : HeatProblem/HeatProblem.o
+
+# target to build an object file
+HeatProblem/HeatProblem.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.o
+.PHONY : HeatProblem/HeatProblem.cpp.o
+
+HeatProblem/HeatProblem.i: HeatProblem/HeatProblem.cpp.i
+.PHONY : HeatProblem/HeatProblem.i
+
+# target to preprocess a source file
+HeatProblem/HeatProblem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.i
+.PHONY : HeatProblem/HeatProblem.cpp.i
+
+HeatProblem/HeatProblem.s: HeatProblem/HeatProblem.cpp.s
+.PHONY : HeatProblem/HeatProblem.s
+
+# target to generate assembly for a file
+HeatProblem/HeatProblem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.s
+.PHONY : HeatProblem/HeatProblem.cpp.s
+
 Mesh/Mesh.o: Mesh/Mesh.cpp.o
 .PHONY : Mesh/Mesh.o
 
@@ -184,6 +208,30 @@ Mesher/MesherRectangle.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/Mesher/MesherRectangle.cpp.s
 .PHONY : Mesher/MesherRectangle.cpp.s
 
+SetterBoundaryCondition/SetterBoundaryCondition.o: SetterBoundaryCondition/SetterBoundaryCondition.cpp.o
+.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.o
+
+# target to build an object file
+SetterBoundaryCondition/SetterBoundaryCondition.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o
+.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.cpp.o
+
+SetterBoundaryCondition/SetterBoundaryCondition.i: SetterBoundaryCondition/SetterBoundaryCondition.cpp.i
+.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.i
+
+# target to preprocess a source file
+SetterBoundaryCondition/SetterBoundaryCondition.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.i
+.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.cpp.i
+
+SetterBoundaryCondition/SetterBoundaryCondition.s: SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
+.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.s
+
+# target to generate assembly for a file
+SetterBoundaryCondition/SetterBoundaryCondition.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
+.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -218,12 +266,18 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... heatTask"
+	@echo "... HeatProblem/HeatProblem.o"
+	@echo "... HeatProblem/HeatProblem.i"
+	@echo "... HeatProblem/HeatProblem.s"
 	@echo "... Mesh/Mesh.o"
 	@echo "... Mesh/Mesh.i"
 	@echo "... Mesh/Mesh.s"
 	@echo "... Mesher/MesherRectangle.o"
 	@echo "... Mesher/MesherRectangle.i"
 	@echo "... Mesher/MesherRectangle.s"
+	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.o"
+	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.i"
+	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

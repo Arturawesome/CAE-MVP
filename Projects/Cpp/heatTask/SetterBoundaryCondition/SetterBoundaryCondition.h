@@ -17,7 +17,7 @@ private:
     std::vector<double> values;
 
 public:
-    SetterBoundaryCondition(BoundaryType type,
+    SetterBoundaryCondition(int type,
                             const std::vector<int> &markers_,
                             const std::vector<double> &values_);
     void Apply(HeatProblem &problem) const;

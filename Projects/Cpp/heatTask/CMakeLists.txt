@@ -9,6 +9,8 @@ add_executable(heatTask
                 main.cpp 
                 Mesher/MesherRectangle.cpp
                 Mesh/Mesh.cpp
+                HeatProblem/HeatProblem.cpp
+                SetterBoundaryCondition/SetterBoundaryCondition.cpp
                 )
 
 
@@ -19,6 +21,6 @@ target_include_directories(heatTask PRIVATE
 
 target_compile_options(heatTask PRIVATE
     -Wall
-#    -Wextra
-#    -Werror
+    -Wextra
+    -Werror
 )

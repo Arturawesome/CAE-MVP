@@ -4,7 +4,7 @@
 
 enum class BoundaryType
 {
-    Dirichlet,
+    Dirichlet = 1,
     Neumann,
     Robin
 };
