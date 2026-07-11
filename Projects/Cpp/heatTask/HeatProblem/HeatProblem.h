@@ -1,15 +1,32 @@
 #pragma once
 #include <iostream>
-class HeatProblem {
-    private:
-    public:
-        // download geometry and set conditions
-        HeatProblem(std::string filename, std::unordered_map<std::string, std::string>& physics_conditions);
+#include <vector>
+#include "../Mesh/Mesh.h"
+#include "../BoundaryCondition/BoundaryConditions.h"
 
-        // set figure and set conditions
-        HeatProblem(std::string figure, int num_elemnts, std::unordered_map<std::string, std::string>& physics_conditions);
-        ~HeatProblem() = default;
+class HeatProblem
+{
+private:
+    const Mesh &mesh;
 
-        void solveProblem();
-        
+    double lambda;
+    double source;
+
+    std::vector<BoundaryCondition> boundaryConditions;
+
+private:
+    bool meshHasBoundaryMarker(int marker);
+
+public:
+    HeatProblem(const Mesh &mesh_, double lambda_, double source_);
+    ~HeatProblem() = default;
+
+    // Getters
+    double GetLambda() const;
+    double GetSource() const;
+    const Mesh &GetMesh() const;
+
+    void AddBoundaryCondition(const BoundaryCondition &condition);
+    const BoundaryCondition &GetBoundaryCondition(int marker) const;
+    bool hasBoundaryCondition(int marker) const;
 };

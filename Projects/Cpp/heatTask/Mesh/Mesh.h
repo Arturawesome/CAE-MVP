@@ -2,37 +2,38 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <utility>
 
-struct Node {
+struct Node
+{
     int id;
     double x;
     double y;
 };
 
-//triangle element
-struct Element{
+// triangle element: id, area and nodes
+struct Element
+{
     int id;
     double s;
     std::vector<int> nodes_id = std::vector<int>(3, 0);
-    
 };
 
-// enum class BoundaryType {
-//     Dirichlet, // 1 род: T = задано
-//     Neumann,   // 2 род: поток
-//     Robin      // 3 род: теплообмен
-// };
-
-struct BoundaryEdge {
-    std::vector<int> nodes_id;
-    std::vector<int> markers;
+// marker is !!!NOT THE BOUND CONDIONOS!!!
+// marker is the marker of are: left boundary EDGE, right boundary EDGE
+struct BoundaryEdge
+{
+    std::pair<int, int> nodes_id;
+    int marker;
 };
 
-class Mesh {
-    public:
-        std::vector<Node> nodes;
-        std::vector<Element> elements;
-        BoundaryEdge boundaryEdges;
-        void saveToSTL(const std::string& filename) const;
-        void saveToVTK(const std::string& filename) const;
+class Mesh
+{
+public:
+    std::vector<Node> nodes;
+    std::vector<Element> elements;
+    std::vector<BoundaryEdge> boundaryEdges;
+    void saveToSTL(const std::string &filename) const;
+    void saveToVTK(const std::string &filename) const;
+    bool hasBoundaryMarker(int marker) const;
 };
