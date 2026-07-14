@@ -1,25 +1,24 @@
 #pragma once
+#include <functional>
 #include <iostream>
 #include <vector>
-#include <functional>
 
-#include "../Mesh/Mesh.h"
 #include "../BoundaryCondition/BoundaryConditions.h"
+#include "../Mesh/Mesh.h"
 
-class HeatProblem
-{
-private:
+class HeatProblem {
+  private:
     std::vector<BoundaryCondition> boundaryConditions;
     const Mesh &mesh;
     double lambda;
 
-private:
+  private:
     std::function<double(double, double, double)> source;
     bool meshHasBoundaryMarker(int marker);
 
-public:
+  public:
     HeatProblem(const Mesh &mesh_, double lambda_,
-                             std::function<double(double, double, double)> source_);
+                std::function<double(double, double, double)> source_);
     ~HeatProblem() = default;
 
     // Getters
@@ -32,7 +31,7 @@ public:
     const BoundaryCondition &GetBoundaryCondition(int marker) const;
     bool hasBoundaryCondition(int marker) const;
     int BC_size() const;
-    BoundaryType GetTypeBC(int i ) const;
+    BoundaryType GetTypeBC(int i) const;
     int GetMarkerBC(int i) const;
     double GetValue1BC(int i) const;
     double GetValue2BC(int i) const;

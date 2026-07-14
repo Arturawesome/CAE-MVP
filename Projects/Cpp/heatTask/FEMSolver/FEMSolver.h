@@ -1,16 +1,15 @@
 #pragma once
 
-#include <Eigen/Dense>
-#include <vector>
-#include <iostream>
-#include <array>
-#include <string>
 #include "../HeatProblem/HeatProblem.h"
 #include "../Mesh/Mesh.h"
+#include <Eigen/Dense>
+#include <array>
+#include <iostream>
+#include <string>
+#include <vector>
 
-class FEMSolver
-{
-private:
+class FEMSolver {
+  private:
     const HeatProblem &problem;
     const Mesh &mesh;
 
@@ -28,7 +27,7 @@ private:
     double x_middle = 0;
     double y_middle = 0;
 
-private:
+  private:
     void makeGlobalMatrix();
     void calcTriangleParamters(std::size_t elId);
     void makeGradMatrix(std::size_t elId);
@@ -45,7 +44,7 @@ private:
 
     void addRobinToGlobalMatrix(int marker, double value1, double value2);
 
-public:
+  public:
     FEMSolver(HeatProblem &problem_);
     ~FEMSolver() = default;
     void solve();

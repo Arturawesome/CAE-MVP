@@ -2,17 +2,9 @@
 
 // TO DO special class for Baoundaru condiions setting
 
-enum class BoundaryType
-{
-    Dirichlet = 1,
-    Neumann,
-    Robin
-};
+enum class BoundaryType { Dirichlet = 1, Neumann, Robin };
 
-
-
-struct BoundaryCondition
-{
+struct BoundaryCondition {
     int marker = 0;
     BoundaryType type = BoundaryType::Dirichlet;
 
