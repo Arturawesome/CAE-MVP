@@ -92,13 +92,6 @@ all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build/CMakeFiles 0
 .PHONY : all
 
-# The main codegen target
-codegen: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build/CMakeFiles /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build//CMakeFiles/progress.marks
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 codegen
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build/CMakeFiles 0
-.PHONY : codegen
-
 # The main clean target
 clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 clean
@@ -135,6 +128,30 @@ heatTask: cmake_check_build_system
 heatTask/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/build
 .PHONY : heatTask/fast
+
+FEMSolver/FEMSolver.o: FEMSolver/FEMSolver.cpp.o
+.PHONY : FEMSolver/FEMSolver.o
+
+# target to build an object file
+FEMSolver/FEMSolver.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.o
+.PHONY : FEMSolver/FEMSolver.cpp.o
+
+FEMSolver/FEMSolver.i: FEMSolver/FEMSolver.cpp.i
+.PHONY : FEMSolver/FEMSolver.i
+
+# target to preprocess a source file
+FEMSolver/FEMSolver.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.i
+.PHONY : FEMSolver/FEMSolver.cpp.i
+
+FEMSolver/FEMSolver.s: FEMSolver/FEMSolver.cpp.s
+.PHONY : FEMSolver/FEMSolver.s
+
+# target to generate assembly for a file
+FEMSolver/FEMSolver.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.s
+.PHONY : FEMSolver/FEMSolver.cpp.s
 
 HeatProblem/HeatProblem.o: HeatProblem/HeatProblem.cpp.o
 .PHONY : HeatProblem/HeatProblem.o
@@ -262,10 +279,12 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... codegen"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... heatTask"
+	@echo "... FEMSolver/FEMSolver.o"
+	@echo "... FEMSolver/FEMSolver.i"
+	@echo "... FEMSolver/FEMSolver.s"
 	@echo "... HeatProblem/HeatProblem.o"
 	@echo "... HeatProblem/HeatProblem.i"
 	@echo "... HeatProblem/HeatProblem.s"

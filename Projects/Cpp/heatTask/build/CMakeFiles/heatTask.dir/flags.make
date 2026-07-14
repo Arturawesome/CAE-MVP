@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask
+CXX_INCLUDES = -I/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask -isystem /opt/homebrew/include/eigen3
 
 CXX_FLAGSarm64 = -std=c++17 -arch arm64 -Wall -Wextra -Werror
 

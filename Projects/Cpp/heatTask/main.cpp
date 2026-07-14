@@ -4,20 +4,27 @@
 #include "Mesh/Mesh.h"
 #include "HeatProblem/HeatProblem.h"
 #include "SetterBoundaryCondition/SetterBoundaryCondition.h"
+#include "FEMSolver/FEMSolver.h"
 
 int main()
 {
-    Rectangle rect = Rectangle(5, 5);
-    MesherRectangle mesher = MesherRectangle(5, 3);
+    Rectangle rect = Rectangle(10, 8);
+    MesherRectangle mesher = MesherRectangle(25, 20);
     Mesh mesh = mesher.generateMesh(rect);
 
-    HeatProblem task = HeatProblem(mesh, 45, 0);
-    SetterBoundaryCondition conditions = SetterBoundaryCondition(1, {1, 2},
-    {100.0, 20.0});
+    HeatProblem task = HeatProblem(mesh, 45, [](double, double, double){
+        return 10.0;
+    });
+
+
+    SetterBoundaryCondition conditions = SetterBoundaryCondition(1, {1, 3 },
+    {100.0, 10});
     conditions.Apply(task);
-    
-    mesh.saveToSTL("mesh.stl");
-    mesh.saveToVTK("mesh.vtk");
+
+    FEMSolver solver(task);
+    solver.solve();
+    solver.saveSolution("temperature.vtk");
+
     std::cout << "Hello CAD/CAE system\n";
     return 0;
 }

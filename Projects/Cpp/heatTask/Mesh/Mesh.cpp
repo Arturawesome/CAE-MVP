@@ -3,13 +3,62 @@
 #include <fstream>
 #include <stdexcept>
 
+std::ostream& operator <<(std::ostream& stream, const Node& node){
+    stream<<"{id ="<<node.id<<"; x="<<node.x<<"; y="<<node.y<<"}\n";
+    return stream;
+}
+
+std::ostream& operator <<(std::ostream& stream, const Element& element){
+    stream<<"{id ="<<element.id<<"; s="<<element.s<<";  n_id = ";
+    for(const auto node_is: element.nodes_id){
+        stream<<node_is<<", ";
+    }
+    stream<<"}\n ";
+    return stream;
+}
+
+
+const Node& Mesh:: GetNode(int id) const {
+    return nodes[id];
+}
+const Element& Mesh:: GetEl(int id) const {
+    return elements[id];
+}
+
+int Mesh::NumNodesInEl(std::size_t elId) const {
+    return elements[elId].nodes_id.size();
+}
+
+int Mesh::NodeIdFromEl(int elId, std::size_t i) const {
+    if (elId < 0 || static_cast<std::size_t>(elId) >= elements.size())
+    {
+        throw std::out_of_range(
+            "Mesh::NodeIdFromEl: invalid element id");
+    }
+
+    if(i >= 0 && i < elements[elId].nodes_id.size()){
+        return elements[elId].nodes_id[i];
+    }
+    throw std::invalid_argument("index of nodes_id is not correct\n");
+}
+
+const std::vector<BoundaryEdge>& Mesh:: GetBoundaryEdge() const{
+    return boundaryEdges;
+}
+
+int  Mesh::GetMarker(int i) const {
+    return boundaryEdges[i].marker;
+}
+
 int Mesh::NumNodes() const{
     return nodes.size();
 }
 int Mesh::NumEl() const{
     return elements.size();
 }
-
+int Mesh::NumBoundEdges() const{
+    return boundaryEdges.size();
+}
 
 bool Mesh::hasBoundaryMarker(int marker) const{
     for(const BoundaryEdge& be: boundaryEdges){

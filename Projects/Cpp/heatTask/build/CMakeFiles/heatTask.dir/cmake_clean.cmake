@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.o"
+  "CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.o.d"
   "CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.o"
   "CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.o.d"
   "CMakeFiles/heatTask.dir/Mesh/Mesh.cpp.o"

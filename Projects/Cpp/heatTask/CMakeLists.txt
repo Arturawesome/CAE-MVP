@@ -1,22 +1,30 @@
-cmake_minimum_required(VERSION 4.1.0)
+cmake_minimum_required(VERSION 3.20)
+
 project(HeatTask LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_executable(heatTask 
-                main.cpp 
-                Mesher/MesherRectangle.cpp
-                Mesh/Mesh.cpp
-                HeatProblem/HeatProblem.cpp
-                SetterBoundaryCondition/SetterBoundaryCondition.cpp
-                )
+find_package(Eigen3 REQUIRED)
 
-
+add_executable(heatTask
+    main.cpp
+    Mesh/Mesh.cpp
+    Mesher/MesherRectangle.cpp
+    HeatProblem/HeatProblem.cpp
+    SetterBoundaryCondition/SetterBoundaryCondition.cpp
+    FEMSolver/FEMSolver.cpp
+    
+)
 
 target_include_directories(heatTask PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(heatTask PRIVATE
+    Eigen3::Eigen
 )
 
 target_compile_options(heatTask PRIVATE
