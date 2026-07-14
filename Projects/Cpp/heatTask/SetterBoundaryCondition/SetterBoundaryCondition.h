@@ -24,4 +24,5 @@ public:
 
 private:
     void ApplyDirichlet(HeatProblem &problem) const;
+    void ApplyNeumann(HeatProblem &problem) const;
 };

@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <unordered_set>
 #include <utility>
+#include <cmath>
 #include "../BoundaryCondition/BoundaryConditions.h"
 // #include "s21_matrix_oop.h"
 
@@ -56,23 +57,74 @@ void FEMSolver::addBoundCondToGlobalMat()
         double value2 = problem.GetValue2BC(i);
         switch (type)
         {
-        case BoundaryType::Dirichlet:
-            addDirichletToGlobalMatrix(marker, value1);
-            break;
         case BoundaryType::Neumann:
-            addNeumannToGlobalMatrix(marker, value1, value2);
+            addNeumannToGlobalMatrix(marker, value1);
             break;
         case BoundaryType::Robin:
+            addRobinToGlobalMatrix(marker, value1, value2);
+            break;
+        case BoundaryType::Dirichlet:
+            addDirichletToGlobalMatrix(marker, value1);
             break;
         }
     }
     std::cout << "FEMSolver::problem.BC_size() = " << problem.BC_size() << "\n";
 }
 
-void FEMSolver::addNeumannToGlobalMatrix(int marker, double value1, double value2)
+void FEMSolver::addRobinToGlobalMatrix(int marker, double value1, double value2) {
+    std::cout<<marker<<value1<<value2<<"\n";
+}
+
+void FEMSolver::addNeumannToGlobalMatrix(int marker, double flux)
 {
-    std::cout << "addNeumannToGlobalMatrix:" << marker << " " << value1 << " " << value2 << "\n";
+    std::size_t processedEdges = 0;
+
+    for (const BoundaryEdge &be : mesh.GetBoundaryEdge())
+    {
+        if (be.marker != marker)
+        {
+            continue;
+        }
+        applyNeumannToEdge(be, flux);
+        ++processedEdges;
+    }
+    if (processedEdges == 0)
+    {
+        throw std::runtime_error(
+            "FEMSolver: no boundary edges with marker " +
+            std::to_string(marker));
+    }
+
+
     return;
+}
+
+void FEMSolver::applyNeumannToEdge(const BoundaryEdge &be, double flux)
+{
+    int id1 = be.nodes_id.first;
+    int id2 = be.nodes_id.second;
+    
+    const Node& node1 = mesh.GetNode(id1);
+    const Node& node2 = mesh.GetNode(id2);
+
+    double dx = node2.x - node1.x;
+    double dy = node2.y - node1.y;
+
+    //Eigen::VectorXd F2e = Eigen::VectorXd::Zero(2);
+    //F2e(0) = value2 * 0.5* std::pow(dx*dx + dy*dy, 0.5);
+    //F2e(1) = value2 * 0.5* std::pow(dx*dx + dy*dy, 0.5);
+    const double edgeLength = std::hypot(dx, dy);
+    if (edgeLength <= 0.0)
+    {
+        throw std::runtime_error(
+            "FEMSolver::applyNeumannToEdge: zero-length boundary edge");
+    }
+
+    double localContribution = flux * 0.5* edgeLength;
+
+    glob_F[id1]+= localContribution;
+    glob_F[id2]+= localContribution;
+    
 }
 
 void FEMSolver::addDirichletToGlobalMatrix(int marker, double value)
@@ -185,8 +237,6 @@ void FEMSolver::calcTriangleParamters(std::size_t elId)
     element_area = 0.5 * triangle.determinant();
     coefs = triangle.inverse();
 }
-
-
 
 void FEMSolver::saveSolution(const std::string &filename) const
 {

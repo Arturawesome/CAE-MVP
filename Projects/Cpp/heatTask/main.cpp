@@ -17,9 +17,13 @@ int main()
     });
 
 
-    SetterBoundaryCondition conditions = SetterBoundaryCondition(1, {1, 3 },
-    {100.0, 10});
+    SetterBoundaryCondition conditions = SetterBoundaryCondition(2, {1},
+    {10});
     conditions.Apply(task);
+
+    SetterBoundaryCondition conditions2 = SetterBoundaryCondition(1, {2},
+    {30});
+    conditions2.Apply(task);
 
     FEMSolver solver(task);
     solver.solve();

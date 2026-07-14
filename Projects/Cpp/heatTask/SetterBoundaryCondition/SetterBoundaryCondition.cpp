@@ -31,7 +31,7 @@ void SetterBoundaryCondition::Apply(HeatProblem &problem) const
         ApplyDirichlet(problem);
         break;
     case BoundaryType::Neumann:
-        throw std::invalid_argument("SetterBoundaryCondition: Neumann condition is not implemented");
+        ApplyNeumann(problem);
         break;
     case BoundaryType::Robin:
         throw std::invalid_argument("SetterBoundaryCondition: Robin condition is not implemented");
@@ -51,6 +51,24 @@ void SetterBoundaryCondition::ApplyDirichlet(HeatProblem &problem) const
             markers[i],
             //.type = 
             BoundaryType::Dirichlet,
+            //.value1 = 
+            values[i],
+            //.value2 = 
+            0.0
+        });
+    }
+}
+
+
+void SetterBoundaryCondition::ApplyNeumann(HeatProblem &problem) const
+{
+    for (std::size_t i = 0; i < markers.size(); ++i)
+    {
+        problem.AddBoundaryCondition({
+            //.marker = 
+            markers[i],
+            //.type = 
+            BoundaryType::Neumann,
             //.value1 = 
             values[i],
             //.value2 = 

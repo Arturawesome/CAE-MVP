@@ -40,7 +40,10 @@ private:
     void addDirichletToGlobalMatrix(int marker, double value);
     void applyDirichletToNode(int nodeId, double value);
 
-    void addNeumannToGlobalMatrix(int marker, double value1, double value2);
+    void addNeumannToGlobalMatrix(int marker, double flux);
+    void applyNeumannToEdge(const BoundaryEdge &be, double flux);
+
+    void addRobinToGlobalMatrix(int marker, double value1, double value2);
 
 public:
     FEMSolver(HeatProblem &problem_);
