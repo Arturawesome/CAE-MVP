@@ -11,11 +11,11 @@ class Rectangle : public Geometry {
     Rectangle(double h, double w) : height(h), width(w) {
         std::cout << "Rectangle: Rectangle\n";
     }
-    double getHeight() const {
+    double getHeight() const override {
         std::cout << "Rectangle: getHeight\n";
         return height;
     }
-    double getWidth() const {
+    double getWidth() const override {
         std::cout << "Rectangle: getWidth\n";
         return width;
     }

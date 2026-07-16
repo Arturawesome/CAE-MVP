@@ -18,6 +18,10 @@ FEMSolver::FEMSolver(HeatProblem &problem_)
 }
 
 void FEMSolver::solve() {
+    glob_K.setZero();
+    glob_F.setZero();
+    solution.setZero();
+    
     makeGlobalMatrix();
 
     addBoundCondToGlobalMat();

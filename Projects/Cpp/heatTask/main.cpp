@@ -1,5 +1,7 @@
 #include "FEMSolver/FEMSolver.h"
 #include "Geometry/Rectangle.h"
+#include "Geometry/EllipseCircle.h"
+
 #include "HeatProblem/HeatProblem.h"
 #include "Mesh/Mesh.h"
 #include "Mesher/MesherRectangle.h"
@@ -7,8 +9,14 @@
 #include <iostream>
 
 int main() {
-    Rectangle rect = Rectangle(10, 8);
-    MesherRectangle mesher = MesherRectangle(25, 20);
+    // EllipseCircle circle = EllipseCircle(10, 1, 1);
+    // std::cout<<circle.getHeight()<<"\n";
+    // std::cout<<circle.getWidth()<<"\n";
+    // std::cout<<circle.contains(5, -5)<<"\n";
+
+
+    Rectangle rect = Rectangle(10, 10);
+    MesherRectangle mesher = MesherRectangle(25, 25);
     Mesh mesh = mesher.generateMesh(rect);
 
     HeatProblem task =
