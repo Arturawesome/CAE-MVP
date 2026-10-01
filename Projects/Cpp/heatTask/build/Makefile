@@ -129,77 +129,29 @@ heatTask/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/build
 .PHONY : heatTask/fast
 
-FEMSolver/FEMSolver.o: FEMSolver/FEMSolver.cpp.o
-.PHONY : FEMSolver/FEMSolver.o
+Mesh/Mesh2D.o: Mesh/Mesh2D.cpp.o
+.PHONY : Mesh/Mesh2D.o
 
 # target to build an object file
-FEMSolver/FEMSolver.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.o
-.PHONY : FEMSolver/FEMSolver.cpp.o
+Mesh/Mesh2D.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/Mesh/Mesh2D.cpp.o
+.PHONY : Mesh/Mesh2D.cpp.o
 
-FEMSolver/FEMSolver.i: FEMSolver/FEMSolver.cpp.i
-.PHONY : FEMSolver/FEMSolver.i
-
-# target to preprocess a source file
-FEMSolver/FEMSolver.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.i
-.PHONY : FEMSolver/FEMSolver.cpp.i
-
-FEMSolver/FEMSolver.s: FEMSolver/FEMSolver.cpp.s
-.PHONY : FEMSolver/FEMSolver.s
-
-# target to generate assembly for a file
-FEMSolver/FEMSolver.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.s
-.PHONY : FEMSolver/FEMSolver.cpp.s
-
-HeatProblem/HeatProblem.o: HeatProblem/HeatProblem.cpp.o
-.PHONY : HeatProblem/HeatProblem.o
-
-# target to build an object file
-HeatProblem/HeatProblem.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.o
-.PHONY : HeatProblem/HeatProblem.cpp.o
-
-HeatProblem/HeatProblem.i: HeatProblem/HeatProblem.cpp.i
-.PHONY : HeatProblem/HeatProblem.i
+Mesh/Mesh2D.i: Mesh/Mesh2D.cpp.i
+.PHONY : Mesh/Mesh2D.i
 
 # target to preprocess a source file
-HeatProblem/HeatProblem.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.i
-.PHONY : HeatProblem/HeatProblem.cpp.i
+Mesh/Mesh2D.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/Mesh/Mesh2D.cpp.i
+.PHONY : Mesh/Mesh2D.cpp.i
 
-HeatProblem/HeatProblem.s: HeatProblem/HeatProblem.cpp.s
-.PHONY : HeatProblem/HeatProblem.s
-
-# target to generate assembly for a file
-HeatProblem/HeatProblem.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.s
-.PHONY : HeatProblem/HeatProblem.cpp.s
-
-Mesh/Mesh.o: Mesh/Mesh.cpp.o
-.PHONY : Mesh/Mesh.o
-
-# target to build an object file
-Mesh/Mesh.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/Mesh/Mesh.cpp.o
-.PHONY : Mesh/Mesh.cpp.o
-
-Mesh/Mesh.i: Mesh/Mesh.cpp.i
-.PHONY : Mesh/Mesh.i
-
-# target to preprocess a source file
-Mesh/Mesh.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/Mesh/Mesh.cpp.i
-.PHONY : Mesh/Mesh.cpp.i
-
-Mesh/Mesh.s: Mesh/Mesh.cpp.s
-.PHONY : Mesh/Mesh.s
+Mesh/Mesh2D.s: Mesh/Mesh2D.cpp.s
+.PHONY : Mesh/Mesh2D.s
 
 # target to generate assembly for a file
-Mesh/Mesh.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/Mesh/Mesh.cpp.s
-.PHONY : Mesh/Mesh.cpp.s
+Mesh/Mesh2D.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/Mesh/Mesh2D.cpp.s
+.PHONY : Mesh/Mesh2D.cpp.s
 
 Mesher/MesherRectangle.o: Mesher/MesherRectangle.cpp.o
 .PHONY : Mesher/MesherRectangle.o
@@ -224,30 +176,6 @@ Mesher/MesherRectangle.s: Mesher/MesherRectangle.cpp.s
 Mesher/MesherRectangle.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/Mesher/MesherRectangle.cpp.s
 .PHONY : Mesher/MesherRectangle.cpp.s
-
-SetterBoundaryCondition/SetterBoundaryCondition.o: SetterBoundaryCondition/SetterBoundaryCondition.cpp.o
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.o
-
-# target to build an object file
-SetterBoundaryCondition/SetterBoundaryCondition.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.cpp.o
-
-SetterBoundaryCondition/SetterBoundaryCondition.i: SetterBoundaryCondition/SetterBoundaryCondition.cpp.i
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.i
-
-# target to preprocess a source file
-SetterBoundaryCondition/SetterBoundaryCondition.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.i
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.cpp.i
-
-SetterBoundaryCondition/SetterBoundaryCondition.s: SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.s
-
-# target to generate assembly for a file
-SetterBoundaryCondition/SetterBoundaryCondition.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
 
 main.o: main.cpp.o
 .PHONY : main.o
@@ -282,21 +210,12 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... heatTask"
-	@echo "... FEMSolver/FEMSolver.o"
-	@echo "... FEMSolver/FEMSolver.i"
-	@echo "... FEMSolver/FEMSolver.s"
-	@echo "... HeatProblem/HeatProblem.o"
-	@echo "... HeatProblem/HeatProblem.i"
-	@echo "... HeatProblem/HeatProblem.s"
-	@echo "... Mesh/Mesh.o"
-	@echo "... Mesh/Mesh.i"
-	@echo "... Mesh/Mesh.s"
+	@echo "... Mesh/Mesh2D.o"
+	@echo "... Mesh/Mesh2D.i"
+	@echo "... Mesh/Mesh2D.s"
 	@echo "... Mesher/MesherRectangle.o"
 	@echo "... Mesher/MesherRectangle.i"
 	@echo "... Mesher/MesherRectangle.s"
-	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.o"
-	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.i"
-	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

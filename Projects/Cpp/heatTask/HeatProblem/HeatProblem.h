@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "../BoundaryCondition/BoundaryConditions.h"
-#include "../Mesh/Mesh.h"
+#include "../Mesh/Mesh2D.h"
 
 class HeatProblem {
   private:

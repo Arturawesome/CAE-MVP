@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <unordered_set>
 #include <utility>
-// #include "s21_matrix_oop.h"
+
 
 FEMSolver::FEMSolver(HeatProblem &problem_)
     : problem(problem_), mesh(problem_.GetMesh()) {
@@ -76,7 +76,7 @@ void FEMSolver::addNeumannToGlobalMatrix(int marker, double flux) {
     std::size_t processedEdges = 0;
 
     for (const BoundaryEdge &be : mesh.GetBoundaryEdge()) {
-        if (be.marker != marker) {
+        if (be.boundaryId != marker) {
             continue;
         }
         applyNeumannToEdge(be, flux);
@@ -118,7 +118,7 @@ void FEMSolver::applyNeumannToEdge(const BoundaryEdge &be, double flux) {
 void FEMSolver::addDirichletToGlobalMatrix(int marker, double value) {
     std::unordered_set<int> nodes;
     for (const BoundaryEdge &be : mesh.GetBoundaryEdge()) {
-        if (be.marker != marker) {
+        if (be.boundaryId != marker) {
             continue;
         }
         nodes.insert(be.nodes_id.first);

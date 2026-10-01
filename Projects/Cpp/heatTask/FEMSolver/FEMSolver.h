@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../HeatProblem/HeatProblem.h"
-#include "../Mesh/Mesh.h"
+#include "../Mesh/Mesh2D.h"
 #include <Eigen/Dense>
 #include <array>
 #include <iostream>
