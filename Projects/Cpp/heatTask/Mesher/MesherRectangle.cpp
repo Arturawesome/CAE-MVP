@@ -20,12 +20,11 @@ Mesh MesherRectangle::generateMesh(const Rectangle &r) {
 
     for (int i = 0; i < ny; i++) {
         for (int j = 0; j < nx; j++) {
-            int nodeId = getNodeId(i, j);
-            mesh.AddNode( {.id = nodeId, .position = Point2D{dx * j + origin.x, dy * i+ origin.y}});
+            mesh.AddNode( {.position = Point2D{dx * j + origin.x, dy * i+ origin.y}});
         }
     }
 
-    int element_count = 0;
+
     for (int i = 0; i < ny - 1; i++) {
         for (int j = 0; j < nx - 1; j++) {
             int n0 = getNodeId(i, j);
@@ -33,19 +32,17 @@ Mesh MesherRectangle::generateMesh(const Rectangle &r) {
             int n2 = getNodeId(i + 1, j);
             int n3 = getNodeId(i + 1, j + 1);
             Element el;
-            el.id = element_count;
             el.nodes_id[0] = n0;
             el.nodes_id[1] = n3;
             el.nodes_id[2] = n2;
             mesh.AddElement(el);
-            ++element_count;
-            el.id = element_count;
+            
             el.nodes_id[0] = n0;
             el.nodes_id[1] = n1;
             el.nodes_id[2] = n3;
 
             mesh.AddElement(el);;
-            ++element_count;
+            
         }
     }
     // std::cout<<"MesherRectangle: mesh.elements.size() =

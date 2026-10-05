@@ -5,7 +5,7 @@
 
 std::ostream &operator<<(std::ostream &stream, const Mesh &m) {
     for (const auto node : m.nodes_) {
-        stream << "{id =" << node.id << "; x=" << node.position.x
+        stream << "{x=" << node.position.x
                << "; y=" << node.position.y << "}\n";
     }
 
@@ -27,7 +27,7 @@ std::ostream &operator<<(std::ostream &stream, const Mesh &m) {
 
 
 std::ostream &operator<<(std::ostream &stream, const Element &element) {
-    stream << "{id =" << element.id << ";  n_id = ";
+    stream << "{n_id = ";
     for (const auto node_is : element.nodes_id) {
         stream << node_is << ", ";
     }
@@ -47,7 +47,7 @@ int Mesh::NodeIdFromEl(int elId, std::size_t i) const {
         throw std::out_of_range("Mesh::NodeIdFromEl: invalid element id");
     }
 
-    if (i >= 0 && i < elements_[elId].nodes_id.size()) {
+    if (i < elements_[elId].nodes_id.size()) {
         return elements_[elId].nodes_id[i];
     }
     throw std::invalid_argument("index of nodes_id is not correct\n");

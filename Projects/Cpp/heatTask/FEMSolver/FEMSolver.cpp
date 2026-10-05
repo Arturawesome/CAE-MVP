@@ -29,7 +29,7 @@ void FEMSolver::solve() {
     solution = glob_K.partialPivLu().solve(glob_F);
 
     if (!solution.allFinite()) {
-        throw std::runtime_error("FEMSolver: solution contains NaN or Inf");
+        throw std::runtime_error("FEMSolver: solution Contains NaN or Inf");
     }
     std::cout << solution;
 }

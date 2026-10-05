@@ -13,6 +13,7 @@ add_executable(heatTask
     main.cpp
     Mesh/Mesh2D.cpp
     Mesher/MesherRectangle.cpp
+    #Mesher/MesherCircle.cpp
     #HeatProblem/HeatProblem.cpp
     #SetterBoundaryCondition/SetterBoundaryCondition.cpp
     #FEMSolver/FEMSolver.cpp
@@ -32,3 +33,4 @@ target_compile_options(heatTask PRIVATE
     -Wextra
     -Werror
 )
+

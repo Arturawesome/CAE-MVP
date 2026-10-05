@@ -4,8 +4,9 @@
 #include <utility>
 #include <vector>
 
-#include "../models/Geometry2D.h"
-#include "../models/Mesh2D.h"
+
+#include "../Models/Geometry2D.h"
+#include "../Models/Mesh2D.h"
 
 class Mesh {
   private:
@@ -15,11 +16,7 @@ class Mesh {
 
   public:
 
-    Mesh() {
-        nodes_.reserve(1000);
-        elements_.reserve(1000);
-        boundaryEdges_.reserve(1000);
-    }
+    Mesh() {}
     void AddNode(Node node);
     void AddElement(Element element);
     void AddBoundaryEdge(BoundaryEdge edge);

@@ -1,10 +1,10 @@
 #pragma once
 #include <fstream>
 
-#include "../models/Geometry2D.h"
+#include "../Models/Geometry2D.h"
 #include "../Mesh/Mesh2D.h"
 
-class STLWriterReader {
+class STLWriter {
   public:
     static void Write(const Mesh &mesh, const std::string &filename) {
         std::ofstream out(filename);

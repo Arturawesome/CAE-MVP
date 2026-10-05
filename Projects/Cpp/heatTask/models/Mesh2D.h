@@ -1,13 +1,10 @@
 #pragma once
-
+#include <array>
+#include <utility>
 #include "Geometry2D.h"
 
 
-
-
-
 struct Node {
-    int id;
     Point2D position;
 };
 
@@ -19,6 +16,5 @@ struct BoundaryEdge {
 
 // triangle element: id, area and nodes
 struct Element {
-    int id;
     std::array<int, 3> nodes_id;
 };
