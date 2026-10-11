@@ -129,30 +129,6 @@ heatTask/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/build
 .PHONY : heatTask/fast
 
-FEMSolver/FEMSolver.o: FEMSolver/FEMSolver.cpp.o
-.PHONY : FEMSolver/FEMSolver.o
-
-# target to build an object file
-FEMSolver/FEMSolver.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.o
-.PHONY : FEMSolver/FEMSolver.cpp.o
-
-FEMSolver/FEMSolver.i: FEMSolver/FEMSolver.cpp.i
-.PHONY : FEMSolver/FEMSolver.i
-
-# target to preprocess a source file
-FEMSolver/FEMSolver.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.i
-.PHONY : FEMSolver/FEMSolver.cpp.i
-
-FEMSolver/FEMSolver.s: FEMSolver/FEMSolver.cpp.s
-.PHONY : FEMSolver/FEMSolver.s
-
-# target to generate assembly for a file
-FEMSolver/FEMSolver.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.s
-.PHONY : FEMSolver/FEMSolver.cpp.s
-
 HeatProblem/HeatProblem.o: HeatProblem/HeatProblem.cpp.o
 .PHONY : HeatProblem/HeatProblem.o
 
@@ -249,6 +225,54 @@ SetterBoundaryCondition/SetterBoundaryCondition.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
 .PHONY : SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
 
+fem/FEMSolver.o: fem/FEMSolver.cpp.o
+.PHONY : fem/FEMSolver.o
+
+# target to build an object file
+fem/FEMSolver.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o
+.PHONY : fem/FEMSolver.cpp.o
+
+fem/FEMSolver.i: fem/FEMSolver.cpp.i
+.PHONY : fem/FEMSolver.i
+
+# target to preprocess a source file
+fem/FEMSolver.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.i
+.PHONY : fem/FEMSolver.cpp.i
+
+fem/FEMSolver.s: fem/FEMSolver.cpp.s
+.PHONY : fem/FEMSolver.s
+
+# target to generate assembly for a file
+fem/FEMSolver.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.s
+.PHONY : fem/FEMSolver.cpp.s
+
+fem/elements/TriangleP1.o: fem/elements/TriangleP1.cpp.o
+.PHONY : fem/elements/TriangleP1.o
+
+# target to build an object file
+fem/elements/TriangleP1.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.o
+.PHONY : fem/elements/TriangleP1.cpp.o
+
+fem/elements/TriangleP1.i: fem/elements/TriangleP1.cpp.i
+.PHONY : fem/elements/TriangleP1.i
+
+# target to preprocess a source file
+fem/elements/TriangleP1.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.i
+.PHONY : fem/elements/TriangleP1.cpp.i
+
+fem/elements/TriangleP1.s: fem/elements/TriangleP1.cpp.s
+.PHONY : fem/elements/TriangleP1.s
+
+# target to generate assembly for a file
+fem/elements/TriangleP1.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.s
+.PHONY : fem/elements/TriangleP1.cpp.s
+
 io/VTKReader.o: io/VTKReader.cpp.o
 .PHONY : io/VTKReader.o
 
@@ -306,9 +330,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... heatTask"
-	@echo "... FEMSolver/FEMSolver.o"
-	@echo "... FEMSolver/FEMSolver.i"
-	@echo "... FEMSolver/FEMSolver.s"
 	@echo "... HeatProblem/HeatProblem.o"
 	@echo "... HeatProblem/HeatProblem.i"
 	@echo "... HeatProblem/HeatProblem.s"
@@ -321,6 +342,12 @@ help:
 	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.o"
 	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.i"
 	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.s"
+	@echo "... fem/FEMSolver.o"
+	@echo "... fem/FEMSolver.i"
+	@echo "... fem/FEMSolver.s"
+	@echo "... fem/elements/TriangleP1.o"
+	@echo "... fem/elements/TriangleP1.i"
+	@echo "... fem/elements/TriangleP1.s"
 	@echo "... io/VTKReader.o"
 	@echo "... io/VTKReader.i"
 	@echo "... io/VTKReader.s"

@@ -4,7 +4,7 @@
 #include "Mesh/Mesh2D.h"
 #include "Mesher/MesherRectangle.h"
 #include "SetterBoundaryCondition/SetterBoundaryCondition.h"
-#include "FEMSolver/FEMSolver.h"
+#include "fem/FEMSolver.h"
 
 #include "io/STLWriter.h"
 #include "io/VTKReader.h"

@@ -1,5 +1,6 @@
 #include "FEMSolver.h"
 #include "../BoundaryCondition/BoundaryConditions.h"
+#include "elements/TriangleP1.h"
 #include <cmath>
 #include <fstream>
 #include <stdexcept>
@@ -37,10 +38,13 @@ void FEMSolver::solve() {
 void FEMSolver::makeGlobalMatrix() {
     int numEl = mesh.NumEl();
     for (int elId = 0; elId < numEl; ++elId) {
+        TriangleP1 triangle(mesh, elId);
+        
         calcTriangleParamters(elId);
         makeGradMatrix(elId);
         makeLocalF(elId);
         makeLocalK(elId);
+        
         addInGlobalKF(elId);
     }
 }

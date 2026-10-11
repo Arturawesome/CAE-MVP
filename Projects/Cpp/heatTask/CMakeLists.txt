@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(HeatTask LANGUAGES CXX)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,11 +14,12 @@ add_executable(heatTask
     main.cpp
     Mesh/Mesh2D.cpp
     Mesher/MesherRectangle.cpp
-        io/VTKReader.cpp
+    io/VTKReader.cpp
     #Mesher/MesherCircle.cpp
     HeatProblem/HeatProblem.cpp
     SetterBoundaryCondition/SetterBoundaryCondition.cpp
-    FEMSolver/FEMSolver.cpp
+    fem/elements/TriangleP1.cpp
+    fem/FEMSolver.cpp
     
 )
 

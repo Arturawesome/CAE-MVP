@@ -37,8 +37,14 @@
 },
 {
   "directory": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build",
-  "command": "/usr/bin/c++  -I/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask -isystem /opt/homebrew/include/eigen3 -std=c++20 -arch arm64 -Wall -Wextra -Werror -o CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.o -c /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/FEMSolver/FEMSolver.cpp",
-  "file": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/FEMSolver/FEMSolver.cpp",
-  "output": "CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.o"
+  "command": "/usr/bin/c++  -I/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask -isystem /opt/homebrew/include/eigen3 -std=c++20 -arch arm64 -Wall -Wextra -Werror -o CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.o -c /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/elements/TriangleP1.cpp",
+  "file": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/elements/TriangleP1.cpp",
+  "output": "CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.o"
+},
+{
+  "directory": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build",
+  "command": "/usr/bin/c++  -I/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask -isystem /opt/homebrew/include/eigen3 -std=c++20 -arch arm64 -Wall -Wextra -Werror -o CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o -c /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/FEMSolver.cpp",
+  "file": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/FEMSolver.cpp",
+  "output": "CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o"
 }
 ]

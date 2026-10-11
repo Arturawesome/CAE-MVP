@@ -1,6 +1,4 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.o"
-  "CMakeFiles/heatTask.dir/FEMSolver/FEMSolver.cpp.o.d"
   "CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.o"
   "CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.o.d"
   "CMakeFiles/heatTask.dir/Mesh/Mesh2D.cpp.o"
@@ -9,6 +7,10 @@ file(REMOVE_RECURSE
   "CMakeFiles/heatTask.dir/Mesher/MesherRectangle.cpp.o.d"
   "CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o"
   "CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o.d"
+  "CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o"
+  "CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o.d"
+  "CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.o"
+  "CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.o.d"
   "CMakeFiles/heatTask.dir/io/VTKReader.cpp.o"
   "CMakeFiles/heatTask.dir/io/VTKReader.cpp.o.d"
   "CMakeFiles/heatTask.dir/main.cpp.o"
