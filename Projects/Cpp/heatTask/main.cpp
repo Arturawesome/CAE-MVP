@@ -1,27 +1,44 @@
-
-#include "Geometry/Rectangle.h"
 #include "Geometry/Circle.h"
+#include "Geometry/Rectangle.h"
 #include "HeatProblem/HeatProblem.h"
 #include "Mesh/Mesh2D.h"
 #include "Mesher/MesherRectangle.h"
+#include "SetterBoundaryCondition/SetterBoundaryCondition.h"
+#include "FEMSolver/FEMSolver.h"
 
 #include "io/STLWriter.h"
+#include "io/VTKReader.h"
 #include "io/VTKWriter.h"
-
 #include <iostream>
-
+#include <cassert>
 int main() {
-
-
     Rectangle rect = Rectangle(10, 10, Point2D{5, 5});
     Circle circle = Circle(5, Point2D{2, 2});
     MesherRectangle mesher = MesherRectangle(5, 5);
     Mesh mesh = mesher.generateMesh(rect);
-    
-    STLWriter::Write(mesh, "Renderer/proba1.stl");
-    VTKWriter::WriteUstructuredGrid(mesh, "Renderer/proba1.vtk"); 
 
-    std::cout << "Hello CAD/CAE system\n";
-    std::cout<<mesh;
+    STLWriter::Write(mesh, "Renderer/proba1.stl");
+    VTKWriter::WriteUstructuredGrid(mesh, "Renderer/proba1.vtk");
+
+    Mesh circleMesh =
+        VTKReader::ReadUstructuredGrid("circle_2d_unstructured.vtk");
+    circleMesh.CreateBoundaryEdges();
+
+    std::cout << circleMesh.NumNodes() << '\n';
+    std::cout << circleMesh.NumEl() << '\n';
+    std::cout << circleMesh.NumBoundEdges() << "\n";
+
+    HeatProblem task =
+        HeatProblem(circleMesh, 45, [](double, double, double) { return 100.0; });
+
+    SetterBoundaryCondition conditions = SetterBoundaryCondition(1, {1}, {5});
+    conditions.Apply(task);
+
+    FEMSolver solver(task);
+    solver.solve();
+    solver.saveSolution("circleMeshtemperature.vtk");
+
+
+   
     return 0;
 }

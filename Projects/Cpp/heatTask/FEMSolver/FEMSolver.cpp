@@ -31,7 +31,7 @@ void FEMSolver::solve() {
     if (!solution.allFinite()) {
         throw std::runtime_error("FEMSolver: solution Contains NaN or Inf");
     }
-    std::cout << solution;
+    
 }
 
 void FEMSolver::makeGlobalMatrix() {
@@ -64,7 +64,7 @@ void FEMSolver::addBoundCondToGlobalMat() {
             break;
         }
     }
-    std::cout << "FEMSolver::problem.BC_size() = " << problem.BC_size() << "\n";
+    
 }
 
 void FEMSolver::addRobinToGlobalMatrix(int marker, double value1,
@@ -75,7 +75,7 @@ void FEMSolver::addRobinToGlobalMatrix(int marker, double value1,
 void FEMSolver::addNeumannToGlobalMatrix(int marker, double flux) {
     std::size_t processedEdges = 0;
 
-    for (const BoundaryEdge &be : mesh.GetBoundaryEdge()) {
+    for (const BoundaryEdge &be : mesh.BoundaryEdges()) {
         if (be.boundaryId != marker) {
             continue;
         }
@@ -94,15 +94,12 @@ void FEMSolver::applyNeumannToEdge(const BoundaryEdge &be, double flux) {
     int id1 = be.nodes_id.first;
     int id2 = be.nodes_id.second;
 
-    const Node &node1 = mesh.GetNode(id1);
-    const Node &node2 = mesh.GetNode(id2);
+    const Node &node1 = mesh.NodeById(id1);
+    const Node &node2 = mesh.NodeById(id2);
 
-    double dx = node2.x - node1.x;
-    double dy = node2.y - node1.y;
+    double dx = node2.position.x - node1.position.x;
+    double dy = node2.position.y - node1.position.y;
 
-    // Eigen::VectorXd F2e = Eigen::VectorXd::Zero(2);
-    // F2e(0) = value2 * 0.5* std::pow(dx*dx + dy*dy, 0.5);
-    // F2e(1) = value2 * 0.5* std::pow(dx*dx + dy*dy, 0.5);
     const double edgeLength = std::hypot(dx, dy);
     if (edgeLength <= 0.0) {
         throw std::runtime_error(
@@ -117,7 +114,7 @@ void FEMSolver::applyNeumannToEdge(const BoundaryEdge &be, double flux) {
 
 void FEMSolver::addDirichletToGlobalMatrix(int marker, double value) {
     std::unordered_set<int> nodes;
-    for (const BoundaryEdge &be : mesh.GetBoundaryEdge()) {
+    for (const BoundaryEdge &be : mesh.BoundaryEdges()) {
         if (be.boundaryId != marker) {
             continue;
         }
@@ -191,19 +188,18 @@ void FEMSolver::calcTriangleParamters(std::size_t elId) {
     y_middle = 0;
     for (std::size_t i = 0; i < nodes_in_element; ++i) {
         std::size_t node_id = mesh.NodeIdFromEl(elId, i);
-        const Node &node = mesh.GetNode(node_id);
+        const Node &node = mesh.NodeById(node_id);
         triangle(i, 0) = 1;
-        triangle(i, 1) = node.x;
-        triangle(i, 2) = node.y;
+        triangle(i, 1) = node.position.x;
+        triangle(i, 2) = node.position.y;
 
-        x_middle += node.x;
-        y_middle += node.y;
+        x_middle += node.position.x;
+        y_middle += node.position.y;
     }
     x_middle /= static_cast<double>(nodes_in_element);
     y_middle /= static_cast<double>(nodes_in_element);
 
-    std::cout << mesh.GetEl(elId);
-    std::cout << 0.5 * triangle.determinant() << "\n";
+
 
     element_area = 0.5 * triangle.determinant();
     coefs = triangle.inverse();
@@ -232,9 +228,9 @@ void FEMSolver::saveSolution(const std::string &filename) const {
 
     for (std::size_t nodeId = 0;
          nodeId < static_cast<std::size_t>(mesh.NumNodes()); ++nodeId) {
-        const Node &node = mesh.GetNode(nodeId);
+        const Node &node = mesh.NodeById(nodeId);
 
-        out << node.x << " " << node.y << " " << 0.0 << "\n";
+        out << node.position.x << " " << node.position.y << " " << 0.0 << "\n";
     }
 
     out << "\n";

@@ -43,7 +43,7 @@ bool HeatProblem::hasBoundaryCondition(int marker) const {
 }
 
 bool HeatProblem::meshHasBoundaryMarker(int marker) {
-    return mesh.hasBoundaryMarker(marker);
+    return mesh.HasBoundaryMarker(marker);
 }
 
 int HeatProblem::BC_size() const { return boundaryConditions.size(); }

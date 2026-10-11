@@ -15,9 +15,9 @@ add_executable(heatTask
     Mesher/MesherRectangle.cpp
         io/VTKReader.cpp
     #Mesher/MesherCircle.cpp
-    #HeatProblem/HeatProblem.cpp
-    #SetterBoundaryCondition/SetterBoundaryCondition.cpp
-    #FEMSolver/FEMSolver.cpp
+    HeatProblem/HeatProblem.cpp
+    SetterBoundaryCondition/SetterBoundaryCondition.cpp
+    FEMSolver/FEMSolver.cpp
     
 )
 

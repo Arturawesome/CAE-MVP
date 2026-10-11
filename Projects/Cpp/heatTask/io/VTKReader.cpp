@@ -26,39 +26,21 @@ Mesh VTKReader::ReadUstructuredGrid(const std::string &filename) {
                 throw std::runtime_error("Duplicate POINTS section");
             }
             hasPoints = true;
-            try {
-                ProcessPoints(in, mesh);
-            }
-            catch (const std::runtime_error &e) {
-                std::cerr << e.what() << std::endl;
-                throw e;
-            }
+            ProcessPoints(in, mesh);
         }
         else if (token == "CELLS") {
             if (hasCells) {
                 throw std::runtime_error("Duplicate CELLS section");
             }
             hasCells = true;
-            try {
-                ProcessCells(in, cells, mesh);
-            }
-            catch (const std::runtime_error &e) {
-                std::cerr << e.what() << std::endl;
-                throw e;
-            }
+            ProcessCells(in, cells);
         }
         else if (token == "CELL_TYPES") {
             if (hasTypes) {
                 throw std::runtime_error("Duplicate CELL_TYPES section");
             }
             hasTypes = true;
-            try {
-                ProcessCellsTypes(in, cellTypes, mesh);
-            }
-            catch (const std::runtime_error &e) {
-                std::cerr << e.what() << std::endl;
-                throw e;
-            }
+            ProcessCellsTypes(in, cellTypes);
         }
         else {
             throw std::runtime_error("Unsupported VTK section: " + token);
@@ -86,8 +68,8 @@ Mesh VTKReader::ReadUstructuredGrid(const std::string &filename) {
     }
     return mesh;
 }
-void VTKReader::ProcessCellsTypes(std::istream &in, std::vector<int> &cellTypes,
-                                  Mesh &mesh) {
+void VTKReader::ProcessCellsTypes(std::istream &in,
+                                  std::vector<int> &cellTypes) {
     int count;
     if (!(in >> count) || count < 0) {
         throw std::runtime_error("Invalid CELL_TYPES header");
@@ -103,7 +85,7 @@ void VTKReader::ProcessCellsTypes(std::istream &in, std::vector<int> &cellTypes,
 }
 
 void VTKReader::ProcessCells(std::istream &in,
-                             std::vector<std::vector<int>> &cells, Mesh &mesh) {
+                             std::vector<std::vector<int>> &cells) {
     int count, totalSize;
     if (!(in >> count >> totalSize) || count < 0 || totalSize < 0) {
         throw std::runtime_error("Invalid CELLS header");
@@ -161,13 +143,13 @@ void VTKReader::CheckHeaderUstructuredGrid(std::istream &in,
         throw std::runtime_error("Cannot open VTK: " + filename);
     }
     std::string line;
-    std::getline(in, line); /*# vtk DataFile Version 3.0 */
-    if (line.rfind("vtk") != 0) {
+    std::getline(in, line); /* # vtk DataFile Version 3.0 */
+    if (line.rfind("# vtk") != 0) {
         throw std::runtime_error("Invalid vtk header");
     }
     std::getline(in, line); // smth
-    std::getline(in, line); // ASKII
-    if (line != "ASKII") {
+    std::getline(in, line); // ASCII
+    if (line != "ASCII") {
         throw std::runtime_error("Only ASCII VTK is supported");
     }
     std::string token;

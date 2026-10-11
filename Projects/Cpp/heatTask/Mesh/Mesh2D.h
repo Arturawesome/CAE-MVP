@@ -20,6 +20,7 @@ class Mesh {
     void AddNode(Node node);
     void AddElement(Element element);
     void AddBoundaryEdge(BoundaryEdge edge);
+    void CreateBoundaryEdges();
 
     const std::vector<Node> &Nodes() const;
     const std::vector<Element> &Elements() const;
