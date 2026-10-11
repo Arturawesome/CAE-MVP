@@ -6,7 +6,7 @@
 
 class VTKWriter {
   public:
-    static void Write(const Mesh &mesh, const std::string &filename)  {
+    static void WriteUstructuredGrid(const Mesh &mesh, const std::string &filename)  {
         std::ofstream out(filename);
 
         if (!out.is_open()) {

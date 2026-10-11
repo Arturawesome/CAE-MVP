@@ -13,6 +13,7 @@ add_executable(heatTask
     main.cpp
     Mesh/Mesh2D.cpp
     Mesher/MesherRectangle.cpp
+        io/VTKReader.cpp
     #Mesher/MesherCircle.cpp
     #HeatProblem/HeatProblem.cpp
     #SetterBoundaryCondition/SetterBoundaryCondition.cpp

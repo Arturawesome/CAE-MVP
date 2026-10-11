@@ -19,7 +19,7 @@ int main() {
     Mesh mesh = mesher.generateMesh(rect);
     
     STLWriter::Write(mesh, "Renderer/proba1.stl");
-    VTKWriter::Write(mesh, "Renderer/proba1.vtk"); 
+    VTKWriter::WriteUstructuredGrid(mesh, "Renderer/proba1.vtk"); 
 
     std::cout << "Hello CAD/CAE system\n";
     std::cout<<mesh;
