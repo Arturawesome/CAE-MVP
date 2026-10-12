@@ -18,7 +18,7 @@ FEMSolver::FEMSolver(HeatProblem &problem_)
     glob_K = Eigen::MatrixXd::Zero(numNodes, numNodes);
 }
 
-void FEMSolver::solve() {
+void FEMSolver::Solve() {
     glob_K.setZero();
     glob_F.setZero();
     solution.setZero();
@@ -38,13 +38,17 @@ void FEMSolver::solve() {
 void FEMSolver::makeGlobalMatrix() {
     int numEl = mesh.NumEl();
     for (int elId = 0; elId < numEl; ++elId) {
+
         TriangleP1 triangle(mesh, elId);
-        
+        triangle.Area();
+        triangle.Center();
+        triangle.Grad();
         calcTriangleParamters(elId);
         makeGradMatrix(elId);
+
+
         makeLocalF(elId);
         makeLocalK(elId);
-        
         addInGlobalKF(elId);
     }
 }
@@ -209,71 +213,7 @@ void FEMSolver::calcTriangleParamters(std::size_t elId) {
     coefs = triangle.inverse();
 }
 
-void FEMSolver::saveSolution(const std::string &filename) const {
-    if (solution.size() != mesh.NumNodes()) {
-        throw std::runtime_error("FEMSolver::saveSolution: solution size does "
-                                 "not match number of mesh nodes");
-    }
-
-    std::ofstream out(filename);
-
-    if (!out.is_open()) {
-        throw std::runtime_error("FEMSolver::saveSolution: cannot open file " +
-                                 filename);
-    }
-
-    out << "# vtk DataFile Version 3.0\n";
-    out << "FEM temperature solution\n";
-    out << "ASCII\n";
-    out << "DATASET UNSTRUCTURED_GRID\n";
-
-    // Узлы
-    out << "POINTS " << mesh.NumNodes() << " double\n";
-
-    for (std::size_t nodeId = 0;
-         nodeId < static_cast<std::size_t>(mesh.NumNodes()); ++nodeId) {
-        const Node &node = mesh.NodeById(nodeId);
-
-        out << node.position.x << " " << node.position.y << " " << 0.0 << "\n";
-    }
-
-    out << "\n";
-
-    // Треугольные элементы.
-    const std::size_t numElements = static_cast<std::size_t>(mesh.NumEl());
-
-    out << "CELLS " << numElements << " " << numElements * 4 << "\n";
-
-    for (std::size_t elementId = 0; elementId < numElements; ++elementId) {
-        const std::size_t numNodesInElement = mesh.NumNodesInEl(elementId);
-
-        out << numNodesInElement;
-
-        for (std::size_t localNodeId = 0; localNodeId < numNodesInElement;
-             ++localNodeId) {
-            out << " " << mesh.NodeIdFromEl(elementId, localNodeId);
-        }
-
-        out << "\n";
-    }
-
-    out << "\n";
-
-    // Для линейных треугольников VTK cell type = 5.
-    out << "CELL_TYPES " << numElements << "\n";
-
-    for (std::size_t elementId = 0; elementId < numElements; ++elementId) {
-        out << "5\n";
-    }
-
-    out << "\n";
-
-    // Температура в узлах.
-    out << "POINT_DATA " << mesh.NumNodes() << "\n";
-    out << "SCALARS Temperature double 1\n";
-    out << "LOOKUP_TABLE default\n";
-
-    for (Eigen::Index nodeId = 0; nodeId < solution.size(); ++nodeId) {
-        out << solution(nodeId) << "\n";
-    }
+Eigen::VectorXd& FEMSolver::Solution(){
+    return solution;
 }
+

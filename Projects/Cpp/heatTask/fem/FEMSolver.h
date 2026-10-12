@@ -47,6 +47,6 @@ class FEMSolver {
   public:
     FEMSolver(HeatProblem &problem_);
     ~FEMSolver() = default;
-    void solve();
-    void saveSolution(const std::string &filename) const;
+    void Solve();
+    Eigen::VectorXd& Solution();
 };

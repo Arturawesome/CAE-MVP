@@ -35,8 +35,8 @@ int main() {
     conditions.Apply(task);
 
     FEMSolver solver(task);
-    solver.solve();
-    solver.saveSolution("circleMeshtemperature.vtk");
+    solver.Solve();
+    VTKWriter::saveSolution(circleMesh, solver.Solution(), "ioSaveSolutionCircle.vtk");
 
 
    
