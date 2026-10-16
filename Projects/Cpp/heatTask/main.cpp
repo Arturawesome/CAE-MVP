@@ -3,7 +3,6 @@
 #include "HeatProblem/HeatProblem.h"
 #include "Mesh/Mesh2D.h"
 #include "Mesher/MesherRectangle.h"
-#include "SetterBoundaryCondition/SetterBoundaryCondition.h"
 #include "fem/FEMSolver.h"
 
 #include "io/STLWriter.h"
@@ -30,13 +29,12 @@ int main() {
 
     HeatProblem task =
         HeatProblem(circleMesh, 45, [](double, double, double) { return 100.0; });
+    task.AddDirichlet(1, 5);
 
-    SetterBoundaryCondition conditions = SetterBoundaryCondition(1, {1}, {5});
-    conditions.Apply(task);
 
     FEMSolver solver(task);
     solver.Solve();
-    VTKWriter::saveSolution(circleMesh, solver.Solution(), "ioSaveSolutionCircle.vtk");
+    VTKWriter::saveSolution(circleMesh, solver.Solution(), "ioCircleSolutionRefactor.vtk");
 
 
    

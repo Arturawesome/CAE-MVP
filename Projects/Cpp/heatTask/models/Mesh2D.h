@@ -2,7 +2,7 @@
 #include <array>
 #include <utility>
 #include "Geometry2D.h"
-
+#include "BoundaryId.h"
 
 struct Node {
     Point2D position;

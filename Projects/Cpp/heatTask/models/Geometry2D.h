@@ -5,8 +5,8 @@
 #include <stdexcept>
 #include <variant>
 #include <vector>
+#include "BoundaryId.h"
 
-using BoundaryId = int;
 
 struct Point2D {
     double x = 0.0;

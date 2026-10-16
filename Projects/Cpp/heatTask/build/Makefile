@@ -201,30 +201,6 @@ Mesher/MesherRectangle.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/Mesher/MesherRectangle.cpp.s
 .PHONY : Mesher/MesherRectangle.cpp.s
 
-SetterBoundaryCondition/SetterBoundaryCondition.o: SetterBoundaryCondition/SetterBoundaryCondition.cpp.o
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.o
-
-# target to build an object file
-SetterBoundaryCondition/SetterBoundaryCondition.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.cpp.o
-
-SetterBoundaryCondition/SetterBoundaryCondition.i: SetterBoundaryCondition/SetterBoundaryCondition.cpp.i
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.i
-
-# target to preprocess a source file
-SetterBoundaryCondition/SetterBoundaryCondition.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.i
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.cpp.i
-
-SetterBoundaryCondition/SetterBoundaryCondition.s: SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.s
-
-# target to generate assembly for a file
-SetterBoundaryCondition/SetterBoundaryCondition.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
-.PHONY : SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
-
 fem/FEMSolver.o: fem/FEMSolver.cpp.o
 .PHONY : fem/FEMSolver.o
 
@@ -272,6 +248,30 @@ fem/assembly/HeatAssembler2D.s: fem/assembly/HeatAssembler2D.cpp.s
 fem/assembly/HeatAssembler2D.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.s
 .PHONY : fem/assembly/HeatAssembler2D.cpp.s
+
+fem/assembly/HeatBoundaryAssembler2D.o: fem/assembly/HeatBoundaryAssembler2D.cpp.o
+.PHONY : fem/assembly/HeatBoundaryAssembler2D.o
+
+# target to build an object file
+fem/assembly/HeatBoundaryAssembler2D.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/assembly/HeatBoundaryAssembler2D.cpp.o
+.PHONY : fem/assembly/HeatBoundaryAssembler2D.cpp.o
+
+fem/assembly/HeatBoundaryAssembler2D.i: fem/assembly/HeatBoundaryAssembler2D.cpp.i
+.PHONY : fem/assembly/HeatBoundaryAssembler2D.i
+
+# target to preprocess a source file
+fem/assembly/HeatBoundaryAssembler2D.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/assembly/HeatBoundaryAssembler2D.cpp.i
+.PHONY : fem/assembly/HeatBoundaryAssembler2D.cpp.i
+
+fem/assembly/HeatBoundaryAssembler2D.s: fem/assembly/HeatBoundaryAssembler2D.cpp.s
+.PHONY : fem/assembly/HeatBoundaryAssembler2D.s
+
+# target to generate assembly for a file
+fem/assembly/HeatBoundaryAssembler2D.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/assembly/HeatBoundaryAssembler2D.cpp.s
+.PHONY : fem/assembly/HeatBoundaryAssembler2D.cpp.s
 
 fem/elements/TriangleP1.o: fem/elements/TriangleP1.cpp.o
 .PHONY : fem/elements/TriangleP1.o
@@ -363,15 +363,15 @@ help:
 	@echo "... Mesher/MesherRectangle.o"
 	@echo "... Mesher/MesherRectangle.i"
 	@echo "... Mesher/MesherRectangle.s"
-	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.o"
-	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.i"
-	@echo "... SetterBoundaryCondition/SetterBoundaryCondition.s"
 	@echo "... fem/FEMSolver.o"
 	@echo "... fem/FEMSolver.i"
 	@echo "... fem/FEMSolver.s"
 	@echo "... fem/assembly/HeatAssembler2D.o"
 	@echo "... fem/assembly/HeatAssembler2D.i"
 	@echo "... fem/assembly/HeatAssembler2D.s"
+	@echo "... fem/assembly/HeatBoundaryAssembler2D.o"
+	@echo "... fem/assembly/HeatBoundaryAssembler2D.i"
+	@echo "... fem/assembly/HeatBoundaryAssembler2D.s"
 	@echo "... fem/elements/TriangleP1.o"
 	@echo "... fem/elements/TriangleP1.i"
 	@echo "... fem/elements/TriangleP1.s"

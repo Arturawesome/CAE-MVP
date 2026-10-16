@@ -39,7 +39,7 @@ class VTKWriter {
             out << "5\n";
         }
     }
-    static void saveSolution(const Mesh &mesh, Eigen::VectorXd &solution,
+    static void saveSolution(const Mesh &mesh, const Eigen::VectorXd &solution,
                              const std::string &filename) {
         if (solution.size() != mesh.NumNodes()) {
             throw std::runtime_error(

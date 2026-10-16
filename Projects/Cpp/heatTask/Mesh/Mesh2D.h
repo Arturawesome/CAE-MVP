@@ -7,6 +7,7 @@
 
 #include "../Models/Geometry2D.h"
 #include "../Models/Mesh2D.h"
+#include "../Models/BoundaryId.h"
 
 class Mesh {
   private:
@@ -20,7 +21,7 @@ class Mesh {
     void AddNode(Node node);
     void AddElement(Element element);
     void AddBoundaryEdge(BoundaryEdge edge);
-    void CreateBoundaryEdges();
+    void CreateBoundaryEdges(BoundaryId defaultId = DefaultBoundaryId);
 
     const std::vector<Node> &Nodes() const;
     const std::vector<Element> &Elements() const;
@@ -36,8 +37,7 @@ class Mesh {
     int NodeIdFromEl(int elId, std::size_t i) const;
     int NumNodesInEl(std::size_t elId) const;
 
-    int GetMarker(int i) const;
-    bool HasBoundaryMarker(int marker) const;
+
 
 
     friend std::ostream &operator<<(std::ostream &stream, const Mesh &m);

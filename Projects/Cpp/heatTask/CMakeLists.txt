@@ -18,13 +18,10 @@ add_executable(heatTask
     #Mesher/MesherCircle.cpp
     HeatProblem/HeatProblem.cpp
     fem/assembly/HeatAssembler2D.cpp
+    fem/assembly/HeatBoundaryAssembler2D.cpp
     fem/elements/TriangleP1.cpp
-    fem/systems/Linearsystem.h
+    fem/systems/LinearSystem.h
     fem/FEMSolver.cpp
-    
-    SetterBoundaryCondition/SetterBoundaryCondition.cpp
-    
-    
 )
 
 target_include_directories(heatTask PRIVATE

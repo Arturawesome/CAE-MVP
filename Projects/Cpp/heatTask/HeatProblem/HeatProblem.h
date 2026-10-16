@@ -3,37 +3,52 @@
 #include <iostream>
 #include <vector>
 
-#include "../BoundaryCondition/BoundaryConditions.h"
+#include "../Models/HeatBoundaryCondition.h"
 #include "../Mesh/Mesh2D.h"
 
 class HeatProblem {
   private:
-    std::vector<BoundaryCondition> boundaryConditions;
-    const Mesh &mesh;
-    double lambda;
+    const Mesh &mesh_;
+    double lambda_;
+    std::vector<BoundaryCondition> boundaryConditions_;
 
   private:
-    std::function<double(double, double, double)> source;
-    bool meshHasBoundaryMarker(int marker);
-
+    std::function<double(double, double, double)> source_;
+    
   public:
-    HeatProblem(const Mesh &mesh_, double lambda_,
-                std::function<double(double, double, double)> source_);
+    HeatProblem(const Mesh &mesh, double lambda,
+                std::function<double(double, double, double)> source);
     ~HeatProblem() = default;
 
     // Getters
     const Mesh &GetMesh() const;
+    double Lambda() const;
+    double Source(double x, double y, double z = 0.0) const;
+    double Source(const Point2D& elementCenter) const;
+    const std::vector<BoundaryCondition>& BoundaryConditions() const;
 
-    double GetLambda() const;
-    double GetSource(double x, double y, double z = 0.0) const;
-    double GetSource(const Point2D& elementCenter) const;
+    void AddDirichlet(BoundaryId id, double temprature);
+    void AddNeumann(BoundaryId id, double flux);
+    void AddRobin(BoundaryId id, double alpha, double temprature);
 
-    void AddBoundaryCondition(const BoundaryCondition &condition);
-    const BoundaryCondition &GetBoundaryCondition(int marker) const;
-    bool hasBoundaryCondition(int marker) const;
-    int BC_size() const;
-    BoundaryType GetTypeBC(int i) const;
-    int GetMarkerBC(int i) const;
-    double GetValue1BC(int i) const;
-    double GetValue2BC(int i) const;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

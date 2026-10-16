@@ -38,7 +38,7 @@ std::ostream &operator<<(std::ostream &stream, const Element &element) {
     stream << "}\n ";
     return stream;
 }
-void Mesh::CreateBoundaryEdges() {
+void Mesh::CreateBoundaryEdges(BoundaryId defaultId) {
     using Edge = std::pair<int, int>;
     struct PairIntHash {
         std::size_t operator()(const Edge& nodesID) const {
@@ -72,7 +72,7 @@ void Mesh::CreateBoundaryEdges() {
             throw std::runtime_error("Incorrect mesh: edje freak more then 2");
         } 
         if (freak == 1) {
-            newEdges.push_back(BoundaryEdge{.nodes_id = edje, .boundaryId = 1});
+            newEdges.push_back(BoundaryEdge{.nodes_id = edje, .boundaryId = defaultId});
         }
     }
     boundaryEdges_ = std::move(newEdges);
@@ -98,19 +98,9 @@ const std::vector<BoundaryEdge> &Mesh::BoundaryEdges() const {
     return boundaryEdges_;
 }
 
-
-bool Mesh::HasBoundaryMarker(int marker) const {
-    for (const BoundaryEdge &be : boundaryEdges_) {
-        if (be.boundaryId == marker) {
-            return true;
-        }
-    }
-    return false;
-}
-
 const std::vector<Node> &Mesh::Nodes() const { return nodes_; }
 const std::vector<Element> &Mesh::Elements() const { return elements_; }
-int Mesh::GetMarker(int i) const { return boundaryEdges_[i].boundaryId; }
+
 
 int Mesh::NumNodes() const { return nodes_.size(); }
 int Mesh::NumEl() const { return elements_.size(); }
