@@ -14,6 +14,9 @@ double HeatProblem::GetLambda() const { return lambda; }
 double HeatProblem::GetSource(double x, double y, double z) const {
     return source(x, y, z);
 }
+double HeatProblem::GetSource(const Point2D& elementCenter) const {
+    return source(elementCenter.x, elementCenter.y, 0);
+}
 
 const Mesh &HeatProblem::GetMesh() const { return mesh; }
 

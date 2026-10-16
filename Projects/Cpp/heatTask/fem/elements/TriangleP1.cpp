@@ -1,4 +1,7 @@
 #include "TriangleP1.h"
+#include <cmath>
+
+
 
 double TriangleP1::Area() const { return area_; }
 Point2D TriangleP1::Center() const { return center_; }
@@ -13,9 +16,9 @@ TriangleP1::TriangleP1(const Mesh &mesh, int elementID) {
     center_.x = (node1.position.x + node2.position.x + node3.position.x) / 3;
     center_.y = (node1.position.y + node2.position.y + node3.position.y) / 3;
 
-    area_ = node1.position.x * (node2.position.y - node3.position.y) +
+    area_ = 0.5 * std::abs(node1.position.x * (node2.position.y - node3.position.y) +
             node2.position.x * (node3.position.y - node1.position.y) +
-            node3.position.x * (node1.position.y - node2.position.y);
+            node3.position.x * (node1.position.y - node2.position.y));
     CreateGradMatrix(node1.position, node2.position, node3.position);
 }
 

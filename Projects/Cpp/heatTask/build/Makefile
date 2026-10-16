@@ -249,6 +249,30 @@ fem/FEMSolver.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.s
 .PHONY : fem/FEMSolver.cpp.s
 
+fem/assembly/HeatAssembler2D.o: fem/assembly/HeatAssembler2D.cpp.o
+.PHONY : fem/assembly/HeatAssembler2D.o
+
+# target to build an object file
+fem/assembly/HeatAssembler2D.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o
+.PHONY : fem/assembly/HeatAssembler2D.cpp.o
+
+fem/assembly/HeatAssembler2D.i: fem/assembly/HeatAssembler2D.cpp.i
+.PHONY : fem/assembly/HeatAssembler2D.i
+
+# target to preprocess a source file
+fem/assembly/HeatAssembler2D.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.i
+.PHONY : fem/assembly/HeatAssembler2D.cpp.i
+
+fem/assembly/HeatAssembler2D.s: fem/assembly/HeatAssembler2D.cpp.s
+.PHONY : fem/assembly/HeatAssembler2D.s
+
+# target to generate assembly for a file
+fem/assembly/HeatAssembler2D.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/heatTask.dir/build.make CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.s
+.PHONY : fem/assembly/HeatAssembler2D.cpp.s
+
 fem/elements/TriangleP1.o: fem/elements/TriangleP1.cpp.o
 .PHONY : fem/elements/TriangleP1.o
 
@@ -345,6 +369,9 @@ help:
 	@echo "... fem/FEMSolver.o"
 	@echo "... fem/FEMSolver.i"
 	@echo "... fem/FEMSolver.s"
+	@echo "... fem/assembly/HeatAssembler2D.o"
+	@echo "... fem/assembly/HeatAssembler2D.i"
+	@echo "... fem/assembly/HeatAssembler2D.s"
 	@echo "... fem/elements/TriangleP1.o"
 	@echo "... fem/elements/TriangleP1.i"
 	@echo "... fem/elements/TriangleP1.s"

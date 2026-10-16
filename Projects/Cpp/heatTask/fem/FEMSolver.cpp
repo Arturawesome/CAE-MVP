@@ -1,6 +1,8 @@
 #include "FEMSolver.h"
 #include "../BoundaryCondition/BoundaryConditions.h"
 #include "elements/TriangleP1.h"
+#include "assembly/HeatAssembler2D.h"
+
 #include <cmath>
 #include <fstream>
 #include <stdexcept>
@@ -16,13 +18,17 @@ FEMSolver::FEMSolver(HeatProblem &problem_)
     glob_F = Eigen::VectorXd::Zero(numNodes);
     solution = Eigen::VectorXd::Zero(numNodes);
     glob_K = Eigen::MatrixXd::Zero(numNodes, numNodes);
+
+    
 }
 
 void FEMSolver::Solve() {
+    HeatAssembler2D assembler(problem, mesh);
     glob_K.setZero();
     glob_F.setZero();
     solution.setZero();
     
+
     makeGlobalMatrix();
 
     addBoundCondToGlobalMat();

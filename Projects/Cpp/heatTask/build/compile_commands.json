@@ -31,9 +31,9 @@
 },
 {
   "directory": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build",
-  "command": "/usr/bin/c++  -I/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask -isystem /opt/homebrew/include/eigen3 -std=c++20 -arch arm64 -Wall -Wextra -Werror -o CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o -c /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp",
-  "file": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp",
-  "output": "CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o"
+  "command": "/usr/bin/c++  -I/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask -isystem /opt/homebrew/include/eigen3 -std=c++20 -arch arm64 -Wall -Wextra -Werror -o CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o -c /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/assembly/HeatAssembler2D.cpp",
+  "file": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/assembly/HeatAssembler2D.cpp",
+  "output": "CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o"
 },
 {
   "directory": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build",
@@ -46,5 +46,11 @@
   "command": "/usr/bin/c++  -I/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask -isystem /opt/homebrew/include/eigen3 -std=c++20 -arch arm64 -Wall -Wextra -Werror -o CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o -c /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/FEMSolver.cpp",
   "file": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/FEMSolver.cpp",
   "output": "CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o"
+},
+{
+  "directory": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build",
+  "command": "/usr/bin/c++  -I/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask -isystem /opt/homebrew/include/eigen3 -std=c++20 -arch arm64 -Wall -Wextra -Werror -o CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o -c /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp",
+  "file": "/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp",
+  "output": "CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o"
 }
 ]

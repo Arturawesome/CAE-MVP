@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o.d"
   "CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o"
   "CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o.d"
+  "CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o"
+  "CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o.d"
   "CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.o"
   "CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.o.d"
   "CMakeFiles/heatTask.dir/io/VTKReader.cpp.o"

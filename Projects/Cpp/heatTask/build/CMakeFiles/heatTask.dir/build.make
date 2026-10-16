@@ -142,19 +142,19 @@ CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/HeatProblem/HeatProblem.cpp -o CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.s
 
-CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o: CMakeFiles/heatTask.dir/flags.make
-CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o: /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp
-CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o: CMakeFiles/heatTask.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o -MF CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o.d -o CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o -c /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp
+CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o: CMakeFiles/heatTask.dir/flags.make
+CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o: /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/assembly/HeatAssembler2D.cpp
+CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o: CMakeFiles/heatTask.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o -MF CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o.d -o CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o -c /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/assembly/HeatAssembler2D.cpp
 
-CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp > CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.i
+CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/assembly/HeatAssembler2D.cpp > CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.i
 
-CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp -o CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
+CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/assembly/HeatAssembler2D.cpp -o CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.s
 
 CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.o: CMakeFiles/heatTask.dir/flags.make
 CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.o: /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/elements/TriangleP1.cpp
@@ -184,6 +184,20 @@ CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/fem/FEMSolver.cpp -o CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.s
 
+CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o: CMakeFiles/heatTask.dir/flags.make
+CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o: /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp
+CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o: CMakeFiles/heatTask.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o -MF CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o.d -o CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o -c /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp
+
+CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp > CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.i
+
+CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/SetterBoundaryCondition/SetterBoundaryCondition.cpp -o CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.s
+
 # Object files for target heatTask
 heatTask_OBJECTS = \
 "CMakeFiles/heatTask.dir/main.cpp.o" \
@@ -191,9 +205,10 @@ heatTask_OBJECTS = \
 "CMakeFiles/heatTask.dir/Mesher/MesherRectangle.cpp.o" \
 "CMakeFiles/heatTask.dir/io/VTKReader.cpp.o" \
 "CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.o" \
-"CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o" \
+"CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o" \
 "CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.o" \
-"CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o"
+"CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o" \
+"CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o"
 
 # External object files for target heatTask
 heatTask_EXTERNAL_OBJECTS =
@@ -203,12 +218,13 @@ heatTask: CMakeFiles/heatTask.dir/Mesh/Mesh2D.cpp.o
 heatTask: CMakeFiles/heatTask.dir/Mesher/MesherRectangle.cpp.o
 heatTask: CMakeFiles/heatTask.dir/io/VTKReader.cpp.o
 heatTask: CMakeFiles/heatTask.dir/HeatProblem/HeatProblem.cpp.o
-heatTask: CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o
+heatTask: CMakeFiles/heatTask.dir/fem/assembly/HeatAssembler2D.cpp.o
 heatTask: CMakeFiles/heatTask.dir/fem/elements/TriangleP1.cpp.o
 heatTask: CMakeFiles/heatTask.dir/fem/FEMSolver.cpp.o
+heatTask: CMakeFiles/heatTask.dir/SetterBoundaryCondition/SetterBoundaryCondition.cpp.o
 heatTask: CMakeFiles/heatTask.dir/build.make
 heatTask: CMakeFiles/heatTask.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable heatTask"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/arturawesome/ResumeCV/Projects/Cpp/heatTask/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable heatTask"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/heatTask.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

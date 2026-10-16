@@ -26,6 +26,7 @@ class HeatProblem {
 
     double GetLambda() const;
     double GetSource(double x, double y, double z = 0.0) const;
+    double GetSource(const Point2D& elementCenter) const;
 
     void AddBoundaryCondition(const BoundaryCondition &condition);
     const BoundaryCondition &GetBoundaryCondition(int marker) const;
