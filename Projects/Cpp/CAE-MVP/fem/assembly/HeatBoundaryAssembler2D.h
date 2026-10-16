@@ -12,8 +12,8 @@ class HeatBoundaryAssembler2D {
     void addDirichlet(LinearSystem &system, const Mesh &mesh, int marker,
                       double value);
 
-    void addRobin();//LinearSystem &system, const Mesh &mesh, BoundaryId boundaryId,
-                  //double value1, double value2);
+    void addRobin(LinearSystem &system, const Mesh &mesh, BoundaryId boundaryId,
+                  double alpha, double temperature);
 
   public:
     void Apply(LinearSystem &system, const HeatProblem &problem,

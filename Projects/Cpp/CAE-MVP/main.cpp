@@ -28,8 +28,8 @@ int main() {
     std::cout << circleMesh.NumBoundEdges() << "\n";
 
     HeatProblem task =
-        HeatProblem(circleMesh, 45, [](double, double, double) { return 100.0; });
-    task.AddDirichlet(1, 5);
+        HeatProblem(circleMesh, 45, [](double, double, double) { return 500.0; });
+    task.AddRobin(1, 10, 50);
 
 
     FEMSolver solver(task);
