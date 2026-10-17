@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 
-#include "../mesh/Mesh2D.h"
-#include "../models/Geometry2D.h"
+#include "mesh/Mesh2D.h"
+#include "geometry/GeometryTypes2D.h"
 
 class VTKWriter {
   public:
@@ -43,7 +43,7 @@ class VTKWriter {
                              const std::string &filename) {
         if (solution.size() != mesh.NumNodes()) {
             throw std::runtime_error(
-                "FEMSolver::saveSolution: solution size does "
+                "HeatSolver::saveSolution: solution size does "
                 "not match number of mesh nodes");
         }
 
@@ -51,7 +51,7 @@ class VTKWriter {
 
         if (!out.is_open()) {
             throw std::runtime_error(
-                "FEMSolver::saveSolution: cannot open file " + filename);
+                "HeatSolver::saveSolution: cannot open file " + filename);
         }
 
         out << "# vtk DataFile Version 3.0\n";

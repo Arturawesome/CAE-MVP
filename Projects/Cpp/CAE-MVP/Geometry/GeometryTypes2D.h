@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <variant>
 #include <vector>
-#include "BoundaryId.h"
+#include "mesh/BoundaryId.h"
 
 
 struct Point2D {

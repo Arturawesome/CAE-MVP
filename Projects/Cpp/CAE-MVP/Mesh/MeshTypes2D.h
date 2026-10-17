@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
 #include <utility>
-#include "Geometry2D.h"
+#include "geometry/GeometryTypes2D.h"
 #include "BoundaryId.h"
 
 struct Node {

@@ -5,7 +5,7 @@ void HeatBoundaryAssembler2D::Apply(LinearSystem &system,
                                     const HeatProblem &problem,
                                     const Mesh &mesh) {
 
-    const auto& boundConds = problem.BoundaryConditions();
+    const auto& boundConds = problem.HeatBoundaryConditions();
     for (const auto& cond : boundConds) {
         switch (cond.type) {
         case HeatBoundaryType::Neumann:
@@ -46,7 +46,7 @@ void HeatBoundaryAssembler2D::addNeuman(LinearSystem &system, const Mesh &mesh,
         const double edgeLength = std::hypot(dx, dy);
         if (edgeLength <= 0.0) {
             throw std::runtime_error(
-                "FEMSolver::applyNeumannToEdge: zero-length boundary edge");
+                "HeatSolver::applyNeumannToEdge: zero-length boundary edge");
         }
 
         double localContribution = flux * 0.5 * edgeLength;
@@ -57,7 +57,7 @@ void HeatBoundaryAssembler2D::addNeuman(LinearSystem &system, const Mesh &mesh,
         ++processedEdges;
     }
     if (processedEdges == 0) {
-        throw std::runtime_error("FEMSolver: no boundary edges with marker " +
+        throw std::runtime_error("HeatSolver: no boundary edges with marker " +
                                  std::to_string(boundaryId));
     }
 
@@ -76,13 +76,13 @@ void HeatBoundaryAssembler2D::addDirichlet(LinearSystem &system,
         nodes.insert(be.nodes_id.second);
     }
     if (nodes.empty()) {
-        throw std::runtime_error("FEMSolver: no boundary edges with marker " +
+        throw std::runtime_error("HeatSolver: no boundary edges with marker " +
                                  std::to_string(boundaryId));
     }
     for (const int nodeId : nodes) {
         const Eigen::Index s = static_cast<Eigen::Index>(nodeId);
         if (s < 0 || s >= system.K.rows()) {
-            throw std::out_of_range("FEMSolver: invalid Dirichlet node index");
+            throw std::out_of_range("HeatSolver: invalid Dirichlet node index");
         }
 
         system.F -= system.K.col(s) * value;

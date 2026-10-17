@@ -1,9 +1,9 @@
 #pragma once
-#include "../../models/BoundaryId.h"
+#include "mesh/BoundaryId.h"
 enum class HeatBoundaryType { Dirichlet, Neumann, Robin };
 
 
-struct BoundaryCondition {
+struct HeatBoundaryCondition {
     BoundaryId boundaryId = 0;
     HeatBoundaryType type;
 

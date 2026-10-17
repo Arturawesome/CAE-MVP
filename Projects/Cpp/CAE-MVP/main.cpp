@@ -4,7 +4,7 @@
 #include "mesh/generators/MesherRectangle.h"
 
 #include "physics/heat/problem/Problem.h"
-#include "physics/heat/FEMSolver.h"
+#include "physics/heat/HeatSolver.h"
 
 #include "io/STLWriter.h"
 #include "io/VTKReader.h"
@@ -31,7 +31,7 @@ int main() {
     task.AddRobin(1, 10, 50);
 
 
-    FEMSolver solver(task);
+    HeatSolver solver(task);
     solver.Solve();
     VTKWriter::saveSolution(circleMesh, solver.Solution(), "solutions/CircleHeat.vtk");
 

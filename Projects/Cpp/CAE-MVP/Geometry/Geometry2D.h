@@ -1,5 +1,5 @@
 #pragma once
-#include "../models/Geometry2D.h"
+#include "GeometryTypes2D.h"
 class Geometry2D {
   public:
     virtual ~Geometry2D() = default;

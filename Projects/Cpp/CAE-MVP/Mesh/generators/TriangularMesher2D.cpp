@@ -10,7 +10,7 @@ Mesh TriangularMesher2D::GenerateMesh() const {
     for(const auto& boundary: contours){
         for(const auto& curve: boundary.curves){
             double L = curve.Lenght();
-            double dl = L / NumElements;
+            double dl = L / NumElements_;
             
         }
     }

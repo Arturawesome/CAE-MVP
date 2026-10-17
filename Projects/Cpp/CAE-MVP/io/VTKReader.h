@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <fstream>
-#include "../mesh/Mesh2D.h"
+#include "mesh/Mesh2D.h"
 
 
 class VTKReader {

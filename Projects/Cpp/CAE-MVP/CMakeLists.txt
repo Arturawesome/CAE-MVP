@@ -6,7 +6,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 
 find_package(Eigen3 REQUIRED)
 
@@ -19,7 +19,7 @@ add_executable(cae_mvp
     physics/heat/problem/Problem.cpp
     physics/heat/assembly/Assembler2D.cpp
     physics/heat/assembly/BoundaryAssembler2D.cpp
-    physics/heat/FEMSolver.cpp
+    physics/heat/HeatSolver.cpp
 
     fem/elements/TriangleP1.cpp
     fem/systems/LinearSystem.h

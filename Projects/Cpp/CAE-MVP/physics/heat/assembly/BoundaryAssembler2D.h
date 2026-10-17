@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../problem/Problem.h"
-#include "../../../mesh/Mesh2D.h"
-#include "../../../fem/systems/LinearSystem.h"
+#include "physics/heat/problem/Problem.h"
+#include "mesh/Mesh2D.h"
+#include "fem/systems/LinearSystem.h"
 
 
 class HeatBoundaryAssembler2D {

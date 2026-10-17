@@ -21,27 +21,27 @@ double HeatProblem::Source(const Point2D &elementCenter) const {
 const Mesh &HeatProblem::GetMesh() const { return mesh_; }
 
 void HeatProblem::AddDirichlet(BoundaryId id, double temprature) {
-    boundaryConditions_.push_back(
-        BoundaryCondition{.boundaryId = id,
+    HeatBoundaryConditions_.push_back(
+        HeatBoundaryCondition{.boundaryId = id,
                           .type = HeatBoundaryType::Dirichlet,
                           .value1 = temprature,
                           .value2 = 0});
 }
 void HeatProblem::AddNeumann(BoundaryId id, double flux) {
-    boundaryConditions_.push_back(
-        BoundaryCondition{.boundaryId = id,
+    HeatBoundaryConditions_.push_back(
+        HeatBoundaryCondition{.boundaryId = id,
                           .type = HeatBoundaryType::Neumann,
                           .value1 = flux,
                           .value2 = 0});
 }
 void HeatProblem::AddRobin(BoundaryId id, double alpha, double temprature) {
-    boundaryConditions_.push_back(
-        BoundaryCondition{.boundaryId = id,
+    HeatBoundaryConditions_.push_back(
+        HeatBoundaryCondition{.boundaryId = id,
                           .type = HeatBoundaryType::Robin,
                           .value1 = alpha,
                           .value2 = temprature});
 }
 
-const std::vector<BoundaryCondition> &HeatProblem::BoundaryConditions() const {
-    return boundaryConditions_;
+const std::vector<HeatBoundaryCondition> &HeatProblem::HeatBoundaryConditions() const {
+    return HeatBoundaryConditions_;
 }
