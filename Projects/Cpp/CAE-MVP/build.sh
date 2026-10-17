@@ -2,18 +2,18 @@
 
 set -e
 BUILD_DIR="build"
-EXECUTABLE="$BUILD_DIR/heatTask"
+EXECUTABLE="$BUILD_DIR/cae_mvp"
 
 case "${1:-build}" in
     build)
         rm -rf build
         cmake -S . -B build
         cmake --build build
-        ./build/heatTask
+        ./build/cae_mvp
         ;;
 
     leaks)
-        leaks -atExit -- ./build/heatTask
+        leaks -atExit -- ./build/cae_mvp
         ;;
 
     *)

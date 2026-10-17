@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../HeatProblem/HeatProblem.h"
-#include "../Mesh/Mesh2D.h"
-#include "systems/LinearSystem.h"
+#include "problem/Problem.h"
+#include "../../mesh/Mesh2D.h"
+#include "../../fem/systems/LinearSystem.h"
 #include <Eigen/Dense>
 #include <array>
 #include <iostream>

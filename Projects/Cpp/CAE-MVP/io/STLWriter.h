@@ -1,8 +1,8 @@
 #pragma once
 #include <fstream>
 
-#include "../Models/Geometry2D.h"
-#include "../Mesh/Mesh2D.h"
+#include "../models/Geometry2D.h"
+#include "../mesh/Mesh2D.h"
 
 class STLWriter {
   public:

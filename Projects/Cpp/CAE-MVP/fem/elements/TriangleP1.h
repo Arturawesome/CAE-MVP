@@ -1,5 +1,5 @@
 #pragma once 
-#include "../../Mesh/Mesh2D.h"
+#include "../../mesh/Mesh2D.h"
 #include <Eigen/Dense>
 
 class TriangleP1 {

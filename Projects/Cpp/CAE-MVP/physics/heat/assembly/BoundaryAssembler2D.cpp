@@ -1,4 +1,4 @@
-#include "HeatBoundaryAssembler2D.h"
+#include "BoundaryAssembler2D.h"
 #include <unordered_set>
 
 void HeatBoundaryAssembler2D::Apply(LinearSystem &system,

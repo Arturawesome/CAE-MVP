@@ -1,9 +1,10 @@
-#include "Geometry/Circle.h"
-#include "Geometry/Rectangle.h"
-#include "HeatProblem/HeatProblem.h"
-#include "Mesh/Mesh2D.h"
-#include "Mesher/MesherRectangle.h"
-#include "fem/FEMSolver.h"
+#include "geometry/Circle.h"
+#include "geometry/Rectangle.h"
+#include "mesh/Mesh2D.h"
+#include "mesh/generators/MesherRectangle.h"
+
+#include "physics/heat/problem/Problem.h"
+#include "physics/heat/FEMSolver.h"
 
 #include "io/STLWriter.h"
 #include "io/VTKReader.h"
@@ -16,8 +17,6 @@ int main() {
     MesherRectangle mesher = MesherRectangle(5, 5);
     Mesh mesh = mesher.generateMesh(rect);
 
-    STLWriter::Write(mesh, "Renderer/proba1.stl");
-    VTKWriter::WriteUstructuredGrid(mesh, "Renderer/proba1.vtk");
 
     Mesh circleMesh =
         VTKReader::ReadUstructuredGrid("circle_2d_unstructured.vtk");
@@ -34,7 +33,7 @@ int main() {
 
     FEMSolver solver(task);
     solver.Solve();
-    VTKWriter::saveSolution(circleMesh, solver.Solution(), "ioCircleSolutionRefactor.vtk");
+    VTKWriter::saveSolution(circleMesh, solver.Solution(), "solutions/CircleHeat.vtk");
 
 
    

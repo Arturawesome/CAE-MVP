@@ -1,6 +1,6 @@
 #pragma once
-#include "../Geometry/Geometry2D.h"
-#include "../Mesh/Mesh2D.h"
+#include "../../geometry/Geometry2D.h"
+#include "../Mesh2D.h"
 
 class TriangularMesher2D {
 private:

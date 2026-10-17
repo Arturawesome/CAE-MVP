@@ -5,9 +5,9 @@
 #include <vector>
 
 
-#include "../Models/Geometry2D.h"
-#include "../Models/Mesh2D.h"
-#include "../Models/BoundaryId.h"
+#include "../models/Geometry2D.h"
+#include "../models/Mesh2D.h"
+#include "../models/BoundaryId.h"
 
 class Mesh {
   private:

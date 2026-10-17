@@ -3,8 +3,8 @@
 #include <iostream>
 #include <vector>
 
-#include "../Models/HeatBoundaryCondition.h"
-#include "../Mesh/Mesh2D.h"
+#include "../HeatBoundaryCondition.h"
+#include "../../../mesh/Mesh2D.h"
 
 class HeatProblem {
   private:

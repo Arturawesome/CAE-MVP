@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(HeatTask LANGUAGES CXX)
+project(CAE_MVP LANGUAGES CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -10,29 +10,32 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Eigen3 REQUIRED)
 
-add_executable(heatTask
+add_executable(cae_mvp
     main.cpp
-    Mesh/Mesh2D.cpp
-    Mesher/MesherRectangle.cpp
+    mesh/Mesh2D.cpp
+    mesh/generators/MesherRectangle.cpp
     io/VTKReader.cpp
-    #Mesher/MesherCircle.cpp
-    HeatProblem/HeatProblem.cpp
-    fem/assembly/HeatAssembler2D.cpp
-    fem/assembly/HeatBoundaryAssembler2D.cpp
+    
+    physics/heat/problem/Problem.cpp
+    physics/heat/assembly/Assembler2D.cpp
+    physics/heat/assembly/BoundaryAssembler2D.cpp
+    physics/heat/FEMSolver.cpp
+
     fem/elements/TriangleP1.cpp
     fem/systems/LinearSystem.h
-    fem/FEMSolver.cpp
+
+
 )
 
-target_include_directories(heatTask PRIVATE
+target_include_directories(cae_mvp PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(heatTask PRIVATE
+target_link_libraries(cae_mvp PRIVATE
     Eigen3::Eigen
 )
 
-target_compile_options(heatTask PRIVATE
+target_compile_options(cae_mvp PRIVATE
     -Wall
     -Wextra
     -Werror

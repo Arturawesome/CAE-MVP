@@ -1,5 +1,5 @@
-#include "../Geometry/Rectangle.h"
-#include "../Mesh/Mesh2D.h"
+#include "../../geometry/Rectangle.h"
+#include "../Mesh2D.h"
 #include <cmath>
 #include <iomanip>
 #include <iostream>

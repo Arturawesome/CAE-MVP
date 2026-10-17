@@ -1,4 +1,4 @@
-#include "HeatProblem.h"
+#include "Problem.h"
 
 HeatProblem::HeatProblem(const Mesh &mesh, double lambda,
                          std::function<double(double, double, double)> source)

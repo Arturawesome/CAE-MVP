@@ -1,8 +1,8 @@
 #include "FEMSolver.h"
 
-#include "assembly/HeatAssembler2D.h"
-#include "assembly/HeatBoundaryAssembler2D.h"
-#include "elements/TriangleP1.h"
+#include "assembly/Assembler2D.h"
+#include "assembly/BoundaryAssembler2D.h"
+#include "../../fem/elements/TriangleP1.h"
 #include <cmath>
 #include <fstream>
 #include <stdexcept>

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Models/Geometry2D.h"
+#include "../models/Geometry2D.h"
 #include "Geometry2D.h"
 #include <iostream>
 

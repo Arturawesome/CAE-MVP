@@ -1,5 +1,5 @@
 #pragma once
-#include "BoundaryId.h"
+#include "../../models/BoundaryId.h"
 enum class HeatBoundaryType { Dirichlet, Neumann, Robin };
 
 

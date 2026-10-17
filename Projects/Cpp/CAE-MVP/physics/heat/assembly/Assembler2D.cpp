@@ -1,4 +1,4 @@
-#include "HeatAssembler2D.h"
+#include "Assembler2D.h"
 
 HeatAssembler2D::HeatAssembler2D(const HeatProblem &problem, const Mesh &mesh)
     : problem_(problem), mesh_(mesh) {

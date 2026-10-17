@@ -1,10 +1,10 @@
 #pragma once
 #include <Eigen/Dense>
 
-#include "../../HeatProblem/HeatProblem.h"
-#include "../../Mesh/Mesh2D.h"
-#include "../elements/TriangleP1.h"
-#include "../systems/LinearSystem.h"
+#include "../problem/Problem.h"
+#include "../../../mesh/Mesh2D.h"
+#include "../../../fem/elements/TriangleP1.h"
+#include "../../../fem/systems/LinearSystem.h"
 
 class HeatAssembler2D {
   private:
