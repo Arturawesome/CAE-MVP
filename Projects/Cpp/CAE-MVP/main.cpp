@@ -5,6 +5,7 @@
 
 #include "physics/heat/problem/Problem.h"
 #include "physics/heat/HeatSolver.h"
+#include "fem/dofs/P2DofMap.h"
 
 #include "io/STLWriter.h"
 #include "io/VTKReader.h"
@@ -21,6 +22,11 @@ int main() {
     Mesh circleMesh =
         VTKReader::ReadUstructuredGrid("circle_2d_unstructured.vtk");
     circleMesh.CreateBoundaryEdges();
+
+    P2DofMap p2Dof(circleMesh);
+    for(const auto el:p2Dof.ElementNodes(4)){
+    std::cout<<el<<" ";
+    }
 
     std::cout << circleMesh.NumNodes() << '\n';
     std::cout << circleMesh.NumEl() << '\n';

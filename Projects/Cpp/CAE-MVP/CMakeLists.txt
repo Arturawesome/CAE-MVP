@@ -23,6 +23,7 @@ add_executable(cae_mvp
 
     fem/elements/TriangleP1.cpp
     fem/systems/LinearSystem.h
+    fem/dofs/P2DofMap.cpp
 
 
 )
