@@ -22,6 +22,7 @@ add_executable(cae_mvp
     physics/heat/HeatSolver.cpp
 
     fem/elements/TriangleP1.cpp
+    fem/elements/TriangleP2.cpp
     fem/systems/LinearSystem.h
     fem/dofs/P2DofMap.cpp
 

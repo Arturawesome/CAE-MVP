@@ -5,15 +5,15 @@
 #include <unordered_map>
 #include <utility>
 
-P2DofMap::P2DofMap(const Mesh &mesh) : mesh_(mesh) {
-    p2Nodes_.reserve(2 * (mesh_.Nodes().size() + 1));
-    elementNodesId_.reserve(mesh_.NumEl());// = std::vector<std::array<int, 6>>(mesh_.NumEl());
-    p2Nodes_ = mesh_.Nodes();
-
-    CreateMiddlePoints();
+P2DofMap::P2DofMap(const Mesh &mesh) {
+    p2Nodes_.reserve(2 * (mesh.Nodes().size() + 1));
+    elementNodesId_.reserve(mesh.NumEl());// = std::vector<std::array<int, 6>>(mesh_.NumEl());
+    p2Nodes_ = mesh.Nodes();
+    CreateMiddlePoints(mesh);
 }
 
 int P2DofMap::NumP2Nodes() const { return p2Nodes_.size(); }
+
 const Node &P2DofMap::P2NodeById(int p2NodeId) const {
     return p2Nodes_.at(p2NodeId);
 }
@@ -21,7 +21,7 @@ const std::array<int, 6>& P2DofMap::ElementNodes(int elementId) const {
     return elementNodesId_.at(elementId);
 }
 
-void P2DofMap::CreateMiddlePoints() {
+void P2DofMap::CreateMiddlePoints(const Mesh &mesh) {
     using Edge = std::pair<int, int>;
     struct PairHash {
         std::size_t operator()(const Edge &p) const {
@@ -33,7 +33,7 @@ void P2DofMap::CreateMiddlePoints() {
     std::unordered_map<Edge, int, PairHash> edgeToNode_;
     
     std::array<int, 6> localNodes;
-    for (const auto &element : mesh_.Elements()) {
+    for (const auto &element : mesh.Elements()) {
         std::array<Edge, 3> edges = {
             Edge{element.nodes_id[0], element.nodes_id[1]},
             Edge{element.nodes_id[1], element.nodes_id[2]},
@@ -51,8 +51,8 @@ void P2DofMap::CreateMiddlePoints() {
             if (edgeToNode_.contains({id1, id2}))
                 continue;
             edgeToNode_[{id1, id2}] = p2Nodes_.size();
-            const Node n1 = mesh_.NodeById(id1);
-            const Node n2 = mesh_.NodeById(id2);
+            const Node n1 = mesh.NodeById(id1);
+            const Node n2 = mesh.NodeById(id2);
 
             p2Nodes_.push_back(Node{
                 .position = Point2D{.x = (n1.position.x + n2.position.x) / 2,

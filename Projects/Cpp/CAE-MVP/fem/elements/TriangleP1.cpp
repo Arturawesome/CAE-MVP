@@ -1,16 +1,15 @@
 #include "TriangleP1.h"
-#include <cmath>
-
-double TriangleP1::Area() const { return area_; }
-Point2D TriangleP1::Center() const { return center_; }
-const Eigen::Matrix<double, 2, 3> &TriangleP1::Grad() const { return grad_; }
-#include "TriangleP1.h"
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
 #include <string>
+
+
+double TriangleP1::Area() const { return area_; }
+Point2D TriangleP1::Center() const { return center_; }
+const Eigen::Matrix<double, 2, 3> &TriangleP1::Grad() const { return grad_; }
 
 TriangleP1::TriangleP1(const Mesh& mesh, int elementID) {
     const auto& element = mesh.ElementById(elementID);
