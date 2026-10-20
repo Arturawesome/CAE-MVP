@@ -16,7 +16,7 @@ class HeatSolver {
     Eigen::VectorXd solution_;
   
   public:
-    HeatSolver(HeatProblem &problem);
+    explicit HeatSolver(HeatProblem &problem);
     ~HeatSolver() = default;
     void Solve();
     const Eigen::VectorXd &Solution();

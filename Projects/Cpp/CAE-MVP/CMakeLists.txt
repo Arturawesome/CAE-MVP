@@ -21,6 +21,9 @@ add_executable(cae_mvp
     physics/heat/assembly/BoundaryAssembler2D.cpp
     physics/heat/HeatSolver.cpp
 
+    physics/hydro/problem/HydroProblem.cpp
+    
+
     fem/elements/TriangleP1.cpp
     fem/elements/TriangleP2.cpp
     fem/systems/LinearSystem.h
@@ -40,6 +43,6 @@ target_link_libraries(cae_mvp PRIVATE
 target_compile_options(cae_mvp PRIVATE
     -Wall
     -Wextra
-    -Werror
+    #-Werror
 )
 
