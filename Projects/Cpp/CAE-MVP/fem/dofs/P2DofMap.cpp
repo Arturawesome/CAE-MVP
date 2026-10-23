@@ -7,7 +7,8 @@
 
 P2DofMap::P2DofMap(const Mesh &mesh) {
     p2Nodes_.reserve(2 * (mesh.Nodes().size() + 1));
-    elementNodesId_.reserve(mesh.NumEl());// = std::vector<std::array<int, 6>>(mesh_.NumEl());
+    elementNodesId_.reserve(
+        mesh.NumEl()); // = std::vector<std::array<int, 6>>(mesh_.NumEl());
     p2Nodes_ = mesh.Nodes();
     CreateMiddlePoints(mesh);
 }
@@ -18,21 +19,19 @@ int P2DofMap::NumP2Elements() const { return elementNodesId_.size(); }
 const Node &P2DofMap::P2NodeById(int p2NodeId) const {
     return p2Nodes_.at(p2NodeId);
 }
-const std::array<int, 6>& P2DofMap::NodesIdByElementId(int elementId) const {
+const std::array<int, 6> &P2DofMap::NodesIdByElementId(int elementId) const {
     return elementNodesId_.at(elementId);
 }
 
+int P2DofMap::MiddleNodeId(int nodeId1, int nodeId2) const {
+    if (nodeId1 > nodeId2) {
+        std::swap(nodeId1, nodeId2);
+    }
+    return edgeToNode_.at(Edge{nodeId1, nodeId2});
+}
+
 void P2DofMap::CreateMiddlePoints(const Mesh &mesh) {
-    using Edge = std::pair<int, int>;
-    struct PairHash {
-        std::size_t operator()(const Edge &p) const {
-            auto h1 = std::hash<int>{}(p.first);
-            auto h2 = std::hash<int>{}(p.second);
-            return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
-        }
-    };
-    std::unordered_map<Edge, int, PairHash> edgeToNode_;
-    
+
     std::array<int, 6> localNodes;
     for (const auto &element : mesh.Elements()) {
         std::array<Edge, 3> edges = {

@@ -5,7 +5,7 @@ HydroAssembler2D::HydroAssembler2D(const HydroProblem &problem,
                                    const TaylorHoodDofMap &dofMap)
     : problem_(problem), mesh_(mesh), dofMap_(dofMap) {}
 
-void HydroAssembler2D::UpdateForce(HydroGlobalSystem &global, int currTime) {
+void HydroAssembler2D::UpdateForce(HydroGlobalSystem &global, double currTime) {
     int numEl = mesh_.NumEl();
     global.force.setZero();
     for (int elId = 0; elId < numEl; ++elId) {
@@ -25,6 +25,7 @@ void HydroAssembler2D::UpdateForce(HydroGlobalSystem &global, int currTime) {
         }
     }
 }
+
 Eigen::Matrix<double, 12, 1>
 HydroAssembler2D::MakeLocalForce(const TriangleP2 &p2,
                                  const std::array<Point2D, 3> &vertices,
@@ -51,12 +52,11 @@ HydroAssembler2D::MakeLocalForce(const TriangleP2 &p2,
             Nu(0, 2 * i) = velocityShapeVector(i);
             Nu(1, 2 * i + 1) = velocityShapeVector(i);
         }
-        
+
         double weight = p2.Area() * qp.weight;        
         Eigen::Vector2d force = problem_.Force(internalPonitInTrinagle.x,
                                                internalPonitInTrinagle.y, time);
         localForce.noalias() += weight * (Nu.transpose() * force);
-        
     }
     return localForce;
 }

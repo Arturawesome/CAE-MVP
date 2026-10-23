@@ -33,6 +33,7 @@ struct HydroGlobalSystem {
           divergence(numPressureDofs, numVelocityDofs),
           force(Eigen::VectorXd::Zero(numVelocityDofs)) {}
 };
+
 struct Triplets {
     std::vector<SparseTriplet> massTriplets;
     std::vector<SparseTriplet> viscosityTriplets;
@@ -50,7 +51,7 @@ class HydroAssembler2D {
     HydroAssembler2D(const HydroProblem &problem, const Mesh &mesh,
                      const TaylorHoodDofMap &dofMap);
     HydroGlobalSystem AssembleGlobalSystem();
-    void UpdateForce(HydroGlobalSystem &global, int currTime);
+    void UpdateForce(HydroGlobalSystem &global, double currTime);
 
   private:
     Eigen::Matrix<double, 12, 1>  MakeLocalForce(const TriangleP2 &p2, const std::array<Point2D, 3> &vertices,
