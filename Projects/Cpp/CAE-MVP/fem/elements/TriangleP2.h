@@ -1,7 +1,14 @@
 #pragma once
-#include <Eigen/Dense>
 #include "geometry/GeometryTypes2D.h"
+#include <Eigen/Dense>
 
+
+struct TriangleQuadraturePoint {
+    double L1;
+    double L2;
+    double L3;
+    double weight;
+};
 
 class TriangleP2 {
   private:
@@ -15,13 +22,14 @@ class TriangleP2 {
     Eigen::Matrix<double, 2, 3> barGrad_;
 
     void CreateBarycentric(const Point2D &p1, const Point2D &p2,
-                          const Point2D &p3);
+                           const Point2D &p3);
 
     void CalcArea(const Point2D &p1, const Point2D &p2, const Point2D &p3,
                   int elementID);
-    
+
   public:
-    TriangleP2(const Point2D &p1, const Point2D &p2, const Point2D &p3, int elementID);
+    TriangleP2(const Point2D &p1, const Point2D &p2, const Point2D &p3,
+               int elementID);
     double Area() const;
     Point2D Center() const;
     Eigen::Matrix<double, 6, 1> Shape(const Point2D &point) const;

@@ -13,11 +13,12 @@ P2DofMap::P2DofMap(const Mesh &mesh) {
 }
 
 int P2DofMap::NumP2Nodes() const { return p2Nodes_.size(); }
+int P2DofMap::NumP2Elements() const { return elementNodesId_.size(); }
 
 const Node &P2DofMap::P2NodeById(int p2NodeId) const {
     return p2Nodes_.at(p2NodeId);
 }
-const std::array<int, 6>& P2DofMap::ElementNodes(int elementId) const {
+const std::array<int, 6>& P2DofMap::NodesIdByElementId(int elementId) const {
     return elementNodesId_.at(elementId);
 }
 

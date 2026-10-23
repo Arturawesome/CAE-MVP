@@ -15,7 +15,8 @@ class P2DofMap {
     public:
         P2DofMap(const Mesh& mesh);
         int NumP2Nodes() const;
+        int NumP2Elements() const;
         const Node& P2NodeById(int p2NodeId) const;
-        const std::array<int, 6>& ElementNodes(int elementId) const;
+        const std::array<int, 6>& NodesIdByElementId(int elementId) const;
         
 };

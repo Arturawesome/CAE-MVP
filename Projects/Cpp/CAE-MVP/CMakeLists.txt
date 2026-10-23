@@ -16,18 +16,21 @@ add_executable(cae_mvp
     mesh/generators/MesherRectangle.cpp
     io/VTKReader.cpp
     
-    physics/heat/problem/Problem.cpp
-    physics/heat/assembly/Assembler2D.cpp
-    physics/heat/assembly/BoundaryAssembler2D.cpp
-    physics/heat/HeatSolver.cpp
+    # physics/heat/problem/Problem.cpp
+    # physics/heat/assembly/Assembler2D.cpp
+    # physics/heat/assembly/BoundaryAssembler2D.cpp
+    # physics/heat/HeatSolver.cpp
 
     physics/hydro/problem/HydroProblem.cpp
+    physics/hydro/assembly/HydroAssembler.cpp
+    physics/hydro/HydroSolver.cpp
     
 
     fem/elements/TriangleP1.cpp
     fem/elements/TriangleP2.cpp
     fem/systems/LinearSystem.h
     fem/dofs/P2DofMap.cpp
+    fem/dofs/TaylorHoodDofMap.h
 
 
 )

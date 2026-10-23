@@ -84,5 +84,13 @@ void TriangleP1::CreateGradMatrix(const Point2D &p1, const Point2D &p2,
     triangle(2, 1) = p3.x;
     triangle(2, 2) = p3.y;
 
-    grad_ = triangle.inverse().block(1, 0, 2, 3);
+    const Eigen::Matrix3d coefs = triangle.inverse();
+    shapeCoefs_ = coefs.row(0).transpose();
+    grad_ = coefs.block(1, 0, 2, 3);
+}
+
+Eigen::Vector3d TriangleP1:: Shape(const Point2D& p) const {
+    return shapeCoefs_
+         + p.x * grad_.row(0).transpose()
+         + p.y * grad_.row(1).transpose();
 }

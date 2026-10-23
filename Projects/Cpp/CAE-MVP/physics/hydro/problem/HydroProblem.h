@@ -28,8 +28,9 @@ class HydroProblem {
     double Density() const;
     Eigen::Vector2d Force(double x, double y, double t) const;
     Eigen::Vector2d InitialVelocity(double x, double y) const;
+    const std::vector<HydroBoundaryCondition>& BoundaryConditions() const;
 
     void AddVelocityDirichlet(BoundaryId id, VectorField velocity);
     void AddTraction(BoundaryId id, VectorField traction);
-    void AddOutletPressure(BoundaryId id, ScalarField pressure);
+    void AddOutletNormalTraction(BoundaryId id, ScalarField normalTraction);
 };

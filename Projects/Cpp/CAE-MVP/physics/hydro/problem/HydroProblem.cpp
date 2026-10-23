@@ -13,6 +13,9 @@ HydroProblem::HydroProblem(double viscosity, double density,
         throw std::invalid_argument(
             "HydroProblem: viscosity and density must be postitive");
     }
+    if (!externalForceCallback_ || !initialVelocityCallback_) {
+        throw std::invalid_argument("HydroProblem: empty callback");
+    }
 }
 
 void HydroProblem::AddVelocityDirichlet(BoundaryId id, VectorField velocity) {
@@ -28,11 +31,11 @@ void HydroProblem::AddTraction(BoundaryId id, VectorField traction) {
                                .type = HydroBoundaryConditionType::Traction,
                                .traction = traction});
 }
-void HydroProblem::AddOutletPressure(BoundaryId id, ScalarField pressure) {
+void HydroProblem::AddOutletNormalTraction(BoundaryId id, ScalarField normalTraction) {
     boundaryConditions_.push_back(
         HydroBoundaryCondition{.boundaryId = id,
-                               .type = HydroBoundaryConditionType::Pressure,
-                               .pressure = pressure});
+                               .type = HydroBoundaryConditionType::NormalTraction,
+                               .normalTraction = normalTraction});
 }
 
 double HydroProblem::Viscosity() const { return viscosity_; }
@@ -45,4 +48,9 @@ Eigen::Vector2d HydroProblem::Force(double x, double y, double t) const {
 
 Eigen::Vector2d HydroProblem::InitialVelocity(double x, double y) const {
     return initialVelocityCallback_(x, y, 0);
+}
+
+const std::vector<HydroBoundaryCondition> &
+HydroProblem::BoundaryConditions() const {
+    return boundaryConditions_;
 }

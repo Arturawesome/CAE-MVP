@@ -5,7 +5,7 @@
 
 enum class HydroBoundaryConditionType {
     VelocityDirichlet,
-    Pressure,
+    NormalTraction,
     Traction
 };
 
@@ -16,5 +16,5 @@ struct HydroBoundaryCondition {
 
     std::function<Eigen::Vector2d(double, double, double)> velocity;
     std::function<Eigen::Vector2d(double, double, double)> traction;
-    std::function<double(double, double, double)> pressure; 
+    std::function<double(double, double, double)> normalTraction; 
 };

@@ -4,8 +4,8 @@
 #include "mesh/generators/MesherRectangle.h"
 
 #include "fem/dofs/P2DofMap.h"
-#include "physics/heat/HeatSolver.h"
-#include "physics/heat/problem/Problem.h"
+// #include "physics/heat/HeatSolver.h"
+// #include "physics/heat/problem/Problem.h"
 
 #include "physics/hydro/HydroSolver.h"
 #include "physics/hydro/problem/HydroProblem.h"
@@ -22,7 +22,7 @@ int main() {
 
     Rectangle rect = Rectangle(0.02, 0.2, Point2D{0, 0});
 
-    MesherRectangle mesher = MesherRectangle(101, 20);
+    MesherRectangle mesher = MesherRectangle(51, 10);
     Mesh rectangleMesh = mesher.generateMesh(rect);
 
     // Mesh circleMesh =
@@ -30,7 +30,7 @@ int main() {
     // circleMesh.CreateBoundaryEdges();
 
     P2DofMap p2Dof(rectangleMesh);
-    for (const auto el : p2Dof.ElementNodes(4)) {
+    for (const auto el : p2Dof.NodesIdByElementId(4)) {
         std::cout << el << " ";
     }
 
@@ -72,6 +72,8 @@ int main() {
     hydroTask.AddTraction(static_cast<BoundaryId>(RectangleBoundary::Right),
                           zeroVelocity);
 
+    HydroSolver hydroSolver(hydroTask, rectangleMesh, 1.0, 0.01);
 
+    hydroSolver.Solve();
     return 0;
 }

@@ -18,16 +18,16 @@ HeatSolver::HeatSolver(HeatProblem &problem)
 
 void HeatSolver::Solve() {
 
-    HeatAssembler2D assembler(problem_, mesh_);
-    LinearSystem system = assembler.Assemble();
-    HeatBoundaryAssembler2D boundaryAssembler;
-    boundaryAssembler.Apply(system, problem_, mesh_);
+    // HeatAssembler2D assembler(problem_, mesh_);
+    // LinearSystem system = assembler.Assemble();
+    // HeatBoundaryAssembler2D boundaryAssembler;
+    // boundaryAssembler.Apply(system, problem_, mesh_);
 
-    solution_ = system.K.partialPivLu().solve(system.F);
+    // solution_ = system.K.partialPivLu().solve(system.F);
 
-    if (!solution_.allFinite()) {
-        throw std::runtime_error("HeatSolver: solution Contains NaN or Inf");
-    }
+    // if (!solution_.allFinite()) {
+    //     throw std::runtime_error("HeatSolver: solution Contains NaN or Inf");
+    // }
 }
 
 const Eigen::VectorXd &HeatSolver::Solution() { return solution_; }
