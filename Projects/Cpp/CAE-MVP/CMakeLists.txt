@@ -23,6 +23,7 @@ add_executable(cae_mvp
 
     physics/hydro/problem/HydroProblem.cpp
     physics/hydro/assembly/HydroAssembler.cpp
+    physics/hydro/assembly/HydroBoundaryAssembler.cpp
     physics/hydro/HydroSolver.cpp
     
 

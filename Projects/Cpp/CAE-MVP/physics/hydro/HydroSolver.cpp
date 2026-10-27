@@ -1,8 +1,10 @@
 #include "HydroSolver.h"
 #include "physics/hydro/assembly/HydroAssembler.h"
+#include "physics/hydro/assembly/HydroBoundaryAssembler.h"
+#include <Eigen/Sparse>
+#include <Eigen/SparseLU>
 #include <iostream>
 #include <vector>
-#include <Eigen/Sparse>
 
 HydroSolver::HydroSolver(const HydroProblem &problem, Mesh &mesh,
                          double timeEnd, double dt)
@@ -21,8 +23,8 @@ void HydroSolver::Solve() {
 
     auto globalSystem = assembler.AssembleGlobalSystem();
     const int numSteps = static_cast<int>(std::ceil(timeEnd_ / dt_));
-    double prevTime = 0;
     auto currVelocity = MakeInitialVelocity();
+    
     solution_.head(currVelocity.size()) = currVelocity;
     for (int step = 1; step <= numSteps; ++step) {
         if (step % 10 == 1) {
@@ -31,29 +33,39 @@ void HydroSolver::Solve() {
         double currTime = step * dt_;
         assembler.UpdateForce(globalSystem, currTime);
         // build Time system
-        const Eigen::VectorXd previousVelocity = solution_.head(globalSystem.mass.rows());
-        LinearSystem system = BuildTimeSystem(globalSystem, previousVelocity, dt_);
+        const Eigen::VectorXd previousVelocity =
+            solution_.head(globalSystem.mass.rows());
+        LinearSystem system =
+            BuildTimeSystem(globalSystem, previousVelocity, dt_);
         // Apply Boundary Conditions
+        HydroBoundaryAssembler2D boundayAssembler;
+        boundayAssembler.Apply(system, currTime, problem_, mesh_, p2DofMap_,
+                               taylorHoodDofMap_);
 
-        // Solver for lin system
+        Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
+        solver.compute(system.K);
+        if (solver.info() != Eigen::Success) {
+            throw std::runtime_error("HydroSolver: LU factorization failed");
+        }
+        solution_ = solver.solve(system.K);
 
-        //  new velosity
-
-        prevTime = currTime;
+        if (solver.info() != Eigen::Success) {
+            throw std::runtime_error("HydroSolver: linear solve failed");
+        }
+        
     }
 }
 Eigen::VectorXd HydroSolver::MakeInitialVelocity() const {
     const int numNodes = p2DofMap_.NumP2Nodes();
-    Eigen::VectorXd velocity =  Eigen::VectorXd::Zero(2*numNodes);
-    for(int nodeId = 0; nodeId < numNodes; nodeId++){
+    Eigen::VectorXd velocity = Eigen::VectorXd::Zero(2 * numNodes);
+    for (int nodeId = 0; nodeId < numNodes; nodeId++) {
         auto point = p2DofMap_.P2NodeById(nodeId);
 
-        auto nodeVelxy = problem_.InitialVelocity(point.position.x, point.position.y);
-         velocity(taylorHoodDofMap_.U(nodeId)) =
-            nodeVelxy.x();
+        auto nodeVelxy =
+            problem_.InitialVelocity(point.position.x, point.position.y);
+        velocity(taylorHoodDofMap_.U(nodeId)) = nodeVelxy.x();
 
-        velocity(taylorHoodDofMap_.V(nodeId)) =
-            nodeVelxy.y();
+        velocity(taylorHoodDofMap_.V(nodeId)) = nodeVelxy.y();
     }
     return velocity;
 }
@@ -113,7 +125,8 @@ HydroSolver::BuildTimeSystem(const HydroGlobalSystem &global,
     }
     system.K.setFromTriplets(triplets.begin(), triplets.end());
     system.K.makeCompressed();
-    system.F.head(numVelocityDofs) = global.force + (global.mass * previousVelocity) / dt;
+    system.F.head(numVelocityDofs) =
+        global.force + (global.mass * previousVelocity) / dt;
     return system;
 }
 
