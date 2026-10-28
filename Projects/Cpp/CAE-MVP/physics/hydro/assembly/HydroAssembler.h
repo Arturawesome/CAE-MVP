@@ -54,7 +54,8 @@ class HydroAssembler2D {
     void UpdateForce(HydroGlobalSystem &global, double currTime);
 
   private:
-    Eigen::Matrix<double, 12, 1>  MakeLocalForce(const TriangleP2 &p2, const std::array<Point2D, 3> &vertices,
+    Eigen::Matrix<double, 12, 1>
+    MakeLocalForce(const TriangleP2 &p2, const std::array<Point2D, 3> &vertices,
                    double time) const;
     void AddToGlobal(HydroGlobalSystem &global, const HydroLocalSystem &local,
                      const std::array<int, 15> &dofs, int numVelocityDofs,
@@ -63,4 +64,15 @@ class HydroAssembler2D {
                                      const std::array<Point2D, 3> &vertices,
                                      double time) const;
     std::array<TriangleQuadraturePoint, 6> MakeQuadraturePoints() const;
+
+    Eigen::Matrix<double, 6, 1>
+    MakeLocalTraction(const BoundaryEdge &edge,
+                      const HydroBoundaryCondition &condition,
+                      double time) const;
+
+    void
+    AddTractionToGlobal(HydroGlobalSystem &global, const BoundaryEdge &edge,
+                        const Eigen::Matrix<double, 6, 1> &localForce) const;
+
+    void AssembleTraction(HydroGlobalSystem &global, double time) const;
 };

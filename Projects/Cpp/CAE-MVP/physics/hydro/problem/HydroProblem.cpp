@@ -26,16 +26,23 @@ void HydroProblem::AddVelocityDirichlet(BoundaryId id, VectorField velocity) {
 }
 
 void HydroProblem::AddTraction(BoundaryId id, VectorField traction) {
+    if (!traction) {
+        throw std::invalid_argument("HydroProblem: empty traction callback");
+    }
     boundaryConditions_.push_back(
         HydroBoundaryCondition{.boundaryId = id,
                                .type = HydroBoundaryConditionType::Traction,
                                .traction = traction});
 }
-void HydroProblem::AddOutletNormalTraction(BoundaryId id, ScalarField normalTraction) {
-    boundaryConditions_.push_back(
-        HydroBoundaryCondition{.boundaryId = id,
-                               .type = HydroBoundaryConditionType::NormalTraction,
-                               .normalTraction = normalTraction});
+void HydroProblem::AddOutletNormalTraction(BoundaryId id,
+                                           ScalarField normalTraction) {
+    if (!normalTraction) {
+        throw std::invalid_argument("HydroProblem: empty traction callback");
+    }
+    boundaryConditions_.push_back(HydroBoundaryCondition{
+        .boundaryId = id,
+        .type = HydroBoundaryConditionType::NormalTraction,
+        .normalTraction = normalTraction});
 }
 
 double HydroProblem::Viscosity() const { return viscosity_; }

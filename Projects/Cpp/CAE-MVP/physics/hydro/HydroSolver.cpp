@@ -1,10 +1,20 @@
+
 #include "HydroSolver.h"
+
+#include "io/VTKHydroWriter.h"
+#include "io/VTKSeriesWriter.h"
 #include "physics/hydro/assembly/HydroAssembler.h"
 #include "physics/hydro/assembly/HydroBoundaryAssembler.h"
-#include <Eigen/Sparse>
+
 #include <Eigen/SparseLU>
+
+#include <algorithm>
+#include <cmath>
+#include <filesystem>
+#include <iomanip>
 #include <iostream>
-#include <vector>
+#include <sstream>
+#include <stdexcept>
 
 HydroSolver::HydroSolver(const HydroProblem &problem, Mesh &mesh,
                          double timeEnd, double dt)
@@ -17,20 +27,38 @@ HydroSolver::HydroSolver(const HydroProblem &problem, Mesh &mesh,
     }
 }
 
-void HydroSolver::Solve() {
+void HydroSolver::Solve(std::string filename) {
 
     HydroAssembler2D assembler(problem_, mesh_, taylorHoodDofMap_);
 
     auto globalSystem = assembler.AssembleGlobalSystem();
     const int numSteps = static_cast<int>(std::ceil(timeEnd_ / dt_));
     auto currVelocity = MakeInitialVelocity();
-    
+
     solution_.head(currVelocity.size()) = currVelocity;
+    const std::filesystem::path outputDir = filename;
+    std::filesystem::create_directories(outputDir);
+
+    VTKSeriesWriter seriesWriter(outputDir);
+    const auto saveFrame = [&](int step, double time) {
+        std::ostringstream stream;
+
+        stream << "hydro_" << std::setw(5) << std::setfill('0') << step
+               << ".vtk";
+
+        const std::string filename = stream.str();
+
+        VTKHydroWriter::Write(mesh_, taylorHoodDofMap_, solution_,
+                              (outputDir / filename).string());
+
+        seriesWriter.AddFrame(filename, time);
+    };
+    saveFrame(0, 0.0);
+
+    Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
     for (int step = 1; step <= numSteps; ++step) {
-        if (step % 10 == 1) {
-            std::cout << "step = " << step << "\n";
-        }
         double currTime = step * dt_;
+        
         assembler.UpdateForce(globalSystem, currTime);
         // build Time system
         const Eigen::VectorXd previousVelocity =
@@ -42,18 +70,23 @@ void HydroSolver::Solve() {
         boundayAssembler.Apply(system, currTime, problem_, mesh_, p2DofMap_,
                                taylorHoodDofMap_);
 
-        Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
         solver.compute(system.K);
         if (solver.info() != Eigen::Success) {
             throw std::runtime_error("HydroSolver: LU factorization failed");
         }
-        solution_ = solver.solve(system.K);
+        solution_ = solver.solve(system.F);
 
         if (solver.info() != Eigen::Success) {
             throw std::runtime_error("HydroSolver: linear solve failed");
         }
-        
+        if (step % 2 == 0) {
+            saveFrame(step, currTime);
+            std::cout << "step = " << step << "\n";
+        }
+       
+       
     }
+     seriesWriter.WriteSeries();
 }
 Eigen::VectorXd HydroSolver::MakeInitialVelocity() const {
     const int numNodes = p2DofMap_.NumP2Nodes();

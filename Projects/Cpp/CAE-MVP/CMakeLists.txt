@@ -15,6 +15,8 @@ add_executable(cae_mvp
     mesh/Mesh2D.cpp
     mesh/generators/MesherRectangle.cpp
     io/VTKReader.cpp
+    io/VTKHydroWriter.cpp
+    io/VTKSeriesWriter.cpp
     
     # physics/heat/problem/Problem.cpp
     # physics/heat/assembly/Assembler2D.cpp

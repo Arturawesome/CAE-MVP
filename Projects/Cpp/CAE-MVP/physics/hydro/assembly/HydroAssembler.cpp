@@ -31,8 +31,9 @@ HydroAssembler2D::MakeLocalForce(const TriangleP2 &p2,
                                  const std::array<Point2D, 3> &vertices,
                                  double time) const {
 
-
-    Eigen::Matrix<double, 12, 1> localForce = Eigen::Matrix<double, 12, 1>::Zero();;
+    Eigen::Matrix<double, 12, 1> localForce =
+        Eigen::Matrix<double, 12, 1>::Zero();
+    ;
 
     const auto quadraturePoints = MakeQuadraturePoints();
 
@@ -53,7 +54,7 @@ HydroAssembler2D::MakeLocalForce(const TriangleP2 &p2,
             Nu(1, 2 * i + 1) = velocityShapeVector(i);
         }
 
-        double weight = p2.Area() * qp.weight;        
+        double weight = p2.Area() * qp.weight;
         Eigen::Vector2d force = problem_.Force(internalPonitInTrinagle.x,
                                                internalPonitInTrinagle.y, time);
         localForce.noalias() += weight * (Nu.transpose() * force);
@@ -245,4 +246,28 @@ HydroAssembler2D::MakeQuadraturePoints() const {
                                 .L3 = quadratureC,
                                 .weight = quadratureWeight2}};
     return quadraturePoints;
+}
+
+Eigen::Matrix<double, 6, 1>
+HydroAssembler2D::MakeLocalTraction(const BoundaryEdge &edge,
+                                    const HydroBoundaryCondition &condition,
+                                    double time) const {}
+
+void HydroAssembler2D::AddTractionToGlobal(
+    HydroGlobalSystem &global, const BoundaryEdge &edge,
+    const Eigen::Matrix<double, 6, 1> &localForce) const {}
+
+void HydroAssembler2D::AssembleTraction(HydroGlobalSystem &global,
+                                        double time) const {
+    for (const auto &bc : problem_.BoundaryConditions()) {
+        if(bc.type != HydroBoundaryConditionType::Traction || bc.type != HydroBoundaryConditionType::NormalTraction){
+            continue;
+        }
+        for(const auto edge: mesh_.BoundaryEdges()){
+            if(edge.boundaryId != bc.boundaryId){
+                continue;
+            }
+            
+        }
+    }
 }

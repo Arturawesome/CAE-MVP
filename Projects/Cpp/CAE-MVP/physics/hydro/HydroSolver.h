@@ -6,6 +6,7 @@
 #include "physics/hydro/assembly/HydroAssembler.h"
 #include "fem/systems/LinearSystem.h"
 #include <Eigen/Dense>
+#include <string>
 
 class HydroSolver {
   private:
@@ -28,6 +29,6 @@ class HydroSolver {
     explicit HydroSolver(const HydroProblem &problem, Mesh &mesh,
                          double timeEnd, double dt);
     ~HydroSolver() = default;
-    void Solve();
+    void Solve(std::string filename = "solutions/hydro");
     const Eigen::VectorXd &Solution();
 };

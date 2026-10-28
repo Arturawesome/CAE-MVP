@@ -3,11 +3,10 @@
 #include <string>
 #include <utility>
 #include <vector>
-
-
-#include "geometry/GeometryTypes2D.h"
-#include "MeshTypes2D.h"
+#include <cmath>
 #include "BoundaryId.h"
+#include "MeshTypes2D.h"
+#include "geometry/GeometryTypes2D.h"
 
 class Mesh {
   private:
@@ -16,7 +15,6 @@ class Mesh {
     std::vector<BoundaryEdge> boundaryEdges_;
 
   public:
-
     Mesh() {}
     void AddNode(Node node);
     void AddElement(Element element);
@@ -37,9 +35,7 @@ class Mesh {
     int NodeIdFromEl(int elId, std::size_t i) const;
     int NumNodesInEl(std::size_t elId) const;
 
-
-
+    Point2D OutwardNormal(const BoundaryEdge &edge) const;
 
     friend std::ostream &operator<<(std::ostream &stream, const Mesh &m);
-    
 };
