@@ -158,14 +158,25 @@ Point2D Mesh::OutwardNormal(const BoundaryEdge &edge) const {
     Point2D normal{dy / length, -dx / length};
 
     // Найти третий узел  треугольника
+    bool hasId1 = false;
+    bool hasId2 = false;
     int oppositeNodeId = -1;
+
     for (int nodeId : elements_[edge.elementId].nodes_id) {
-        if (nodeId == id1 || nodeId == id2) {
-            continue;
+        if (nodeId == id1) {
+            hasId1 = true;
+        }
+        else if (nodeId == id2) {
+            hasId2 = true;
         }
         else {
             oppositeNodeId = nodeId;
         }
+    }
+
+    if (!hasId1 || !hasId2 || oppositeNodeId < 0) {
+        throw std::runtime_error(
+            "Mesh::OutwardNormal: invalid edge-element adjacency");
     }
 
     const Point2D &c = NodeById(oppositeNodeId).position;
@@ -191,6 +202,39 @@ Point2D Mesh::OutwardNormal(const BoundaryEdge &edge) const {
     }
 
     return normal;
+}
+
+int Mesh::NodeIdByBoundaryEdge(const BoundaryEdge &edge) const {
+    const int id1 = edge.nodes_id.first;
+    const int id2 = edge.nodes_id.second;
+
+    if (id1 == id2) {
+        throw std::invalid_argument("Mesh::OutwardNormal: degenerate edge");
+    }
+
+    // Найти третий узел  треугольника
+    bool hasId1 = false;
+    bool hasId2 = false;
+    int oppositeNodeId = -1;
+
+    for (int nodeId : elements_[edge.elementId].nodes_id) {
+        if (nodeId == id1) {
+            hasId1 = true;
+        }
+        else if (nodeId == id2) {
+            hasId2 = true;
+        }
+        else {
+            oppositeNodeId = nodeId;
+        }
+    }
+
+    if (!hasId1 || !hasId2 || oppositeNodeId < 0) {
+        throw std::runtime_error(
+            "Mesh::OutwardNormal: invalid edge-element adjacency");
+    }
+
+    return oppositeNodeId;
 }
 
 void Mesh::AddNode(Node node) { nodes_.push_back(node); }

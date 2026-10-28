@@ -1,0 +1,31 @@
+{
+  "file-series-version": "1.0",
+  "files": [
+    {"name": "hydro_00000.vtk", "time": 0},
+    {"name": "hydro_00002.vtk", "time": 0.02},
+    {"name": "hydro_00004.vtk", "time": 0.040000000000000001},
+    {"name": "hydro_00006.vtk", "time": 0.059999999999999998},
+    {"name": "hydro_00008.vtk", "time": 0.080000000000000002},
+    {"name": "hydro_00010.vtk", "time": 0.10000000000000001},
+    {"name": "hydro_00012.vtk", "time": 0.12},
+    {"name": "hydro_00014.vtk", "time": 0.14000000000000001},
+    {"name": "hydro_00016.vtk", "time": 0.16},
+    {"name": "hydro_00018.vtk", "time": 0.17999999999999999},
+    {"name": "hydro_00020.vtk", "time": 0.20000000000000001},
+    {"name": "hydro_00022.vtk", "time": 0.22},
+    {"name": "hydro_00024.vtk", "time": 0.23999999999999999},
+    {"name": "hydro_00026.vtk", "time": 0.26000000000000001},
+    {"name": "hydro_00028.vtk", "time": 0.28000000000000003},
+    {"name": "hydro_00030.vtk", "time": 0.29999999999999999},
+    {"name": "hydro_00032.vtk", "time": 0.32000000000000001},
+    {"name": "hydro_00034.vtk", "time": 0.34000000000000002},
+    {"name": "hydro_00036.vtk", "time": 0.35999999999999999},
+    {"name": "hydro_00038.vtk", "time": 0.38},
+    {"name": "hydro_00040.vtk", "time": 0.40000000000000002},
+    {"name": "hydro_00042.vtk", "time": 0.41999999999999998},
+    {"name": "hydro_00044.vtk", "time": 0.44},
+    {"name": "hydro_00046.vtk", "time": 0.46000000000000002},
+    {"name": "hydro_00048.vtk", "time": 0.47999999999999998},
+    {"name": "hydro_00050.vtk", "time": 0.5}
+  ]
+}

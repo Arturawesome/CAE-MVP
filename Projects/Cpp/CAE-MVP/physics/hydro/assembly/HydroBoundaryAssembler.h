@@ -7,12 +7,6 @@
 #include <unordered_map>
 
 class HydroBoundaryAssembler2D {
-  private:
-    // const HydroProblem &problem_;
-    // const Mesh &mesh_;
-    // const P2DofMap &p2DofMap_;
-    // const TaylorHoodDofMap &dofMap_;
-
   public:
     HydroBoundaryAssembler2D() = default;
     void Apply(LinearSystem &system, double currTime,

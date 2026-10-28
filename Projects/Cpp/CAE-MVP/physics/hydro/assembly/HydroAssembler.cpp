@@ -24,6 +24,7 @@ void HydroAssembler2D::UpdateForce(HydroGlobalSystem &global, double currTime) {
             global.force(globalI) += localForce(i);
         }
     }
+    AssembleTraction(global, currTime);
 }
 
 Eigen::Matrix<double, 12, 1>
@@ -60,6 +61,95 @@ HydroAssembler2D::MakeLocalForce(const TriangleP2 &p2,
         localForce.noalias() += weight * (Nu.transpose() * force);
     }
     return localForce;
+}
+
+Eigen::Matrix<double, 6, 1>
+HydroAssembler2D::MakeLocalTraction(const BoundaryEdge &edge,
+                                    const HydroBoundaryCondition &condition,
+                                    double time) const {
+
+    Point2D normal{0.0, 0.0};
+
+    if (condition.type == HydroBoundaryConditionType::NormalTraction) {
+        normal = mesh_.OutwardNormal(edge);
+    }
+    int id1 = edge.nodes_id.first;
+    int id2 = edge.nodes_id.second;
+
+    const Point2D &p1 = mesh_.NodeById(id1).position;
+    const Point2D &p2 = mesh_.NodeById(id2).position;
+
+    const double dx = p1.x - p2.x;
+    const double dy = p1.y - p2.y;
+
+    const double length = std::hypot(dx, dy);
+
+    if (!std::isfinite(length) || length <= 0.0) {
+        throw std::invalid_argument("HydroAssembler2D: invalid boundary edge");
+    }
+    Eigen::Matrix<double, 6, 1> localF = Eigen::Matrix<double, 6, 1>::Zero();
+    std::array<EdgeQuadraturePoint, 3> quadro = MakeEdgeQuadraturePoints();
+    for (int i = 0; i < 3; ++i) {
+        double s = quadro[i].pos;
+        double w = quadro[i].weight * length;
+
+        // shape func
+        const double N1 = (1 - s) * (1 - 2 * s);
+        const double N2 = s * (2 * s - 1);
+        const double N3 = 4 * s * (1 - s);
+
+        double x = (1 - s) * p1.x + s * p2.x;
+        double y = (1 - s) * p1.y + s * p2.y;
+
+        Eigen::Vector2d traction;
+
+        switch (condition.type) {
+        case HydroBoundaryConditionType::Traction: {
+            traction = condition.traction(x, y, time);
+            break;
+        }
+        case HydroBoundaryConditionType::NormalTraction: {
+            const double tn = condition.normalTraction(x, y, time);
+            traction = tn * Eigen::Vector2d(normal.x, normal.y);
+            break;
+        }
+        default:
+            throw std::invalid_argument(
+                "HydroAssembler2D: unsupported traction type");
+        }
+
+        if (!traction.allFinite()) {
+            throw std::runtime_error("HydroAssembler2D: non-finite traction");
+        }
+
+        
+        localF(0) += w * N1 * traction.x();
+        localF(1) += w * N1 * traction.y();
+
+        localF(2) += w * N2 * traction.x();
+        localF(3) += w * N2 * traction.y();
+
+        localF(4) += w * N3 * traction.x();
+        localF(5) += w * N3 * traction.y();
+    }
+    return localF;
+}
+
+void HydroAssembler2D::AddTractionToGlobal(
+    HydroGlobalSystem &global, const BoundaryEdge &edge,
+    const Eigen::Matrix<double, 6, 1> &localForce) const {
+
+    const int id1 = edge.nodes_id.first;
+    const int id2 = edge.nodes_id.second;
+    std::array<int, 3> ids = {id1, id2, dofMap_.MiddleNodeId(id1, id2)};
+
+    for (int i = 0; i < 3; ++i) {
+        int id = ids[i];
+        int globIdU = dofMap_.U(id);
+        int globIdV = dofMap_.V(id);
+        global.force(globIdU) += localForce(2 * i);
+        global.force(globIdV) += localForce(2 * i + 1);
+    }
 }
 
 HydroGlobalSystem HydroAssembler2D::AssembleGlobalSystem() {
@@ -208,6 +298,20 @@ HydroAssembler2D::MakeLocalSystem(const TriangleP1 &p1, const TriangleP2 &p2,
     return local;
 }
 
+// three points on boundary edje for intergral calualtiong
+std::array<EdgeQuadraturePoint, 3>
+HydroAssembler2D::MakeEdgeQuadraturePoints() const {
+    double a = 0.5 * (1.0 - std::sqrt(3.0 / 5.0));
+    double b = 0.5;
+    double c = 0.5 * (1.0 + std::sqrt(3.0 / 5.0));
+    std::array<EdgeQuadraturePoint, 3> quadraturePoints = {
+        EdgeQuadraturePoint{.pos = a, .weight = 5.0 / 18.0},
+        EdgeQuadraturePoint{.pos = b, .weight = 4.0 / 9.0},
+        EdgeQuadraturePoint{.pos = c, .weight = 5.0 / 18.0}};
+    return quadraturePoints;
+}
+
+// six points in element (intrnal element) for integral calculationg
 std::array<TriangleQuadraturePoint, 6>
 HydroAssembler2D::MakeQuadraturePoints() const {
     constexpr double quadratureA = 0.816847572980459;
@@ -248,26 +352,24 @@ HydroAssembler2D::MakeQuadraturePoints() const {
     return quadraturePoints;
 }
 
-Eigen::Matrix<double, 6, 1>
-HydroAssembler2D::MakeLocalTraction(const BoundaryEdge &edge,
-                                    const HydroBoundaryCondition &condition,
-                                    double time) const {}
-
-void HydroAssembler2D::AddTractionToGlobal(
-    HydroGlobalSystem &global, const BoundaryEdge &edge,
-    const Eigen::Matrix<double, 6, 1> &localForce) const {}
-
 void HydroAssembler2D::AssembleTraction(HydroGlobalSystem &global,
                                         double time) const {
-    for (const auto &bc : problem_.BoundaryConditions()) {
-        if(bc.type != HydroBoundaryConditionType::Traction || bc.type != HydroBoundaryConditionType::NormalTraction){
+
+    for (const auto &condition : problem_.BoundaryConditions()) {
+
+        if (condition.type != HydroBoundaryConditionType::Traction &&
+            condition.type != HydroBoundaryConditionType::NormalTraction) {
             continue;
         }
-        for(const auto edge: mesh_.BoundaryEdges()){
-            if(edge.boundaryId != bc.boundaryId){
+        for (const auto &edge : mesh_.BoundaryEdges()) {
+
+            if (edge.boundaryId != condition.boundaryId) {
                 continue;
             }
-            
+
+            const auto localForce = MakeLocalTraction(edge, condition, time);
+
+            AddTractionToGlobal(global, edge, localForce);
         }
     }
 }

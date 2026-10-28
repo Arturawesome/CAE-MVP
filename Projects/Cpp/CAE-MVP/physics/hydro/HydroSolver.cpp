@@ -60,6 +60,9 @@ void HydroSolver::Solve(std::string filename) {
         double currTime = step * dt_;
         
         assembler.UpdateForce(globalSystem, currTime);
+        //assembler.UpdateTraction(globalSystem, currTime);
+
+        
         // build Time system
         const Eigen::VectorXd previousVelocity =
             solution_.head(globalSystem.mass.rows());

@@ -27,6 +27,9 @@ class Mesh {
 
     const Node &NodeById(int id) const;
     const Element &ElementById(int id) const;
+    
+    int NodeIdByBoundaryEdge(const BoundaryEdge &edge) const ;
+
 
     int NumNodes() const;
     int NumEl() const;

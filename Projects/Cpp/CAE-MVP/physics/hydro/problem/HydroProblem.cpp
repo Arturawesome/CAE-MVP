@@ -45,6 +45,16 @@ void HydroProblem::AddOutletNormalTraction(BoundaryId id,
         .normalTraction = normalTraction});
 }
 
+void HydroProblem::AddOutletPressure(BoundaryId id, ScalarField pressure) {
+    if (!pressure) {
+        throw std::invalid_argument("HydroProblem: empty pressure callback");
+    }
+
+    AddOutletNormalTraction(id, [pressure](double x, double y, double t) {
+        return -pressure(x, y, t);
+    });
+}
+
 double HydroProblem::Viscosity() const { return viscosity_; }
 
 double HydroProblem::Density() const { return density_; }

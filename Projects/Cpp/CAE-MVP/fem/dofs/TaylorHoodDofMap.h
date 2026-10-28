@@ -45,6 +45,9 @@ public:
     int P(int nodeId) const {
         return 2 * p2_.NumP2Nodes() + nodeId;
     }
+    int MiddleNodeId(int nodeId1, int nodeId2) const{
+        return p2_.MiddleNodeId(nodeId1, nodeId2);
+    }
 
     std::array<int, 15> ElementDofs(int elId) const {
         std::array<int, 15> dofs{};

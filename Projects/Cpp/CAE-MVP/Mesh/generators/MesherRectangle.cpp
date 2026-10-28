@@ -49,6 +49,8 @@ Mesh MesherRectangle::generateMesh(const Rectangle &r) {
     // "<<mesh.elements.size()<<std::endl;
     generateBoundaryEdges(mesh);
 
+    mesh.CreateBoundaryEdges();
+    
     return mesh;
 }
 

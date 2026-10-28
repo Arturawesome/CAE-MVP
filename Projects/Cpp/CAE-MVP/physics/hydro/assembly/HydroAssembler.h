@@ -64,6 +64,7 @@ class HydroAssembler2D {
                                      const std::array<Point2D, 3> &vertices,
                                      double time) const;
     std::array<TriangleQuadraturePoint, 6> MakeQuadraturePoints() const;
+    std::array<EdgeQuadraturePoint, 3> MakeEdgeQuadraturePoints() const;
 
     Eigen::Matrix<double, 6, 1>
     MakeLocalTraction(const BoundaryEdge &edge,
@@ -74,5 +75,6 @@ class HydroAssembler2D {
     AddTractionToGlobal(HydroGlobalSystem &global, const BoundaryEdge &edge,
                         const Eigen::Matrix<double, 6, 1> &localForce) const;
 
+    // обход по граничным ребрам
     void AssembleTraction(HydroGlobalSystem &global, double time) const;
 };

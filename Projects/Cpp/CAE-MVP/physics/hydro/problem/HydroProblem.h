@@ -1,10 +1,10 @@
 #pragma once
 
+#include "mesh/BoundaryId.h"
+#include "physics/hydro/HydroBoundaryCondition.h"
 #include <Eigen/Core>
 #include <functional>
 #include <vector>
-#include "mesh/BoundaryId.h"
-#include "physics/hydro/HydroBoundaryCondition.h"
 class HydroProblem {
   public:
     // f(x, y, t)
@@ -18,7 +18,7 @@ class HydroProblem {
     VectorField initialVelocityCallback_;
 
     std::vector<HydroBoundaryCondition> boundaryConditions_;
-    
+
   public:
     HydroProblem(double viscosity, double density, VectorField externalForce,
                  VectorField initialVelocity);
@@ -28,9 +28,10 @@ class HydroProblem {
     double Density() const;
     Eigen::Vector2d Force(double x, double y, double t) const;
     Eigen::Vector2d InitialVelocity(double x, double y) const;
-    const std::vector<HydroBoundaryCondition>& BoundaryConditions() const;
+    const std::vector<HydroBoundaryCondition> &BoundaryConditions() const;
 
     void AddVelocityDirichlet(BoundaryId id, VectorField velocity);
     void AddTraction(BoundaryId id, VectorField traction);
     void AddOutletNormalTraction(BoundaryId id, ScalarField normalTraction);
+    void AddOutletPressure(BoundaryId id, ScalarField pressure);
 };

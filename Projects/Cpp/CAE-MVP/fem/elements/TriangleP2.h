@@ -10,6 +10,11 @@ struct TriangleQuadraturePoint {
     double weight;
 };
 
+struct EdgeQuadraturePoint {
+  double pos;
+  double weight;
+};
+
 class TriangleP2 {
   private:
     double area_ = 0;
