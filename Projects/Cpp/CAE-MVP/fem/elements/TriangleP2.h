@@ -1,6 +1,7 @@
 #pragma once
 #include "geometry/GeometryTypes2D.h"
 #include <Eigen/Dense>
+#include <array>
 
 
 struct TriangleQuadraturePoint {
@@ -39,4 +40,6 @@ class TriangleP2 {
     Point2D Center() const;
     Eigen::Matrix<double, 6, 1> Shape(const Point2D &point) const;
     Eigen::Matrix<double, 2, 6> Grad(const Point2D &point) const;
+
+
 };

@@ -58,14 +58,15 @@ void HydroSolver::Solve(std::string filename) {
     Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
     for (int step = 1; step <= numSteps; ++step) {
         double currTime = step * dt_;
-        
-        assembler.UpdateForce(globalSystem, currTime);
-        //assembler.UpdateTraction(globalSystem, currTime);
 
-        
+        // assembler.UpdateTraction(globalSystem, currTime);
+
         // build Time system
         const Eigen::VectorXd previousVelocity =
             solution_.head(globalSystem.mass.rows());
+        assembler.UpdateForce(globalSystem, currTime);
+        assembler.UpdateConvection(globalSystem, previousVelocity);
+
         LinearSystem system =
             BuildTimeSystem(globalSystem, previousVelocity, dt_);
         // Apply Boundary Conditions
@@ -86,10 +87,8 @@ void HydroSolver::Solve(std::string filename) {
             saveFrame(step, currTime);
             std::cout << "step = " << step << "\n";
         }
-       
-       
     }
-     seriesWriter.WriteSeries();
+    seriesWriter.WriteSeries();
 }
 Eigen::VectorXd HydroSolver::MakeInitialVelocity() const {
     const int numNodes = p2DofMap_.NumP2Nodes();
@@ -133,7 +132,8 @@ HydroSolver::BuildTimeSystem(const HydroGlobalSystem &global,
     LinearSystem system(numDofs);
     std::vector<Triplet> triplets;
     triplets.reserve(global.mass.nonZeros() + global.viscosity.nonZeros() +
-                     2 * global.divergence.nonZeros());
+                     2 * global.divergence.nonZeros() +
+                     global.convection.nonZeros());
 
     // 1. Mass matrix: M / dt
     // outerSize -- size dense matrix
@@ -157,6 +157,15 @@ HydroSolver::BuildTimeSystem(const HydroGlobalSystem &global,
             int velocityID = it.col();
             triplets.emplace_back(pressureID, velocityID, it.value());
             triplets.emplace_back(velocityID, pressureID, -it.value());
+        }
+    }
+
+    // 4. Convection matrix C(U^n)
+    for (int k = 0; k < global.convection.outerSize(); ++k) {
+        for (Eigen::SparseMatrix<double>::InnerIterator it(global.convection,
+                                                           k);
+             it; ++it) {
+            triplets.emplace_back(it.row(), it.col(), it.value());
         }
     }
     system.K.setFromTriplets(triplets.begin(), triplets.end());

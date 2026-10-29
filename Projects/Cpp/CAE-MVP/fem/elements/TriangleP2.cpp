@@ -115,3 +115,5 @@ void TriangleP2::CreateBarycentric(const Point2D &p1, const Point2D &p2,
     // <row_size, col_size> (strat_row, start_col)  <>() -- static
     barGrad_ = barCoefs_.block<2, 3>(1, 0);
 }
+
+

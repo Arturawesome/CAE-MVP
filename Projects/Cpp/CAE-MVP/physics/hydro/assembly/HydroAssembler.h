@@ -26,11 +26,14 @@ struct HydroGlobalSystem {
     Eigen::SparseMatrix<double> mass;
     Eigen::SparseMatrix<double> viscosity;
     Eigen::SparseMatrix<double> divergence;
+    Eigen::SparseMatrix<double> convection;
     Eigen::VectorXd force;
+
     HydroGlobalSystem(int numVelocityDofs, int numPressureDofs)
         : mass(numVelocityDofs, numVelocityDofs),
           viscosity(numVelocityDofs, numVelocityDofs),
           divergence(numPressureDofs, numVelocityDofs),
+          convection(numVelocityDofs, numVelocityDofs),
           force(Eigen::VectorXd::Zero(numVelocityDofs)) {}
 };
 
@@ -52,8 +55,14 @@ class HydroAssembler2D {
                      const TaylorHoodDofMap &dofMap);
     HydroGlobalSystem AssembleGlobalSystem();
     void UpdateForce(HydroGlobalSystem &global, double currTime);
+    void UpdateConvection(HydroGlobalSystem &global,
+                          const Eigen::VectorXd &transportVelocity) const;
 
   private:
+    Eigen::Matrix<double, 12, 12> MakeLocalConvection(
+        const TriangleP2 &p2, const std::array<Point2D, 3> &vertices,
+        const Eigen::Matrix<double, 12, 1>& transportVelocity) const;
+
     Eigen::Matrix<double, 12, 1>
     MakeLocalForce(const TriangleP2 &p2, const std::array<Point2D, 3> &vertices,
                    double time) const;
@@ -63,6 +72,8 @@ class HydroAssembler2D {
     HydroLocalSystem MakeLocalSystem(const TriangleP1 &p1, const TriangleP2 &p2,
                                      const std::array<Point2D, 3> &vertices,
                                      double time) const;
+    std::array<TriangleQuadraturePoint, 7>
+    MakeConvectionQuadraturePoints() const;
     std::array<TriangleQuadraturePoint, 6> MakeQuadraturePoints() const;
     std::array<EdgeQuadraturePoint, 3> MakeEdgeQuadraturePoints() const;
 

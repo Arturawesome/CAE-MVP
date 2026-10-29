@@ -10,21 +10,52 @@ void HydroAssembler2D::UpdateForce(HydroGlobalSystem &global, double currTime) {
     global.force.setZero();
     for (int elId = 0; elId < numEl; ++elId) {
         std::array<Point2D, 3> vertices;
-
         for (int i = 0; i < 3; ++i) {
             vertices[i] = mesh_.NodeById(mesh_.NodeIdFromEl(elId, i)).position;
         }
-
         TriangleP2 triangleP2(vertices[0], vertices[1], vertices[2], elId);
-
         auto localForce = MakeLocalForce(triangleP2, vertices, currTime);
-
         for (int i = 0; i < 12; ++i) {
             const int globalI = dofMap_.ElementDofs(elId)[i];
             global.force(globalI) += localForce(i);
         }
     }
     AssembleTraction(global, currTime);
+}
+void HydroAssembler2D::UpdateConvection(
+    HydroGlobalSystem &global, const Eigen::VectorXd &transportVelocity) const {
+    if (transportVelocity.size() != dofMap_.numVelocityDofs()) {
+        throw std::invalid_argument(
+            "HydroAssembler2D: invalid transport velocity size");
+    }
+
+    std::vector<Eigen::Triplet<double>> triplets;
+    triplets.reserve(mesh_.NumEl() * 12 * 12);
+
+    for (int elId = 0; elId < mesh_.NumEl(); ++elId) {
+        std::array<Point2D, 3> vertices;
+        for (int i = 0; i < 3; ++i) {
+            vertices[i] = mesh_.NodeById(mesh_.NodeIdFromEl(elId, i)).position;
+        }
+        TriangleP2 triangleP2(vertices[0], vertices[1], vertices[2], elId);
+        const auto &dofs = dofMap_.ElementDofs(elId);
+
+        Eigen::Matrix<double, 12, 1> localVelocity;
+
+        for (int i = 0; i < 12; ++i) {
+            localVelocity(i) = transportVelocity(dofs[i]);
+        }
+
+        auto localConvection =
+            MakeLocalConvection(triangleP2, vertices, localVelocity);
+        for(int i = 0; i < 12; i++){
+            for(int j = 0; j < 12; ++j){
+                triplets.emplace_back(dofs[i], dofs[j], localConvection(i, j));
+            }
+        }    
+    }
+    global.convection.setFromTriplets(triplets.begin(), triplets.end());
+    global.convection.makeCompressed();
 }
 
 Eigen::Matrix<double, 12, 1>
@@ -35,16 +66,13 @@ HydroAssembler2D::MakeLocalForce(const TriangleP2 &p2,
     Eigen::Matrix<double, 12, 1> localForce =
         Eigen::Matrix<double, 12, 1>::Zero();
     ;
-
     const auto quadraturePoints = MakeQuadraturePoints();
-
     for (const auto &qp : quadraturePoints) {
         Point2D internalPonitInTrinagle{
             qp.L1 * vertices[0].x + qp.L2 * vertices[1].x +
                 qp.L3 * vertices[2].x,
             qp.L1 * vertices[0].y + qp.L2 * vertices[1].y +
                 qp.L3 * vertices[2].y};
-
         const auto velocityShapeVector = p2.Shape(internalPonitInTrinagle);
 
         // Vector velocity interpolation matrix
@@ -54,7 +82,6 @@ HydroAssembler2D::MakeLocalForce(const TriangleP2 &p2,
             Nu(0, 2 * i) = velocityShapeVector(i);
             Nu(1, 2 * i + 1) = velocityShapeVector(i);
         }
-
         double weight = p2.Area() * qp.weight;
         Eigen::Vector2d force = problem_.Force(internalPonitInTrinagle.x,
                                                internalPonitInTrinagle.y, time);
@@ -69,7 +96,6 @@ HydroAssembler2D::MakeLocalTraction(const BoundaryEdge &edge,
                                     double time) const {
 
     Point2D normal{0.0, 0.0};
-
     if (condition.type == HydroBoundaryConditionType::NormalTraction) {
         normal = mesh_.OutwardNormal(edge);
     }
@@ -81,12 +107,11 @@ HydroAssembler2D::MakeLocalTraction(const BoundaryEdge &edge,
 
     const double dx = p1.x - p2.x;
     const double dy = p1.y - p2.y;
-
     const double length = std::hypot(dx, dy);
-
     if (!std::isfinite(length) || length <= 0.0) {
         throw std::invalid_argument("HydroAssembler2D: invalid boundary edge");
     }
+
     Eigen::Matrix<double, 6, 1> localF = Eigen::Matrix<double, 6, 1>::Zero();
     std::array<EdgeQuadraturePoint, 3> quadro = MakeEdgeQuadraturePoints();
     for (int i = 0; i < 3; ++i) {
@@ -102,7 +127,6 @@ HydroAssembler2D::MakeLocalTraction(const BoundaryEdge &edge,
         double y = (1 - s) * p1.y + s * p2.y;
 
         Eigen::Vector2d traction;
-
         switch (condition.type) {
         case HydroBoundaryConditionType::Traction: {
             traction = condition.traction(x, y, time);
@@ -122,7 +146,6 @@ HydroAssembler2D::MakeLocalTraction(const BoundaryEdge &edge,
             throw std::runtime_error("HydroAssembler2D: non-finite traction");
         }
 
-        
         localF(0) += w * N1 * traction.x();
         localF(1) += w * N1 * traction.y();
 
@@ -172,7 +195,6 @@ HydroGlobalSystem HydroAssembler2D::AssembleGlobalSystem() {
 
         TriangleP1 triangleP1(mesh_, elId);
         TriangleP2 triangleP2(vertices[0], vertices[1], vertices[2], elId);
-
         HydroLocalSystem local =
             MakeLocalSystem(triangleP1, triangleP2, vertices, 0);
         AddToGlobal(global, local, dofMap_.ElementDofs(elId),
@@ -196,42 +218,72 @@ void HydroAssembler2D::AddToGlobal(HydroGlobalSystem &global,
                                    const std::array<int, 15> &dofs,
                                    int numVelocityDofs,
                                    Triplets &triplets) const {
-
     // Velocity operators: 12 x 12
     for (int i = 0; i < 12; ++i) {
         const int globalI = dofs[i];
-
         // Force vector
         global.force(globalI) += local.force(i);
-
         for (int j = 0; j < 12; ++j) {
             const int globalJ = dofs[j];
-
             triplets.massTriplets.emplace_back(globalI, globalJ,
                                                local.mass(i, j));
-
             triplets.viscosityTriplets.emplace_back(globalI, globalJ,
                                                     local.viscosity(i, j));
         }
     }
-
     for (int i = 0; i < 3; ++i) {
         const int pressureId = dofs[12 + i] - numVelocityDofs;
-
         for (int j = 0; j < 12; ++j) {
             const int velocityId = dofs[j];
-
             triplets.divergenceTriplets.emplace_back(pressureId, velocityId,
                                                      local.divergence(i, j));
         }
     }
 }
 
+Eigen::Matrix<double, 12, 12> HydroAssembler2D::MakeLocalConvection(
+    const TriangleP2 &p2, const std::array<Point2D, 3> &vertices,
+    const Eigen::Matrix<double, 12, 1>& transportVelocity) const {
+    Eigen::Matrix<double, 12, 12> localConvection =
+        Eigen::Matrix<double, 12, 12>::Zero();
+    double rho = problem_.Density();
+    const auto quadraturePoints = MakeConvectionQuadraturePoints();
+
+    for (const auto &qp : quadraturePoints) {
+        Point2D internalPonitInTrinagle{
+            qp.L1 * vertices[0].x + qp.L2 * vertices[1].x +
+                qp.L3 * vertices[2].x,
+            qp.L1 * vertices[0].y + qp.L2 * vertices[1].y +
+                qp.L3 * vertices[2].y};
+        // velocityGradMatrix and shape functions
+        const auto gradN = p2.Grad(internalPonitInTrinagle);
+        const auto N = p2.Shape(internalPonitInTrinagle);
+        const double weight = p2.Area() * qp.weight;
+
+        Eigen::Vector2d beta = Eigen::Vector2d::Zero();
+
+        for (int i = 0; i < 6; i++) {
+            beta.x() += N(i) * transportVelocity(2 * i);
+            beta.y() += N(i) * transportVelocity(2 * i + 1);
+        }
+
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                const double derivateve =
+                    beta.x() * gradN(0, j) + beta.y() * gradN(1, j);
+                const double value = rho * weight * N(i) * derivateve;
+                localConvection(2 * i, 2 * j) += value;
+                localConvection(2 * i + 1, 2 * j + 1) += value;
+            }
+        }
+    }
+    return localConvection;
+}
+
 HydroLocalSystem
 HydroAssembler2D::MakeLocalSystem(const TriangleP1 &p1, const TriangleP2 &p2,
                                   const std::array<Point2D, 3> &vertices,
                                   double time) const {
-
     HydroLocalSystem local;
     local.mass.setZero();
     local.viscosity.setZero();
@@ -247,7 +299,6 @@ HydroAssembler2D::MakeLocalSystem(const TriangleP1 &p1, const TriangleP2 &p2,
     C(2, 2) = mu;
 
     const auto quadraturePoints = MakeQuadraturePoints();
-
     for (const auto &qp : quadraturePoints) {
         Point2D internalPonitInTrinagle{
             qp.L1 * vertices[0].x + qp.L2 * vertices[1].x +
@@ -256,7 +307,6 @@ HydroAssembler2D::MakeLocalSystem(const TriangleP1 &p1, const TriangleP2 &p2,
                 qp.L3 * vertices[2].y};
         const auto velocityGradMatrix = p2.Grad(internalPonitInTrinagle);
         const auto velocityShapeVector = p2.Shape(internalPonitInTrinagle);
-
         const auto pressureShape = p1.Shape(internalPonitInTrinagle);
 
         // Velocity strain-displacement matrix
@@ -352,23 +402,46 @@ HydroAssembler2D::MakeQuadraturePoints() const {
     return quadraturePoints;
 }
 
+std::array<TriangleQuadraturePoint, 7>
+HydroAssembler2D::MakeConvectionQuadraturePoints() const {
+
+    constexpr double a = 0.059715871789770;
+    constexpr double b = 0.470142064105115;
+
+    constexpr double c = 0.797426985353087;
+    constexpr double d = 0.101286507323456;
+
+    constexpr double w0 = 0.225000000000000;
+    constexpr double w1 = 0.132394152788506;
+    constexpr double w2 = 0.125939180544827;
+
+    return {{// Center
+             {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, w0},
+
+             // Three permutations of (a, b, b)
+             {a, b, b, w1},
+             {b, a, b, w1},
+             {b, b, a, w1},
+
+             // Three permutations of (c, d, d)
+             {c, d, d, w2},
+             {d, c, d, w2},
+             {d, d, c, w2}}};
+}
+
 void HydroAssembler2D::AssembleTraction(HydroGlobalSystem &global,
                                         double time) const {
 
     for (const auto &condition : problem_.BoundaryConditions()) {
-
         if (condition.type != HydroBoundaryConditionType::Traction &&
             condition.type != HydroBoundaryConditionType::NormalTraction) {
             continue;
         }
         for (const auto &edge : mesh_.BoundaryEdges()) {
-
             if (edge.boundaryId != condition.boundaryId) {
                 continue;
             }
-
             const auto localForce = MakeLocalTraction(edge, condition, time);
-
             AddTractionToGlobal(global, edge, localForce);
         }
     }
