@@ -1,6 +1,7 @@
 #include "fem/dofs/P2DofMap.h"
 #include "geometry/Circle.h"
 #include "geometry/Rectangle.h"
+#include "geometry/RectangleWithHole.h"
 #include "mesh/Mesh2D.h"
 #include "mesh/generators/MesherRectangle.h"
 #include <cmath>
@@ -14,19 +15,108 @@
 #include "io/VTKWriter.h"
 #include <cassert>
 #include <iostream>
+
+enum class ChannelHoleBoundary {
+    Bottom = 1,
+    Right = 2,
+    Top = 3,
+    Left = 4,
+    Hole = 5
+};
+
+void TagChannelWithHoleBoundaries(Mesh &mesh, double L, double H,
+                                  Point2D holeCenter, double holeRadius) {
+    using Edge = std::pair<int, int>;
+
+    struct PairHash {
+        std::size_t operator()(const Edge &edge) const {
+            auto h1 = std::hash<int>{}(edge.first);
+            auto h2 = std::hash<int>{}(edge.second);
+            return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
+        }
+    };
+
+    std::unordered_map<Edge, int, PairHash> edgeCount;
+
+    for (const auto &el : mesh.Elements()) {
+        std::array<Edge, 3> edges = {Edge{el.nodes_id[0], el.nodes_id[1]},
+                                     Edge{el.nodes_id[1], el.nodes_id[2]},
+                                     Edge{el.nodes_id[2], el.nodes_id[0]}};
+
+        for (auto [a, b] : edges) {
+            if (a > b) {
+                std::swap(a, b);
+            }
+            edgeCount[Edge{a, b}]++;
+        }
+    }
+
+    constexpr double epsRect = 1e-6;
+    constexpr double epsHole = 5e-4;
+
+    for (const auto &[edge, count] : edgeCount) {
+        if (count != 1) {
+            continue; // не граничное ребро
+        }
+
+        const Point2D &p1 = mesh.NodeById(edge.first).position;
+        const Point2D &p2 = mesh.NodeById(edge.second).position;
+
+        const double mx = 0.5 * (p1.x + p2.x);
+        const double my = 0.5 * (p1.y + p2.y);
+
+        BoundaryId id = DefaultBoundaryId;
+
+        if (std::abs(my - 0.0) < epsRect) {
+            id = static_cast<int>(ChannelHoleBoundary::Bottom);
+        }
+        else if (std::abs(mx - L) < epsRect) {
+            id = static_cast<int>(ChannelHoleBoundary::Right);
+        }
+        else if (std::abs(my - H) < epsRect) {
+            id = static_cast<int>(ChannelHoleBoundary::Top);
+        }
+        else if (std::abs(mx - 0.0) < epsRect) {
+            id = static_cast<int>(ChannelHoleBoundary::Left);
+        }
+        else {
+            const double r = std::hypot(mx - holeCenter.x, my - holeCenter.y);
+
+            if (std::abs(r - holeRadius) < epsHole) {
+                id = static_cast<int>(ChannelHoleBoundary::Hole);
+            }
+            else {
+                throw std::runtime_error("TagChannelWithHoleBoundaries: "
+                                         "failed to classify boundary edge");
+            }
+        }
+
+        mesh.AddBoundaryEdge(
+            BoundaryEdge{.nodes_id = edge, .boundaryId = id, .elementId = -1});
+    }
+
+    // пересобираем boundaryEdges_ уже с корректными id и elementId
+    mesh.CreateBoundaryEdges(DefaultBoundaryId);
+}
+
 int main() {
 
     // ================================================
     // Geometry and mesh
     // ================================================
 
-    constexpr double L = 0.05;
+    constexpr double L = 0.06;
     constexpr double H = 0.02;
 
-    Rectangle rectangle(H, L, Point2D{0.0, 0.0});
+    // Rectangle rectangle(H, L, Point2D{0.0, 0.0});
 
-    MesherRectangle mesher(30, 15);
-    Mesh mesh = mesher.generateMesh(rectangle);
+    // MesherRectangle mesher(30, 15);
+    // Mesh mesh = mesher.generateMesh(rectangle);
+
+    Mesh mesh =
+        VTKReader::ReadUstructuredGrid("channel_hole_L006_under800.vtk");
+
+    TagChannelWithHoleBoundaries(mesh, L, H, Point2D{0.03, 0.01}, 0.003);
 
     // ================================================
     // Fluid properties
@@ -35,7 +125,7 @@ int main() {
     constexpr double rho = 1000.0;
     constexpr double mu = 0.01;
 
-    constexpr double Uavg = 0.20;
+    constexpr double Uavg = 0.10;
 
     // Reynolds number based on channel height
     const double Re = rho * Uavg * H / mu;
@@ -48,8 +138,8 @@ int main() {
     // Time parameters
     // ================================================
 
-    constexpr double dt = 0.002;
-    constexpr double timeEnd = 0.8;
+    constexpr double dt = 0.0025;
+    constexpr double timeEnd = 0.7;
 
     constexpr double rampTime = 0.05;
 
@@ -57,7 +147,7 @@ int main() {
     // Inlet perturbation
     // ================================================
 
-    constexpr double perturbationFraction = 0.05;
+    constexpr double perturbationFraction = 0.00;
     constexpr double perturbationFrequency = 20.0;
 
     const auto zeroVelocity = [](double, double, double) {
@@ -112,6 +202,9 @@ int main() {
 
     // Zero traction at outlet
     hydroTask.AddTraction(right, zeroVelocity);
+
+    constexpr BoundaryId hole = 5;
+    hydroTask.AddVelocityDirichlet(hole, zeroVelocity);
 
     // ================================================
     // Solver

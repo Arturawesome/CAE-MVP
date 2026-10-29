@@ -18,6 +18,7 @@ add_executable(cae_mvp
     io/VTKHydroWriter.cpp
     io/VTKSeriesWriter.cpp
     
+    
     # physics/heat/problem/Problem.cpp
     # physics/heat/assembly/Assembler2D.cpp
     # physics/heat/assembly/BoundaryAssembler2D.cpp
@@ -31,6 +32,7 @@ add_executable(cae_mvp
 
     fem/elements/TriangleP1.cpp
     fem/elements/TriangleP2.cpp
+    geometry/RectangleWithHole.h
     fem/systems/LinearSystem.h
     fem/dofs/P2DofMap.cpp
     fem/dofs/TaylorHoodDofMap.h

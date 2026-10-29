@@ -3,6 +3,12 @@
 #include <fstream>
 #include "mesh/Mesh2D.h"
 
+#include <cmath>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+#include <stdexcept>
+
 
 class VTKReader {
     public:
