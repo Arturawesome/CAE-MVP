@@ -1,49 +1,51 @@
 #include "Assembler2D.h"
 
 HeatAssembler2D::HeatAssembler2D(const HeatProblem &problem, const Mesh &mesh)
-    : problem_(problem), mesh_(mesh) {
-
-    
-}
+    : problem_(problem), mesh_(mesh) {}
 
 LinearSystem HeatAssembler2D::Assemble() {
     LinearSystem system = LinearSystem(mesh_.NumNodes());
     int numEl = mesh_.NumEl();
+    std::vector<Eigen::Triplet<double>> triplets;
+    triplets.reserve(static_cast<std::size_t>(mesh_.NumEl()) * 9);
     for (int elId = 0; elId < numEl; ++elId) {
         TriangleP1 triangle(mesh_, elId);
-        MakeLocalF(triangle);
-        MakeLocalK(triangle);
-        AddToGlobal(system, elId);
-    }
+        auto locF = MakeLocalF(triangle);
+        auto locK = MakeLocalK(triangle);
 
+        // collect triplets
+        for (std::size_t i = 0; i < 3; ++i) {
+            int node_i_id = mesh_.NodeIdFromEl(elId, i);
+
+            for (std::size_t j = 0; j < 3; ++j) {
+                int node_j_id = mesh_.NodeIdFromEl(elId, j);
+                triplets.emplace_back(node_i_id, node_j_id, locK(i, j));
+            }
+            // collect forsec
+            system.F(node_i_id) += locF(i);
+        }
+    }
+    system.K.setFromTriplets(triplets.begin(), triplets.end());
+    system.K.makeCompressed();
     return system;
 }
 
+Eigen::Vector3d HeatAssembler2D::MakeLocalF(const TriangleP1 &triangle) const {
+    Eigen::Vector3d locF_;
 
-
-void HeatAssembler2D::AddToGlobal(LinearSystem& system, std::size_t elId) {
-
-    for (std::size_t i = 0; i < 3; ++i) {
-        std::size_t node_i_id = mesh_.NodeIdFromEl(elId, i);
-
-        for (std::size_t j = 0; j < 3; ++j) {
-            std::size_t node_j_id = mesh_.NodeIdFromEl(elId, j);
-            system.K(node_i_id, node_j_id) += locK_(i, j);
-        }
-
-        system.F(node_i_id) += locF_(i);
-    }
-}
-
-void HeatAssembler2D::MakeLocalF(const TriangleP1 &triangle) {
-    double source =problem_.Source(triangle.Center()) / 3 * triangle.Area(); 
+    double source = problem_.Source(triangle.Center()) / 3 * triangle.Area();
     for (std::size_t i = 0; i < 3; ++i) {
         locF_(i) = source;
     }
+    return locF_;
 }
 
-void HeatAssembler2D::MakeLocalK(const TriangleP1 &triangle) {
+Eigen::Matrix<double, 3, 3>
+HeatAssembler2D::MakeLocalK(const TriangleP1 &triangle) const {
+    Eigen::Matrix<double, 3, 3> locK_;
+
     double lambda = problem_.Lambda();
     locK_ = lambda * triangle.Area() * triangle.Grad().transpose() *
             triangle.Grad();
+    return locK_;
 }
