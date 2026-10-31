@@ -1,3 +1,0 @@
-/home/softmatter/Documents/ResumeCV/Education/CppEx/AbstractPoli/MyVector/build/CMakeFiles/mv.out.dir
-/home/softmatter/Documents/ResumeCV/Education/CppEx/AbstractPoli/MyVector/build/CMakeFiles/edit_cache.dir
-/home/softmatter/Documents/ResumeCV/Education/CppEx/AbstractPoli/MyVector/build/CMakeFiles/rebuild_cache.dir

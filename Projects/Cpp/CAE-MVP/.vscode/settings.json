@@ -1,4 +1,0 @@
-{
-    "terminal.integrated.fontSize": 20,
-    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json"
-}

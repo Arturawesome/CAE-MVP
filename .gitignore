@@ -1,3 +1,7 @@
+# Build directories
+build/
+build-*/
+
 # Prerequisites
 *.d
 
@@ -54,3 +58,4 @@ dkms.conf
 .DS_Store
 .DS_Store?
 ._*
+*.zip
