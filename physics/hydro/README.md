@@ -4,10 +4,10 @@
 
 ## Уравнения
 
-\[
+$$
 \rho(\partial_t\mathbf u+(\mathbf u\cdot\nabla)\mathbf u)-\nabla\cdot(2\mu D(\mathbf u))+\nabla p=\mathbf f,
 \qquad\nabla\cdot\mathbf u=0.
-\]
+$$
 
 \(\rho\) — плотность, \(\mu\) — динамическая вязкость, \(\mathbf u\) — скорость, \(p\) — давление. Для линейного Стокса конвективный член опускают; в текущем коде он **присутствует**, поэтому название «только Стокс» было бы неточным.
 
@@ -19,12 +19,12 @@
 
 При согласованном выборе знаков слабой формы:
 
-\[
+$$
 \begin{pmatrix}M/\Delta t+A+C(\mathbf u^n)&-B^T\\B&0\end{pmatrix}
 \begin{pmatrix}\mathbf u^{n+1}\\p^{n+1}\end{pmatrix}
 =
 \begin{pmatrix}\mathbf f^{n+1}+(M/\Delta t)\mathbf u^n\\0\end{pmatrix}.
-\]
+$$
 
 Здесь \(M\) — массовая, \(A\) — вязкостная, \(C\) — конвективная, \(B\) — дивергенция. **Знаки блоков** должны соответствовать фактической реализации `BuildTimeSystem`, а не механически копироваться из другой книги.
 

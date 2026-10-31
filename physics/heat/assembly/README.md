@@ -6,10 +6,10 @@
 
 Для P1-треугольника \(K_e\):
 
-\[
+$$
 K^e_{ij}=\lambda\int_{K_e}\nabla N_i\cdot\nabla N_j\,d\Omega
 =\lambda|K_e|\nabla N_i\cdot\nabla N_j.
-\]
+$$
 
 Локальная матрица **3×3**. Элементные коэффициенты помещаются в `Eigen::Triplet`, одинаковые глобальные индексы суммируются. Источник интегрируется в текущей реализации с выбранной аппроксимацией по элементу; для непостоянного источника точность интегрирования следует проверять отдельно.
 
@@ -23,10 +23,10 @@ K^e_{ij}=\lambda\int_{K_e}\nabla N_i\cdot\nabla N_j\,d\Omega
 
 Для \(-\lambda\partial_nT=\alpha(T-T_\infty)\) граничный вклад переносится в левую часть:
 
-\[
+$$
 K^\Gamma=\frac{\alpha\ell}{6}\begin{pmatrix}2&1\\1&2\end{pmatrix},\qquad
 F^\Gamma=\frac{\alpha T_\infty\ell}{2}\begin{pmatrix}1\\1\end{pmatrix}.
-\]
+$$
 
 Код собирает отдельные sparse-триплеты и добавляет граничную матрицу к объёмной.
 
