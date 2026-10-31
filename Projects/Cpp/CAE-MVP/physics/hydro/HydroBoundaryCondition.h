@@ -1,14 +1,13 @@
 #pragma once
 #include "mesh/BoundaryId.h"
-#include <functional>
 #include <Eigen/Dense>
-
+#include <functional>
+namespace hydro {
 enum class HydroBoundaryConditionType {
     VelocityDirichlet,
     NormalTraction,
     Traction
 };
-
 
 struct HydroBoundaryCondition {
     BoundaryId boundaryId = 0;
@@ -16,5 +15,6 @@ struct HydroBoundaryCondition {
 
     std::function<Eigen::Vector2d(double, double, double)> velocity;
     std::function<Eigen::Vector2d(double, double, double)> traction;
-    std::function<double(double, double, double)> normalTraction; 
+    std::function<double(double, double, double)> normalTraction;
 };
+} // namespace hydro

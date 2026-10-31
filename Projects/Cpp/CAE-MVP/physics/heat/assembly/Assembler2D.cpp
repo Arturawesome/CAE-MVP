@@ -1,6 +1,7 @@
 #include "Assembler2D.h"
-
-HeatAssembler2D::HeatAssembler2D(const HeatProblem &problem, const mesh::Mesh &mesh)
+namespace heat {
+HeatAssembler2D::HeatAssembler2D(const HeatProblem &problem,
+                                 const mesh::Mesh &mesh)
     : problem_(problem), mesh_(mesh) {}
 
 fem::LinearSystem HeatAssembler2D::Assemble() {
@@ -14,7 +15,7 @@ fem::LinearSystem HeatAssembler2D::Assemble() {
             vertices[i] = mesh_.NodeById(mesh_.NodeIdFromEl(elId, i)).position;
         }
         fem::TriangleP1 triangle(vertices[0], vertices[1], vertices[2], elId);
-    
+
         auto locF = MakeLocalF(triangle);
         auto locK = MakeLocalK(triangle);
 
@@ -35,7 +36,8 @@ fem::LinearSystem HeatAssembler2D::Assemble() {
     return system;
 }
 
-Eigen::Vector3d HeatAssembler2D::MakeLocalF(const fem::TriangleP1 &triangle) const {
+Eigen::Vector3d
+HeatAssembler2D::MakeLocalF(const fem::TriangleP1 &triangle) const {
     Eigen::Vector3d locF_;
 
     double source = problem_.Source(triangle.Center()) / 3 * triangle.Area();
@@ -54,3 +56,4 @@ HeatAssembler2D::MakeLocalK(const fem::TriangleP1 &triangle) const {
             triangle.Grad();
     return locK_;
 }
+} // namespace heat

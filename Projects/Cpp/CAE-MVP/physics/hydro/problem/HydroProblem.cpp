@@ -1,6 +1,6 @@
 #include "HydroProblem.h"
 #include <iostream>
-
+namespace hydro {
 HydroProblem::HydroProblem(double viscosity, double density,
                            VectorField externalForce,
                            VectorField initialVelocity)
@@ -71,3 +71,4 @@ const std::vector<HydroBoundaryCondition> &
 HydroProblem::BoundaryConditions() const {
     return boundaryConditions_;
 }
+} // namespace hydro

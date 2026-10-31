@@ -1,7 +1,8 @@
 #pragma once
 #include "mesh/BoundaryId.h"
-enum class HeatBoundaryType { Dirichlet, Neumann, Robin };
 
+namespace heat {
+enum class HeatBoundaryType { Dirichlet, Neumann, Robin };
 
 struct HeatBoundaryCondition {
     BoundaryId boundaryId = 0;
@@ -10,3 +11,5 @@ struct HeatBoundaryCondition {
     double value1 = 0;
     double value2 = 0;
 };
+
+} // namespace heat

@@ -1,5 +1,5 @@
 #include "HydroAssembler.h"
-
+namespace hydro {
 HydroAssembler2D::HydroAssembler2D(const HydroProblem &problem,
                                    const mesh::Mesh &mesh,
                                    const fem::TaylorHoodDofMap &dofMap)
@@ -48,20 +48,19 @@ void HydroAssembler2D::UpdateConvection(
 
         auto localConvection =
             MakeLocalConvection(TriangleP2, vertices, localVelocity);
-        for(int i = 0; i < 12; i++){
-            for(int j = 0; j < 12; ++j){
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 12; ++j) {
                 triplets.emplace_back(dofs[i], dofs[j], localConvection(i, j));
             }
-        }    
+        }
     }
     global.convection.setFromTriplets(triplets.begin(), triplets.end());
     global.convection.makeCompressed();
 }
 
-Eigen::Matrix<double, 12, 1>
-HydroAssembler2D::MakeLocalForce(const fem::TriangleP2 &p2,
-                                 const std::array<geometry::Point2D, 3> &vertices,
-                                 double time) const {
+Eigen::Matrix<double, 12, 1> HydroAssembler2D::MakeLocalForce(
+    const fem::TriangleP2 &p2, const std::array<geometry::Point2D, 3> &vertices,
+    double time) const {
 
     Eigen::Matrix<double, 12, 1> localForce =
         Eigen::Matrix<double, 12, 1>::Zero();
@@ -113,7 +112,8 @@ HydroAssembler2D::MakeLocalTraction(const mesh::BoundaryEdge &edge,
     }
 
     Eigen::Matrix<double, 6, 1> localF = Eigen::Matrix<double, 6, 1>::Zero();
-    std::array<fem::EdgeQuadraturePoint, 3> quadro = fem::MakeEdgeQuadraturePoints();
+    std::array<fem::EdgeQuadraturePoint, 3> quadro =
+        fem::MakeEdgeQuadraturePoints();
     for (int i = 0; i < 3; ++i) {
         double s = quadro[i].pos;
         double w = quadro[i].weight * length;
@@ -243,7 +243,7 @@ void HydroAssembler2D::AddToGlobal(HydroGlobalSystem &global,
 
 Eigen::Matrix<double, 12, 12> HydroAssembler2D::MakeLocalConvection(
     const fem::TriangleP2 &p2, const std::array<geometry::Point2D, 3> &vertices,
-    const Eigen::Matrix<double, 12, 1>& transportVelocity) const {
+    const Eigen::Matrix<double, 12, 1> &transportVelocity) const {
     Eigen::Matrix<double, 12, 12> localConvection =
         Eigen::Matrix<double, 12, 12>::Zero();
     double rho = problem_.Density();
@@ -280,10 +280,9 @@ Eigen::Matrix<double, 12, 12> HydroAssembler2D::MakeLocalConvection(
     return localConvection;
 }
 
-HydroLocalSystem
-HydroAssembler2D::MakeLocalSystem(const fem::TriangleP1 &p1, const fem::TriangleP2 &p2,
-                                  const std::array<geometry::Point2D, 3> &vertices,
-                                  double time) const {
+HydroLocalSystem HydroAssembler2D::MakeLocalSystem(
+    const fem::TriangleP1 &p1, const fem::TriangleP2 &p2,
+    const std::array<geometry::Point2D, 3> &vertices, double time) const {
     HydroLocalSystem local;
     local.mass.setZero();
     local.viscosity.setZero();
@@ -365,3 +364,4 @@ void HydroAssembler2D::AssembleTraction(HydroGlobalSystem &global,
         }
     }
 }
+} // namespace hydro

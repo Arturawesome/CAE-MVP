@@ -15,8 +15,8 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
-
-HydroSolver::HydroSolver(const HydroProblem &problem,  mesh::Mesh &mesh,
+namespace hydro {
+HydroSolver::HydroSolver(const HydroProblem &problem, mesh::Mesh &mesh,
                          double timeEnd, double dt)
     : problem_(problem), mesh_(mesh), timeEnd_(timeEnd), dt_(dt),
       p2DofMap_(mesh_), taylorHoodDofMap_(mesh_, p2DofMap_) {
@@ -176,3 +176,4 @@ HydroSolver::BuildTimeSystem(const HydroGlobalSystem &global,
 }
 
 const Eigen::VectorXd &HydroSolver::Solution() { return solution_; }
+} // namespace hydro

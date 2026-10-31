@@ -9,7 +9,7 @@
 #include <Eigen/Sparse>
 #include <array>
 #include <vector>
-
+namespace hydro {
 using SparseTriplet = Eigen::Triplet<double>;
 
 // block numeration: global solition vector:
@@ -60,18 +60,21 @@ class HydroAssembler2D {
 
   private:
     Eigen::Matrix<double, 12, 12> MakeLocalConvection(
-        const fem::TriangleP2 &p2, const std::array<geometry::Point2D, 3> &vertices,
-        const Eigen::Matrix<double, 12, 1>& transportVelocity) const;
+        const fem::TriangleP2 &p2,
+        const std::array<geometry::Point2D, 3> &vertices,
+        const Eigen::Matrix<double, 12, 1> &transportVelocity) const;
 
     Eigen::Matrix<double, 12, 1>
-    MakeLocalForce(const fem::TriangleP2 &p2, const std::array<geometry::Point2D, 3> &vertices,
+    MakeLocalForce(const fem::TriangleP2 &p2,
+                   const std::array<geometry::Point2D, 3> &vertices,
                    double time) const;
     void AddToGlobal(HydroGlobalSystem &global, const HydroLocalSystem &local,
                      const std::array<int, 15> &dofs, int numVelocityDofs,
                      Triplets &triplets) const;
-    HydroLocalSystem MakeLocalSystem(const fem::TriangleP1 &p1, const fem::TriangleP2 &p2,
-                                     const std::array<geometry::Point2D, 3> &vertices,
-                                     double time) const;
+    HydroLocalSystem
+    MakeLocalSystem(const fem::TriangleP1 &p1, const fem::TriangleP2 &p2,
+                    const std::array<geometry::Point2D, 3> &vertices,
+                    double time) const;
     // std::array<TriangleQuadraturePoint, 7>
     // MakeConvectionQuadraturePoints() const;
     // std::array<TriangleQuadraturePoint, 6> MakeQuadraturePoints() const;
@@ -83,9 +86,12 @@ class HydroAssembler2D {
                       double time) const;
 
     void
-    AddTractionToGlobal(HydroGlobalSystem &global, const mesh::BoundaryEdge &edge,
+    AddTractionToGlobal(HydroGlobalSystem &global,
+                        const mesh::BoundaryEdge &edge,
                         const Eigen::Matrix<double, 6, 1> &localForce) const;
 
     // обход по граничным ребрам
     void AssembleTraction(HydroGlobalSystem &global, double time) const;
 };
+
+} // namespace hydro

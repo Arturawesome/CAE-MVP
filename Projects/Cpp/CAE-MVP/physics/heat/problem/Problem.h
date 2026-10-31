@@ -3,9 +3,9 @@
 #include <iostream>
 #include <vector>
 
-#include "physics/heat/HeatBoundaryCondition.h"
 #include "mesh/Mesh2D.h"
-
+#include "physics/heat/HeatBoundaryCondition.h"
+namespace heat {
 class HeatProblem {
   private:
     const mesh::Mesh &mesh_;
@@ -14,7 +14,7 @@ class HeatProblem {
 
   private:
     std::function<double(double, double, double)> source_;
-    
+
   public:
     HeatProblem(const mesh::Mesh &mesh, double lambda,
                 std::function<double(double, double, double)> source);
@@ -24,31 +24,12 @@ class HeatProblem {
     const mesh::Mesh &GetMesh() const;
     double Lambda() const;
     double Source(double x, double y, double z = 0.0) const;
-    double Source(const geometry::Point2D& elementCenter) const;
-    const std::vector<HeatBoundaryCondition>& HeatBoundaryConditions() const;
+    double Source(const geometry::Point2D &elementCenter) const;
+    const std::vector<HeatBoundaryCondition> &HeatBoundaryConditions() const;
 
     void AddDirichlet(BoundaryId id, double temprature);
     void AddNeumann(BoundaryId id, double flux);
     void AddRobin(BoundaryId id, double alpha, double temprature);
-
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+} // namespace heat

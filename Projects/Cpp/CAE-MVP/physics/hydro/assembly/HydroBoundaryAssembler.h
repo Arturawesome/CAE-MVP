@@ -5,21 +5,25 @@
 #include "mesh/Mesh2D.h"
 #include "physics/hydro/problem/HydroProblem.h"
 #include <unordered_map>
-
+namespace hydro {
 class HydroBoundaryAssembler2D {
   public:
     HydroBoundaryAssembler2D() = default;
     void Apply(fem::LinearSystem &system, double currTime,
                const HydroProblem &problem, const mesh::Mesh &mesh,
-               const fem::P2DofMap &p2DofMap, const fem::TaylorHoodDofMap &dofMap) const;
+               const fem::P2DofMap &p2DofMap,
+               const fem::TaylorHoodDofMap &dofMap) const;
 
   private:
     std::unordered_map<int, double>
     CollectVelocityDirichlet(double currTime, const HydroProblem &problem,
-                             const mesh::Mesh &mesh, const fem::P2DofMap &p2DofMap,
+                             const mesh::Mesh &mesh,
+                             const fem::P2DofMap &p2DofMap,
                              const fem::TaylorHoodDofMap &dofMap) const;
     void ApplyVelocityDirichlet(fem::LinearSystem &system, double currTime,
-                                const HydroProblem &problem, const mesh::Mesh &mesh,
+                                const HydroProblem &problem,
+                                const mesh::Mesh &mesh,
                                 const fem::P2DofMap &p2DofMap,
                                 const fem::TaylorHoodDofMap &dofMap) const;
 };
+} // namespace hydro

@@ -2,10 +2,11 @@
 #include <Eigen/Sparse>
 #include <iostream>
 #include <unordered_set>
-void HydroBoundaryAssembler2D::Apply(fem::LinearSystem &system, double currTime,
-                                     const HydroProblem &problem,
-                                     const mesh::Mesh &mesh, const fem::P2DofMap &p2DofMap,
-                                     const fem::TaylorHoodDofMap &dofMap) const {
+namespace hydro {
+void HydroBoundaryAssembler2D::Apply(
+    fem::LinearSystem &system, double currTime, const HydroProblem &problem,
+    const mesh::Mesh &mesh, const fem::P2DofMap &p2DofMap,
+    const fem::TaylorHoodDofMap &dofMap) const {
 
     const auto &boundCond = problem.BoundaryConditions();
 
@@ -40,7 +41,8 @@ void HydroBoundaryAssembler2D::ApplyVelocityDirichlet(
             if (fixedCol != mapIdVelocity.end()) {
                 // Переносим известную скорость в правую часть
                 system.F(row) -= value * fixedCol->second;
-            } else {
+            }
+            else {
                 triplets.emplace_back(row, col, value);
             }
         }
@@ -48,7 +50,6 @@ void HydroBoundaryAssembler2D::ApplyVelocityDirichlet(
     Eigen::SparseMatrix<double> newK(system.K.rows(), system.K.cols());
     newK.setFromTriplets(triplets.begin(), triplets.end());
     system.K = std::move(newK);
-
 }
 
 std::unordered_map<int, double>
@@ -112,3 +113,4 @@ HydroBoundaryAssembler2D::CollectVelocityDirichlet(
     }
     return mapIdVelocity;
 }
+} // namespace hydro

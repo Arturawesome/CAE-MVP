@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <utility>
 
+namespace heat {
 HeatSolver::HeatSolver(HeatProblem &problem)
     : problem_(problem), mesh_(problem.GetMesh()) {
 
@@ -38,3 +39,4 @@ void HeatSolver::Solve() {
 }
 
 const Eigen::VectorXd &HeatSolver::Solution() { return solution_; }
+} // namespace heat

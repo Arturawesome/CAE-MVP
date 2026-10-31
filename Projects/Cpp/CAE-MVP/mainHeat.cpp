@@ -26,7 +26,7 @@ int main() {
         // Heat problem
         constexpr double lambda = 10.0;
 
-        HeatProblem problem(mesh, lambda, [](double, double, double) {
+        heat::HeatProblem problem(mesh, lambda, [](double, double, double) {
             return 0.0; // No heat source
         });
 
@@ -44,7 +44,7 @@ int main() {
                            0.0);
 
         // Solve
-        HeatSolver solver(problem);
+        heat::HeatSolver solver(problem);
         solver.Solve();
 
         const auto &solution = solver.Solution();

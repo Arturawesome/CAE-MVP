@@ -5,6 +5,9 @@
 #include <Eigen/Core>
 #include <functional>
 #include <vector>
+
+namespace hydro {
+
 class HydroProblem {
   public:
     // f(x, y, t)
@@ -35,3 +38,5 @@ class HydroProblem {
     void AddOutletNormalTraction(BoundaryId id, ScalarField normalTraction);
     void AddOutletPressure(BoundaryId id, ScalarField pressure);
 };
+
+} // namespace hydro
