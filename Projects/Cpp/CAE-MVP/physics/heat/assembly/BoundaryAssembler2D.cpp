@@ -1,165 +1,181 @@
 #include "BoundaryAssembler2D.h"
-#include <unordered_set>
 
-void HeatBoundaryAssembler2D::Apply(LinearSystem &system,
-                                    const HeatProblem &problem,
-                                    const Mesh &mesh) {
+#include <Eigen/Sparse>
+#include <algorithm>
+#include <cmath>
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-    const auto& boundConds = problem.HeatBoundaryConditions();
-    for (const auto& cond : boundConds) {
+
+
+double EdgeLength(const Mesh& mesh, const BoundaryEdge& edge) {
+    const auto& a = mesh.NodeById(edge.nodes_id.first).position;
+    const auto& b = mesh.NodeById(edge.nodes_id.second).position;
+    const double length = std::hypot(b.x - a.x, b.y - a.y);
+    if (!std::isfinite(length) || length <= 0.0) {
+        throw std::runtime_error("HeatBoundaryAssembler2D: invalid boundary edge length");
+    }
+    return length;
+}
+
+bool SameTemperature(double a, double b) {
+    constexpr double tolerance = 1e-10;
+    return std::abs(a - b) <= tolerance * std::max({1.0, std::abs(a), std::abs(b)});
+}
+
+
+
+void HeatBoundaryAssembler2D::Apply(LinearSystem& system,
+                                    const HeatProblem& problem,
+                                    const Mesh& mesh) const {
+    if (system.K.rows() != system.K.cols() ||
+        system.K.rows() != mesh.NumNodes() || system.F.size() != mesh.NumNodes()) {
+        throw std::invalid_argument("HeatBoundaryAssembler2D: system size does not match mesh");
+    }
+
+    // Natural boundary conditions must be assembled before eliminating fixed DOFs.
+    for (const auto& cond : problem.HeatBoundaryConditions()) {
         switch (cond.type) {
         case HeatBoundaryType::Neumann:
-            addNeuman(system, mesh, cond.boundaryId, cond.value1);
+            AddNeumann(system, mesh, cond.boundaryId, cond.value1);
             break;
         case HeatBoundaryType::Robin:
-            addRobin(system, mesh, cond.boundaryId, cond.value1, cond.value2);
+            AddRobin(system, mesh, cond.boundaryId, cond.value1, cond.value2);
             break;
         case HeatBoundaryType::Dirichlet:
             break;
         }
     }
-    for (const auto &cond : boundConds) {
-        if (cond.type == HeatBoundaryType::Dirichlet) {
-            addDirichlet(system, mesh, cond.boundaryId, cond.value1);
-        }
-    }
+
+    ApplyDirichlet(system, CollectDirichlet(problem, mesh));
 }
 
-void HeatBoundaryAssembler2D::addNeuman(LinearSystem &system, const Mesh &mesh,
-                                        BoundaryId boundaryId, double flux) {
-    std::size_t processedEdges = 0;
+std::unordered_map<int, double> HeatBoundaryAssembler2D::CollectDirichlet(
+    const HeatProblem& problem, const Mesh& mesh) const {
+    std::unordered_map<int, double> fixedNodes;
 
-    for (const BoundaryEdge &be : mesh.BoundaryEdges()) {
-        if (be.boundaryId != boundaryId) {
+    for (const auto& cond : problem.HeatBoundaryConditions()) {
+        if (cond.type != HeatBoundaryType::Dirichlet) {
             continue;
         }
-
-        int id1 = be.nodes_id.first;
-        int id2 = be.nodes_id.second;
-
-        const Node &node1 = mesh.NodeById(id1);
-        const Node &node2 = mesh.NodeById(id2);
-
-        double dx = node2.position.x - node1.position.x;
-        double dy = node2.position.y - node1.position.y;
-
-        const double edgeLength = std::hypot(dx, dy);
-        if (edgeLength <= 0.0) {
-            throw std::runtime_error(
-                "HeatSolver::applyNeumannToEdge: zero-length boundary edge");
+        if (!std::isfinite(cond.value1)) {
+            throw std::invalid_argument("Dirichlet: temperature must be finite");
         }
 
-        double localContribution = flux * 0.5 * edgeLength;
-
-        system.F[id1] += localContribution;
-        system.F[id2] += localContribution;
-
-        ++processedEdges;
+        std::size_t processedEdges = 0;
+        for (const auto& edge : mesh.BoundaryEdges()) {
+            if (edge.boundaryId != cond.boundaryId) {
+                continue;
+            }
+            ++processedEdges;
+            for (int nodeId : {edge.nodes_id.first, edge.nodes_id.second}) {
+                const auto [it, inserted] = fixedNodes.try_emplace(nodeId, cond.value1);
+                if (!inserted && !SameTemperature(it->second, cond.value1)) {
+                    throw std::runtime_error(
+                        "Dirichlet: conflicting temperatures at node " + std::to_string(nodeId));
+                }
+            }
+        }
+        if (processedEdges == 0) {
+            throw std::runtime_error("Dirichlet: no boundary edges with marker " +
+                                     std::to_string(cond.boundaryId));
+        }
     }
-    if (processedEdges == 0) {
-        throw std::runtime_error("HeatSolver: no boundary edges with marker " +
-                                 std::to_string(boundaryId));
-    }
-
-    return;
+    return fixedNodes;
 }
 
-void HeatBoundaryAssembler2D::addDirichlet(LinearSystem &system,
-                                           const Mesh &mesh,  BoundaryId boundaryId,
-                                           double value) {
-    std::unordered_set<int> nodes;
-    for (const BoundaryEdge &be : mesh.BoundaryEdges()) {
-        if (be.boundaryId != boundaryId) {
-            continue;
-        }
-        nodes.insert(be.nodes_id.first);
-        nodes.insert(be.nodes_id.second);
+void HeatBoundaryAssembler2D::AddNeumann(LinearSystem& system, const Mesh& mesh,
+                                        BoundaryId boundaryId, double flux) const {
+    if (!std::isfinite(flux)) {
+        throw std::invalid_argument("Neumann: flux must be finite");
     }
-    if (nodes.empty()) {
-        throw std::runtime_error("HeatSolver: no boundary edges with marker " +
-                                 std::to_string(boundaryId));
-    }
-    for (const int nodeId : nodes) {
-        const Eigen::Index s = static_cast<Eigen::Index>(nodeId);
-        if (s < 0 || s >= system.K.rows()) {
-            throw std::out_of_range("HeatSolver: invalid Dirichlet node index");
-        }
-
-        system.F -= system.K.col(s) * value;
-
-        system.K.row(s).setZero();
-        system.K.col(s).setZero();
-
-        system.K(s, s) = 1.0;
-        system.F(s) = value;
-    }
-}
-
-void HeatBoundaryAssembler2D::addRobin(LinearSystem &system, const Mesh &mesh, BoundaryId boundaryId,
-                  double alpha, double temperature) {
-
-    if (!std::isfinite(alpha) || alpha < 0.0) {
-        throw std::invalid_argument(
-            "Robin: alpha must be finite and non-negative"
-        );
-    }
-
-    if (!std::isfinite(temperature)) {
-        throw std::invalid_argument(
-            "Robin: ambient temperature must be finite"
-        );
-    }
-
     std::size_t processedEdges = 0;
-
-    for (const BoundaryEdge& edge : mesh.BoundaryEdges()) {
+    for (const auto& edge : mesh.BoundaryEdges()) {
         if (edge.boundaryId != boundaryId) {
             continue;
         }
-
-        const int id1 = edge.nodes_id.first;
-        const int id2 = edge.nodes_id.second;
-
-        const Node& node1 = mesh.NodeById(id1);
-        const Node& node2 = mesh.NodeById(id2);
-
-        const double dx = node2.position.x - node1.position.x;
-        const double dy = node2.position.y - node1.position.y;
-        const double length = std::hypot(dx, dy);
-
-        if (!std::isfinite(length) || length <= 0.0) {
-            throw std::runtime_error(
-                "Robin: invalid boundary edge length"
-            );
-        }
-
-        const double k = alpha * length / 6.0;
-        const double f = alpha * temperature * length / 2.0;
-
-        // Local Robin matrix:
-        // k * [ 2  1 ]
-        //     [ 1  2 ]
-
-        system.K(id1, id1) += 2.0 * k;
-        system.K(id1, id2) += k;
-        system.K(id2, id1) += k;
-        system.K(id2, id2) += 2.0 * k;
-
-        // Local Robin RHS:
-        // f * [ 1 ]
-        //     [ 1 ]
-
-        system.F(id1) += f;
-        system.F(id2) += f;
-
+        const double contribution = flux * EdgeLength(mesh, edge) / 2.0;
+        system.F(edge.nodes_id.first) += contribution;
+        system.F(edge.nodes_id.second) += contribution;
         ++processedEdges;
     }
-
     if (processedEdges == 0) {
-        throw std::runtime_error(
-            "Robin: no boundary edges with BoundaryId " +
-            std::to_string(boundaryId)
-        );
+        throw std::runtime_error("Neumann: no boundary edges with marker " +
+                                 std::to_string(boundaryId));
     }
 }
 
+void HeatBoundaryAssembler2D::AddRobin(LinearSystem& system, const Mesh& mesh,
+                                      BoundaryId boundaryId, double alpha,
+                                      double temperature) const {
+    if (!std::isfinite(alpha) || alpha < 0.0) {
+        throw std::invalid_argument("Robin: alpha must be finite and non-negative");
+    }
+    if (!std::isfinite(temperature)) {
+        throw std::invalid_argument("Robin: ambient temperature must be finite");
+    }
+
+    std::vector<Eigen::Triplet<double>> triplets;
+    std::size_t processedEdges = 0;
+    for (const auto& edge : mesh.BoundaryEdges()) {
+        if (edge.boundaryId != boundaryId) {
+            continue;
+        }
+        const int a = edge.nodes_id.first;
+        const int b = edge.nodes_id.second;
+        const double length = EdgeLength(mesh, edge);
+        const double k = alpha * length / 6.0;
+        const double f = alpha * temperature * length / 2.0;
+        triplets.emplace_back(a, a, 2.0 * k);
+        triplets.emplace_back(a, b, k);
+        triplets.emplace_back(b, a, k);
+        triplets.emplace_back(b, b, 2.0 * k);
+        system.F(a) += f;
+        system.F(b) += f;
+        ++processedEdges;
+    }
+    if (processedEdges == 0) {
+        throw std::runtime_error("Robin: no boundary edges with marker " +
+                                 std::to_string(boundaryId));
+    }
+
+    Eigen::SparseMatrix<double> robinK(system.K.rows(), system.K.cols());
+    robinK.setFromTriplets(triplets.begin(), triplets.end());
+    system.K += robinK;
+}
+
+void HeatBoundaryAssembler2D::ApplyDirichlet(
+    LinearSystem& system, const std::unordered_map<int, double>& fixedNodes) const {
+    if (fixedNodes.empty()) {
+        return;
+    }
+
+    std::vector<Eigen::Triplet<double>> triplets;
+    triplets.reserve(static_cast<std::size_t>(system.K.nonZeros()) + fixedNodes.size());
+
+    for (int outer = 0; outer < system.K.outerSize(); ++outer) {
+        for (Eigen::SparseMatrix<double>::InnerIterator it(system.K, outer); it; ++it) {
+            const int row = it.row();
+            const int col = it.col();
+            if (fixedNodes.contains(row)) {
+                continue;
+            }
+            if (const auto fixed = fixedNodes.find(col); fixed != fixedNodes.end()) {
+                system.F(row) -= it.value() * fixed->second;
+            } else {
+                triplets.emplace_back(row, col, it.value());
+            }
+        }
+    }
+
+    for (const auto& [nodeId, temperature] : fixedNodes) {
+        triplets.emplace_back(nodeId, nodeId, 1.0);
+        system.F(nodeId) = temperature;
+    }
+
+    Eigen::SparseMatrix<double> constrainedK(system.K.rows(), system.K.cols());
+    constrainedK.setFromTriplets(triplets.begin(), triplets.end());
+    system.K.swap(constrainedK);
+}
