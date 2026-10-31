@@ -17,15 +17,15 @@
 
 **Теплопроводность (стационарная):**
 
-\[
+$$
 -\nabla\cdot(\lambda\nabla T)=f\quad\text{в }\Omega.
-\]
+$$
 
 **Несжимаемая гидродинамика:**
 
-\[
+$$
 \rho\left(\frac{\partial\mathbf u}{\partial t}+(\mathbf u\cdot\nabla)\mathbf u\right)-\nabla\cdot(2\mu D(\mathbf u))+\nabla p=\mathbf f,\qquad\nabla\cdot\mathbf u=0,
-\]
+$$
 
 где \(D(\mathbf u)=(\nabla\mathbf u+\nabla\mathbf u^T)/2\). Для скорости используются P2-функции формы, для давления — P1.
 
