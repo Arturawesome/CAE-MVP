@@ -10,7 +10,7 @@
 
 
 
-double EdgeLength(const Mesh& mesh, const BoundaryEdge& edge) {
+double EdgeLength(const mesh::Mesh& mesh, const mesh::BoundaryEdge& edge) {
     const auto& a = mesh.NodeById(edge.nodes_id.first).position;
     const auto& b = mesh.NodeById(edge.nodes_id.second).position;
     const double length = std::hypot(b.x - a.x, b.y - a.y);
@@ -27,9 +27,9 @@ bool SameTemperature(double a, double b) {
 
 
 
-void HeatBoundaryAssembler2D::Apply(LinearSystem& system,
+void HeatBoundaryAssembler2D::Apply(fem::LinearSystem& system,
                                     const HeatProblem& problem,
-                                    const Mesh& mesh) const {
+                                    const mesh::Mesh& mesh) const {
     if (system.K.rows() != system.K.cols() ||
         system.K.rows() != mesh.NumNodes() || system.F.size() != mesh.NumNodes()) {
         throw std::invalid_argument("HeatBoundaryAssembler2D: system size does not match mesh");
@@ -53,7 +53,7 @@ void HeatBoundaryAssembler2D::Apply(LinearSystem& system,
 }
 
 std::unordered_map<int, double> HeatBoundaryAssembler2D::CollectDirichlet(
-    const HeatProblem& problem, const Mesh& mesh) const {
+    const HeatProblem& problem, const mesh::Mesh& mesh) const {
     std::unordered_map<int, double> fixedNodes;
 
     for (const auto& cond : problem.HeatBoundaryConditions()) {
@@ -86,7 +86,7 @@ std::unordered_map<int, double> HeatBoundaryAssembler2D::CollectDirichlet(
     return fixedNodes;
 }
 
-void HeatBoundaryAssembler2D::AddNeumann(LinearSystem& system, const Mesh& mesh,
+void HeatBoundaryAssembler2D::AddNeumann(fem::LinearSystem& system, const mesh::Mesh& mesh,
                                         BoundaryId boundaryId, double flux) const {
     if (!std::isfinite(flux)) {
         throw std::invalid_argument("Neumann: flux must be finite");
@@ -107,7 +107,7 @@ void HeatBoundaryAssembler2D::AddNeumann(LinearSystem& system, const Mesh& mesh,
     }
 }
 
-void HeatBoundaryAssembler2D::AddRobin(LinearSystem& system, const Mesh& mesh,
+void HeatBoundaryAssembler2D::AddRobin(fem::LinearSystem& system, const mesh::Mesh& mesh,
                                       BoundaryId boundaryId, double alpha,
                                       double temperature) const {
     if (!std::isfinite(alpha) || alpha < 0.0) {
@@ -147,7 +147,7 @@ void HeatBoundaryAssembler2D::AddRobin(LinearSystem& system, const Mesh& mesh,
 }
 
 void HeatBoundaryAssembler2D::ApplyDirichlet(
-    LinearSystem& system, const std::unordered_map<int, double>& fixedNodes) const {
+    fem::LinearSystem& system, const std::unordered_map<int, double>& fixedNodes) const {
     if (fixedNodes.empty()) {
         return;
     }

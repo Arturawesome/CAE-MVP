@@ -6,8 +6,7 @@
 #include <iomanip>
 #include <iostream>
 
-
-
+namespace mesh {
 class MesherRectangle {
   private:
     int nx_ = 2; // numbers of NODES
@@ -18,5 +17,6 @@ class MesherRectangle {
 
   public:
     MesherRectangle(int nx, int ny);
-    Mesh generateMesh(const Rectangle &r);
+    Mesh generateMesh(const geometry::Rectangle &r);
 };
+} // namespace mesh

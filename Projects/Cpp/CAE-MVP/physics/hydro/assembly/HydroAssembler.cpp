@@ -1,20 +1,20 @@
 #include "HydroAssembler.h"
 
 HydroAssembler2D::HydroAssembler2D(const HydroProblem &problem,
-                                   const Mesh &mesh,
-                                   const TaylorHoodDofMap &dofMap)
+                                   const mesh::Mesh &mesh,
+                                   const fem::TaylorHoodDofMap &dofMap)
     : problem_(problem), mesh_(mesh), dofMap_(dofMap) {}
 
 void HydroAssembler2D::UpdateForce(HydroGlobalSystem &global, double currTime) {
     int numEl = mesh_.NumEl();
     global.force.setZero();
     for (int elId = 0; elId < numEl; ++elId) {
-        std::array<Point2D, 3> vertices;
+        std::array<geometry::Point2D, 3> vertices;
         for (int i = 0; i < 3; ++i) {
             vertices[i] = mesh_.NodeById(mesh_.NodeIdFromEl(elId, i)).position;
         }
-        TriangleP2 triangleP2(vertices[0], vertices[1], vertices[2], elId);
-        auto localForce = MakeLocalForce(triangleP2, vertices, currTime);
+        fem::TriangleP2 TriangleP2(vertices[0], vertices[1], vertices[2], elId);
+        auto localForce = MakeLocalForce(TriangleP2, vertices, currTime);
         for (int i = 0; i < 12; ++i) {
             const int globalI = dofMap_.ElementDofs(elId)[i];
             global.force(globalI) += localForce(i);
@@ -33,11 +33,11 @@ void HydroAssembler2D::UpdateConvection(
     triplets.reserve(mesh_.NumEl() * 12 * 12);
 
     for (int elId = 0; elId < mesh_.NumEl(); ++elId) {
-        std::array<Point2D, 3> vertices;
+        std::array<geometry::Point2D, 3> vertices;
         for (int i = 0; i < 3; ++i) {
             vertices[i] = mesh_.NodeById(mesh_.NodeIdFromEl(elId, i)).position;
         }
-        TriangleP2 triangleP2(vertices[0], vertices[1], vertices[2], elId);
+        fem::TriangleP2 TriangleP2(vertices[0], vertices[1], vertices[2], elId);
         const auto &dofs = dofMap_.ElementDofs(elId);
 
         Eigen::Matrix<double, 12, 1> localVelocity;
@@ -47,7 +47,7 @@ void HydroAssembler2D::UpdateConvection(
         }
 
         auto localConvection =
-            MakeLocalConvection(triangleP2, vertices, localVelocity);
+            MakeLocalConvection(TriangleP2, vertices, localVelocity);
         for(int i = 0; i < 12; i++){
             for(int j = 0; j < 12; ++j){
                 triplets.emplace_back(dofs[i], dofs[j], localConvection(i, j));
@@ -59,16 +59,16 @@ void HydroAssembler2D::UpdateConvection(
 }
 
 Eigen::Matrix<double, 12, 1>
-HydroAssembler2D::MakeLocalForce(const TriangleP2 &p2,
-                                 const std::array<Point2D, 3> &vertices,
+HydroAssembler2D::MakeLocalForce(const fem::TriangleP2 &p2,
+                                 const std::array<geometry::Point2D, 3> &vertices,
                                  double time) const {
 
     Eigen::Matrix<double, 12, 1> localForce =
         Eigen::Matrix<double, 12, 1>::Zero();
     ;
-    const auto quadraturePoints = MakeQuadraturePoints();
+    const auto quadraturePoints = fem::Make6QuadraturePoints();
     for (const auto &qp : quadraturePoints) {
-        Point2D internalPonitInTrinagle{
+        geometry::Point2D internalPonitInTrinagle{
             qp.L1 * vertices[0].x + qp.L2 * vertices[1].x +
                 qp.L3 * vertices[2].x,
             qp.L1 * vertices[0].y + qp.L2 * vertices[1].y +
@@ -91,19 +91,19 @@ HydroAssembler2D::MakeLocalForce(const TriangleP2 &p2,
 }
 
 Eigen::Matrix<double, 6, 1>
-HydroAssembler2D::MakeLocalTraction(const BoundaryEdge &edge,
+HydroAssembler2D::MakeLocalTraction(const mesh::BoundaryEdge &edge,
                                     const HydroBoundaryCondition &condition,
                                     double time) const {
 
-    Point2D normal{0.0, 0.0};
+    geometry::Point2D normal{0.0, 0.0};
     if (condition.type == HydroBoundaryConditionType::NormalTraction) {
         normal = mesh_.OutwardNormal(edge);
     }
     int id1 = edge.nodes_id.first;
     int id2 = edge.nodes_id.second;
 
-    const Point2D &p1 = mesh_.NodeById(id1).position;
-    const Point2D &p2 = mesh_.NodeById(id2).position;
+    const geometry::Point2D &p1 = mesh_.NodeById(id1).position;
+    const geometry::Point2D &p2 = mesh_.NodeById(id2).position;
 
     const double dx = p1.x - p2.x;
     const double dy = p1.y - p2.y;
@@ -113,7 +113,7 @@ HydroAssembler2D::MakeLocalTraction(const BoundaryEdge &edge,
     }
 
     Eigen::Matrix<double, 6, 1> localF = Eigen::Matrix<double, 6, 1>::Zero();
-    std::array<EdgeQuadraturePoint, 3> quadro = MakeEdgeQuadraturePoints();
+    std::array<fem::EdgeQuadraturePoint, 3> quadro = fem::MakeEdgeQuadraturePoints();
     for (int i = 0; i < 3; ++i) {
         double s = quadro[i].pos;
         double w = quadro[i].weight * length;
@@ -159,7 +159,7 @@ HydroAssembler2D::MakeLocalTraction(const BoundaryEdge &edge,
 }
 
 void HydroAssembler2D::AddTractionToGlobal(
-    HydroGlobalSystem &global, const BoundaryEdge &edge,
+    HydroGlobalSystem &global, const mesh::BoundaryEdge &edge,
     const Eigen::Matrix<double, 6, 1> &localForce) const {
 
     const int id1 = edge.nodes_id.first;
@@ -187,16 +187,16 @@ HydroGlobalSystem HydroAssembler2D::AssembleGlobalSystem() {
     triplets.divergenceTriplets.reserve(numEl * 3 * 12);
 
     for (int elId = 0; elId < numEl; ++elId) {
-        std::array<Point2D, 3> vertices;
+        std::array<geometry::Point2D, 3> vertices;
 
         for (int i = 0; i < 3; ++i) {
             vertices[i] = mesh_.NodeById(mesh_.NodeIdFromEl(elId, i)).position;
         }
 
-        TriangleP1 triangleP1(mesh_, elId);
-        TriangleP2 triangleP2(vertices[0], vertices[1], vertices[2], elId);
+        fem::TriangleP1 TriangleP1(vertices[0], vertices[1], vertices[2], elId);
+        fem::TriangleP2 TriangleP2(vertices[0], vertices[1], vertices[2], elId);
         HydroLocalSystem local =
-            MakeLocalSystem(triangleP1, triangleP2, vertices, 0);
+            MakeLocalSystem(TriangleP1, TriangleP2, vertices, 0);
         AddToGlobal(global, local, dofMap_.ElementDofs(elId),
                     dofMap_.numVelocityDofs(), triplets);
     }
@@ -242,15 +242,15 @@ void HydroAssembler2D::AddToGlobal(HydroGlobalSystem &global,
 }
 
 Eigen::Matrix<double, 12, 12> HydroAssembler2D::MakeLocalConvection(
-    const TriangleP2 &p2, const std::array<Point2D, 3> &vertices,
+    const fem::TriangleP2 &p2, const std::array<geometry::Point2D, 3> &vertices,
     const Eigen::Matrix<double, 12, 1>& transportVelocity) const {
     Eigen::Matrix<double, 12, 12> localConvection =
         Eigen::Matrix<double, 12, 12>::Zero();
     double rho = problem_.Density();
-    const auto quadraturePoints = MakeConvectionQuadraturePoints();
+    const auto quadraturePoints = fem::Make7QuadraturePoints();
 
     for (const auto &qp : quadraturePoints) {
-        Point2D internalPonitInTrinagle{
+        geometry::Point2D internalPonitInTrinagle{
             qp.L1 * vertices[0].x + qp.L2 * vertices[1].x +
                 qp.L3 * vertices[2].x,
             qp.L1 * vertices[0].y + qp.L2 * vertices[1].y +
@@ -281,8 +281,8 @@ Eigen::Matrix<double, 12, 12> HydroAssembler2D::MakeLocalConvection(
 }
 
 HydroLocalSystem
-HydroAssembler2D::MakeLocalSystem(const TriangleP1 &p1, const TriangleP2 &p2,
-                                  const std::array<Point2D, 3> &vertices,
+HydroAssembler2D::MakeLocalSystem(const fem::TriangleP1 &p1, const fem::TriangleP2 &p2,
+                                  const std::array<geometry::Point2D, 3> &vertices,
                                   double time) const {
     HydroLocalSystem local;
     local.mass.setZero();
@@ -298,9 +298,9 @@ HydroAssembler2D::MakeLocalSystem(const TriangleP1 &p1, const TriangleP2 &p2,
     C(1, 1) = 2.0 * mu;
     C(2, 2) = mu;
 
-    const auto quadraturePoints = MakeQuadraturePoints();
+    const auto quadraturePoints = fem::Make6QuadraturePoints();
     for (const auto &qp : quadraturePoints) {
-        Point2D internalPonitInTrinagle{
+        geometry::Point2D internalPonitInTrinagle{
             qp.L1 * vertices[0].x + qp.L2 * vertices[1].x +
                 qp.L3 * vertices[2].x,
             qp.L1 * vertices[0].y + qp.L2 * vertices[1].y +
@@ -346,87 +346,6 @@ HydroAssembler2D::MakeLocalSystem(const TriangleP1 &p1, const TriangleP2 &p2,
         local.divergence.noalias() += weight * (pressureShape * H);
     }
     return local;
-}
-
-// three points on boundary edje for intergral calualtiong
-std::array<EdgeQuadraturePoint, 3>
-HydroAssembler2D::MakeEdgeQuadraturePoints() const {
-    double a = 0.5 * (1.0 - std::sqrt(3.0 / 5.0));
-    double b = 0.5;
-    double c = 0.5 * (1.0 + std::sqrt(3.0 / 5.0));
-    std::array<EdgeQuadraturePoint, 3> quadraturePoints = {
-        EdgeQuadraturePoint{.pos = a, .weight = 5.0 / 18.0},
-        EdgeQuadraturePoint{.pos = b, .weight = 4.0 / 9.0},
-        EdgeQuadraturePoint{.pos = c, .weight = 5.0 / 18.0}};
-    return quadraturePoints;
-}
-
-// six points in element (intrnal element) for integral calculationg
-std::array<TriangleQuadraturePoint, 6>
-HydroAssembler2D::MakeQuadraturePoints() const {
-    constexpr double quadratureA = 0.816847572980459;
-    constexpr double quadratureB = 0.091576213509771;
-
-    constexpr double quadratureC = 0.108103018168070;
-    constexpr double quadratureD = 0.445948490915965;
-
-    constexpr double quadratureWeight1 = 0.109951743655322;
-    constexpr double quadratureWeight2 = 0.223381589678011;
-
-    std::array<TriangleQuadraturePoint, 6> quadraturePoints = {
-        TriangleQuadraturePoint{.L1 = quadratureA,
-                                .L2 = quadratureB,
-                                .L3 = quadratureB,
-                                .weight = quadratureWeight1},
-        TriangleQuadraturePoint{.L1 = quadratureB,
-                                .L2 = quadratureA,
-                                .L3 = quadratureB,
-                                .weight = quadratureWeight1},
-        TriangleQuadraturePoint{.L1 = quadratureB,
-                                .L2 = quadratureB,
-                                .L3 = quadratureA,
-                                .weight = quadratureWeight1},
-
-        TriangleQuadraturePoint{.L1 = quadratureC,
-                                .L2 = quadratureD,
-                                .L3 = quadratureD,
-                                .weight = quadratureWeight2},
-        TriangleQuadraturePoint{.L1 = quadratureD,
-                                .L2 = quadratureC,
-                                .L3 = quadratureD,
-                                .weight = quadratureWeight2},
-        TriangleQuadraturePoint{.L1 = quadratureD,
-                                .L2 = quadratureD,
-                                .L3 = quadratureC,
-                                .weight = quadratureWeight2}};
-    return quadraturePoints;
-}
-
-std::array<TriangleQuadraturePoint, 7>
-HydroAssembler2D::MakeConvectionQuadraturePoints() const {
-
-    constexpr double a = 0.059715871789770;
-    constexpr double b = 0.470142064105115;
-
-    constexpr double c = 0.797426985353087;
-    constexpr double d = 0.101286507323456;
-
-    constexpr double w0 = 0.225000000000000;
-    constexpr double w1 = 0.132394152788506;
-    constexpr double w2 = 0.125939180544827;
-
-    return {{// Center
-             {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, w0},
-
-             // Three permutations of (a, b, b)
-             {a, b, b, w1},
-             {b, a, b, w1},
-             {b, b, a, w1},
-
-             // Three permutations of (c, d, d)
-             {c, d, d, w2},
-             {d, c, d, w2},
-             {d, d, c, w2}}};
 }
 
 void HydroAssembler2D::AssembleTraction(HydroGlobalSystem &global,

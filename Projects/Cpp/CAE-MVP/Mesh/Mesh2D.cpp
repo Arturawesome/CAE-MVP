@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <unordered_map>
 #include <utility>
-
+namespace mesh {
 std::ostream &operator<<(std::ostream &stream, const Mesh &m) {
     for (const auto node : m.nodes_) {
         stream << "{x=" << node.position.x << "; y=" << node.position.y
@@ -135,7 +135,7 @@ int Mesh::NumBoundEdges() const { return boundaryEdges_.size(); }
 const Node &Mesh::NodeById(int id) const { return nodes_[id]; }
 const Element &Mesh::ElementById(int id) const { return elements_[id]; }
 
-Point2D Mesh::OutwardNormal(const BoundaryEdge &edge) const {
+geometry::Point2D Mesh::OutwardNormal(const BoundaryEdge &edge) const {
     const int id1 = edge.nodes_id.first;
     const int id2 = edge.nodes_id.second;
 
@@ -143,8 +143,8 @@ Point2D Mesh::OutwardNormal(const BoundaryEdge &edge) const {
         throw std::invalid_argument("Mesh::OutwardNormal: degenerate edge");
     }
 
-    const Point2D &a = NodeById(id1).position;
-    const Point2D &b = NodeById(id2).position;
+    const geometry::Point2D &a = NodeById(id1).position;
+    const geometry::Point2D &b = NodeById(id2).position;
 
     const double dx = b.x - a.x;
     const double dy = b.y - a.y;
@@ -155,7 +155,7 @@ Point2D Mesh::OutwardNormal(const BoundaryEdge &edge) const {
         throw std::invalid_argument("Mesh::OutwardNormal: invalid edge length");
     }
 
-    Point2D normal{dy / length, -dx / length};
+    geometry::Point2D normal{dy / length, -dx / length};
 
     // Найти третий узел  треугольника
     bool hasId1 = false;
@@ -179,7 +179,7 @@ Point2D Mesh::OutwardNormal(const BoundaryEdge &edge) const {
             "Mesh::OutwardNormal: invalid edge-element adjacency");
     }
 
-    const Point2D &c = NodeById(oppositeNodeId).position;
+    const geometry::Point2D &c = NodeById(oppositeNodeId).position;
 
     const double mx = 0.5 * (a.x + b.x);
     const double my = 0.5 * (a.y + b.y);
@@ -242,3 +242,4 @@ void Mesh::AddElement(Element element) { elements_.push_back(element); }
 void Mesh::AddBoundaryEdge(BoundaryEdge edge) {
     boundaryEdges_.push_back(edge);
 }
+} // namespace mesh

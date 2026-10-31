@@ -9,15 +9,15 @@
 class HeatBoundaryAssembler2D {
 private:
     std::unordered_map<int, double> CollectDirichlet(const HeatProblem& problem,
-                                                     const Mesh& mesh) const;
-    void AddNeumann(LinearSystem& system, const Mesh& mesh,
+                                                     const mesh::Mesh& mesh) const;
+    void AddNeumann(fem::LinearSystem& system, const mesh::Mesh& mesh,
                     BoundaryId boundaryId, double flux) const;
-    void AddRobin(LinearSystem& system, const Mesh& mesh,
+    void AddRobin(fem::LinearSystem& system, const mesh::Mesh& mesh,
                   BoundaryId boundaryId, double alpha, double temperature) const;
-    void ApplyDirichlet(LinearSystem& system,
+    void ApplyDirichlet(fem::LinearSystem& system,
                         const std::unordered_map<int, double>& fixedNodes) const;
 
 public:
-    void Apply(LinearSystem& system, const HeatProblem& problem,
-               const Mesh& mesh) const;
+    void Apply(fem::LinearSystem& system, const HeatProblem& problem,
+               const mesh::Mesh& mesh) const;
 };

@@ -5,30 +5,22 @@
 #include <limits>
 #include <stdexcept>
 #include <string>
-
+namespace fem {
 
 double TriangleP1::Area() const { return area_; }
-Point2D TriangleP1::Center() const { return center_; }
+geometry::Point2D TriangleP1::Center() const { return center_; }
 const Eigen::Matrix<double, 2, 3> &TriangleP1::Grad() const { return grad_; }
 
-TriangleP1::TriangleP1(const Mesh& mesh, int elementID) {
-    const auto& element = mesh.ElementById(elementID);
-
-    const auto& p1 = mesh.NodeById(element.nodes_id[0]).position;
-    const auto& p2 = mesh.NodeById(element.nodes_id[1]).position;
-    const auto& p3 = mesh.NodeById(element.nodes_id[2]).position;
-
-    const auto isFinite = [](const Point2D& p) {
+TriangleP1::TriangleP1(const geometry::Point2D &p1, const geometry::Point2D &p2,
+                       const geometry::Point2D &p3, int elementID) {
+    const auto isFinite = [](const geometry::Point2D &p) {
         return std::isfinite(p.x) && std::isfinite(p.y);
     };
-
     if (!isFinite(p1) || !isFinite(p2) || !isFinite(p3)) {
         throw std::invalid_argument(
             "TriangleP1: non-finite coordinates in element " +
-            std::to_string(elementID)
-        );
+            std::to_string(elementID));
     }
-
     const double dx12 = p2.x - p1.x;
     const double dy12 = p2.y - p1.y;
 
@@ -44,20 +36,16 @@ TriangleP1::TriangleP1(const Mesh& mesh, int elementID) {
 
     const double maxLength = std::max({l12, l13, l23});
 
-
     const double doubleArea = dx12 * dy13 - dy12 * dx13;
 
     constexpr double kMinShapeRatio = 1e-12;
 
-    if (!std::isfinite(maxLength) ||
-        maxLength <= 0.0 ||
+    if (!std::isfinite(maxLength) || maxLength <= 0.0 ||
         !std::isfinite(doubleArea) ||
         std::abs(doubleArea) / maxLength / maxLength <= kMinShapeRatio) {
 
-        throw std::runtime_error(
-            "TriangleP1: degenerate triangle, element " +
-            std::to_string(elementID)
-        );
+        throw std::runtime_error("TriangleP1: degenerate triangle, element " +
+                                 std::to_string(elementID));
     }
 
     area_ = 0.5 * std::abs(doubleArea);
@@ -68,8 +56,10 @@ TriangleP1::TriangleP1(const Mesh& mesh, int elementID) {
     CreateGradMatrix(p1, p2, p3);
 }
 
-void TriangleP1::CreateGradMatrix(const Point2D &p1, const Point2D &p2,
-                                  const Point2D &p3) {
+
+void TriangleP1::CreateGradMatrix(const geometry::Point2D &p1,
+                                  const geometry::Point2D &p2,
+                                  const geometry::Point2D &p3) {
     Eigen::MatrixXd triangle = Eigen::MatrixXd::Zero(3, 3);
 
     triangle(0, 0) = 1;
@@ -89,8 +79,8 @@ void TriangleP1::CreateGradMatrix(const Point2D &p1, const Point2D &p2,
     grad_ = coefs.block(1, 0, 2, 3);
 }
 
-Eigen::Vector3d TriangleP1:: Shape(const Point2D& p) const {
-    return shapeCoefs_
-         + p.x * grad_.row(0).transpose()
-         + p.y * grad_.row(1).transpose();
+Eigen::Vector3d TriangleP1::Shape(const geometry::Point2D &p) const {
+    return shapeCoefs_ + p.x * grad_.row(0).transpose() +
+           p.y * grad_.row(1).transpose();
 }
+} // namespace fem

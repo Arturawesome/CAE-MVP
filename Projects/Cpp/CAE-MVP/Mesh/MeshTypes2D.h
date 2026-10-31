@@ -3,9 +3,10 @@
 #include "geometry/GeometryTypes2D.h"
 #include <array>
 #include <utility>
+namespace mesh {
 
 struct Node {
-    Point2D position;
+    geometry::Point2D position;
 };
 
 // EDJE OF ELEMENT on boundary SIDE
@@ -19,3 +20,4 @@ struct BoundaryEdge {
 struct Element {
     std::array<int, 3> nodes_id;
 };
+} // namespace mesh

@@ -8,7 +8,7 @@
 
 class HeatProblem {
   private:
-    const Mesh &mesh_;
+    const mesh::Mesh &mesh_;
     double lambda_;
     std::vector<HeatBoundaryCondition> HeatBoundaryConditions_;
 
@@ -16,15 +16,15 @@ class HeatProblem {
     std::function<double(double, double, double)> source_;
     
   public:
-    HeatProblem(const Mesh &mesh, double lambda,
+    HeatProblem(const mesh::Mesh &mesh, double lambda,
                 std::function<double(double, double, double)> source);
     ~HeatProblem() = default;
 
     // Getters
-    const Mesh &GetMesh() const;
+    const mesh::Mesh &GetMesh() const;
     double Lambda() const;
     double Source(double x, double y, double z = 0.0) const;
-    double Source(const Point2D& elementCenter) const;
+    double Source(const geometry::Point2D& elementCenter) const;
     const std::vector<HeatBoundaryCondition>& HeatBoundaryConditions() const;
 
     void AddDirichlet(BoundaryId id, double temprature);

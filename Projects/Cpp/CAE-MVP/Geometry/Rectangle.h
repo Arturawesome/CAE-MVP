@@ -3,6 +3,7 @@
 #include "GeometryTypes2D.h"
 #include <iostream>
 
+namespace geometry {
 enum class RectangleBoundary { Bottom = 1, Right, Top, Left };
 
 class Rectangle : public Geometry2D {
@@ -77,3 +78,4 @@ class Rectangle : public Geometry2D {
         return origin_;
     }
 };
+} // namespace geometry

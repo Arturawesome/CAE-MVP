@@ -11,7 +11,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(Eigen3 REQUIRED)
 
 add_executable(cae_mvp
-    main.cpp
+    mainHydro.cpp
     mesh/Mesh2D.cpp
     mesh/generators/MesherRectangle.cpp
     io/VTKReader.cpp
@@ -19,10 +19,10 @@ add_executable(cae_mvp
     io/VTKSeriesWriter.cpp
     
     
-    # physics/heat/problem/Problem.cpp
-    # physics/heat/assembly/Assembler2D.cpp
-    # physics/heat/assembly/BoundaryAssembler2D.cpp
-    # physics/heat/HeatSolver.cpp
+    physics/heat/problem/Problem.cpp
+    physics/heat/assembly/Assembler2D.cpp
+    physics/heat/assembly/BoundaryAssembler2D.cpp
+    physics/heat/HeatSolver.cpp
 
     physics/hydro/problem/HydroProblem.cpp
     physics/hydro/assembly/HydroAssembler.cpp

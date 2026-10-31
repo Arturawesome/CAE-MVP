@@ -2,7 +2,7 @@
 #include "geometry/GeometryTypes2D.h"
 #include <Eigen/Dense>
 #include <array>
-
+namespace fem {
 
 struct TriangleQuadraturePoint {
     double L1;
@@ -12,14 +12,18 @@ struct TriangleQuadraturePoint {
 };
 
 struct EdgeQuadraturePoint {
-  double pos;
-  double weight;
+    double pos;
+    double weight;
 };
+
+std::array<TriangleQuadraturePoint, 6> Make6QuadraturePoints();
+std::array<EdgeQuadraturePoint, 3> MakeEdgeQuadraturePoints();
+std::array<TriangleQuadraturePoint, 7> Make7QuadraturePoints();
 
 class TriangleP2 {
   private:
     double area_ = 0;
-    Point2D center_;
+    geometry::Point2D center_;
 
     // Коэфф лин барицентрических функций.
     Eigen::Matrix<double, 3, 3> barCoefs_;
@@ -27,19 +31,19 @@ class TriangleP2 {
     // Постоянные градиенты L1, L2, L3 (их TriangleP1).
     Eigen::Matrix<double, 2, 3> barGrad_;
 
-    void CreateBarycentric(const Point2D &p1, const Point2D &p2,
-                           const Point2D &p3);
+    void CreateBarycentric(const geometry::Point2D &p1,
+                           const geometry::Point2D &p2,
+                           const geometry::Point2D &p3);
 
-    void CalcArea(const Point2D &p1, const Point2D &p2, const Point2D &p3,
-                  int elementID);
+    void CalcArea(const geometry::Point2D &p1, const geometry::Point2D &p2,
+                  const geometry::Point2D &p3, int elementID);
 
   public:
-    TriangleP2(const Point2D &p1, const Point2D &p2, const Point2D &p3,
-               int elementID);
+    TriangleP2(const geometry::Point2D &p1, const geometry::Point2D &p2,
+               const geometry::Point2D &p3, int elementID);
     double Area() const;
-    Point2D Center() const;
-    Eigen::Matrix<double, 6, 1> Shape(const Point2D &point) const;
-    Eigen::Matrix<double, 2, 6> Grad(const Point2D &point) const;
-
-
+    geometry::Point2D Center() const;
+    Eigen::Matrix<double, 6, 1> Shape(const geometry::Point2D &point) const;
+    Eigen::Matrix<double, 2, 6> Grad(const geometry::Point2D &point) const;
 };
+} // namespace fem

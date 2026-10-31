@@ -2,10 +2,10 @@
 #include <Eigen/Sparse>
 #include <iostream>
 #include <unordered_set>
-void HydroBoundaryAssembler2D::Apply(LinearSystem &system, double currTime,
+void HydroBoundaryAssembler2D::Apply(fem::LinearSystem &system, double currTime,
                                      const HydroProblem &problem,
-                                     const Mesh &mesh, const P2DofMap &p2DofMap,
-                                     const TaylorHoodDofMap &dofMap) const {
+                                     const mesh::Mesh &mesh, const fem::P2DofMap &p2DofMap,
+                                     const fem::TaylorHoodDofMap &dofMap) const {
 
     const auto &boundCond = problem.BoundaryConditions();
 
@@ -13,9 +13,9 @@ void HydroBoundaryAssembler2D::Apply(LinearSystem &system, double currTime,
 }
 
 void HydroBoundaryAssembler2D::ApplyVelocityDirichlet(
-    LinearSystem &system, double currTime, const HydroProblem &problem,
-    const Mesh &mesh, const P2DofMap &p2DofMap,
-    const TaylorHoodDofMap &dofMap) const {
+    fem::LinearSystem &system, double currTime, const HydroProblem &problem,
+    const mesh::Mesh &mesh, const fem::P2DofMap &p2DofMap,
+    const fem::TaylorHoodDofMap &dofMap) const {
 
     std::unordered_map<int, double> mapIdVelocity =
         CollectVelocityDirichlet(currTime, problem, mesh, p2DofMap, dofMap);
@@ -53,8 +53,8 @@ void HydroBoundaryAssembler2D::ApplyVelocityDirichlet(
 
 std::unordered_map<int, double>
 HydroBoundaryAssembler2D::CollectVelocityDirichlet(
-    double currTime, const HydroProblem &problem, const Mesh &mesh,
-    const P2DofMap &p2DofMap, const TaylorHoodDofMap &dofMap) const {
+    double currTime, const HydroProblem &problem, const mesh::Mesh &mesh,
+    const fem::P2DofMap &p2DofMap, const fem::TaylorHoodDofMap &dofMap) const {
     using Edge = std::pair<int, int>;
     struct PairHash {
         std::size_t operator()(const Edge &p) const {
@@ -97,7 +97,7 @@ HydroBoundaryAssembler2D::CollectVelocityDirichlet(
             addVelocity(dofMap.V(nodeId), velocity.y());
         };
 
-        for (const BoundaryEdge &be : mesh.BoundaryEdges()) {
+        for (const mesh::BoundaryEdge &be : mesh.BoundaryEdges()) {
             if (be.boundaryId != bc.boundaryId) {
                 continue;
             }

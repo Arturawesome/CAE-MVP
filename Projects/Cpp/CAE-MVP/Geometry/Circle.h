@@ -3,6 +3,8 @@
 #include <iostream>
 #include <numbers>
 
+namespace geometry {
+
 enum class CircleBoundary { Outer = 1 };
 
 class Circle : public Geometry2D {
@@ -40,18 +42,14 @@ class Circle : public Geometry2D {
         return {contour};
     }
 
-    double Radius() const {
-      return radius_;
-    }
+    double Radius() const { return radius_; }
 
-    Point2D Center() const {
-      return center_;
-    }
+    Point2D Center() const { return center_; }
 
-    
   private:
     double radius_ = 1;
     Point2D center_;
     BoundaryId boundaryID_;
     bool isHole = false;
 };
+} // namespace geometry

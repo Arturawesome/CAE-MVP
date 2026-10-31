@@ -10,8 +10,8 @@
 class VTKHydroWriter {
 public:
     static void Write(
-        const Mesh& mesh,
-        const TaylorHoodDofMap& dofMap,
+        const mesh::Mesh& mesh,
+        const fem::TaylorHoodDofMap& dofMap,
         const Eigen::VectorXd& solution,
         const std::string& filename
     );

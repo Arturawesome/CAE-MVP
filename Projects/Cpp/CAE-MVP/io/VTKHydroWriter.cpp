@@ -7,8 +7,8 @@
 #include <stdexcept>
 
 void VTKHydroWriter::Write(
-    const Mesh& mesh,
-    const TaylorHoodDofMap& dofMap,
+    const  mesh::Mesh& mesh,
+    const fem::TaylorHoodDofMap& dofMap,
     const Eigen::VectorXd& solution,
     const std::string& filename
 ) {
@@ -35,7 +35,7 @@ void VTKHydroWriter::Write(
     out << "ASCII\n";
     out << "DATASET UNSTRUCTURED_GRID\n";
 
-    // 1. Mesh nodes
+    // 1.  mesh::Mesh nodes
     out << "POINTS " << mesh.NumNodes() << " double\n";
 
     for (const auto& node : mesh.Nodes()) {
@@ -45,7 +45,7 @@ void VTKHydroWriter::Write(
 
     out << "\n";
 
-    // 2. Mesh elements
+    // 2.  mesh::Mesh elements
     const int numElements = mesh.NumEl();
 
     out << "CELLS " << numElements

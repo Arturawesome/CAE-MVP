@@ -4,8 +4,8 @@
 #include "mesh/MeshTypes2D.h"
 #include <unordered_map>
 #include <utility>
-
-P2DofMap::P2DofMap(const Mesh &mesh) {
+namespace fem {
+P2DofMap::P2DofMap(const mesh::Mesh &mesh) {
     p2Nodes_.reserve(2 * (mesh.Nodes().size() + 1));
     elementNodesId_.reserve(
         mesh.NumEl()); // = std::vector<std::array<int, 6>>(mesh_.NumEl());
@@ -16,7 +16,7 @@ P2DofMap::P2DofMap(const Mesh &mesh) {
 int P2DofMap::NumP2Nodes() const { return p2Nodes_.size(); }
 int P2DofMap::NumP2Elements() const { return elementNodesId_.size(); }
 
-const Node &P2DofMap::P2NodeById(int p2NodeId) const {
+const mesh::Node &P2DofMap::P2NodeById(int p2NodeId) const {
     return p2Nodes_.at(p2NodeId);
 }
 const std::array<int, 6> &P2DofMap::NodesIdByElementId(int elementId) const {
@@ -30,7 +30,7 @@ int P2DofMap::MiddleNodeId(int nodeId1, int nodeId2) const {
     return edgeToNode_.at(Edge{nodeId1, nodeId2});
 }
 
-void P2DofMap::CreateMiddlePoints(const Mesh &mesh) {
+void P2DofMap::CreateMiddlePoints(const mesh::Mesh &mesh) {
 
     std::array<int, 6> localNodes;
     for (const auto &element : mesh.Elements()) {
@@ -51,12 +51,13 @@ void P2DofMap::CreateMiddlePoints(const Mesh &mesh) {
             if (edgeToNode_.contains({id1, id2}))
                 continue;
             edgeToNode_[{id1, id2}] = p2Nodes_.size();
-            const Node n1 = mesh.NodeById(id1);
-            const Node n2 = mesh.NodeById(id2);
+            const mesh::Node n1 = mesh.NodeById(id1);
+            const mesh::Node n2 = mesh.NodeById(id2);
 
-            p2Nodes_.push_back(Node{
-                .position = Point2D{.x = (n1.position.x + n2.position.x) / 2,
-                                    .y = (n1.position.y + n2.position.y) / 2}});
+            p2Nodes_.push_back(
+                mesh::Node{.position = geometry::Point2D{
+                         .x = (n1.position.x + n2.position.x) / 2,
+                         .y = (n1.position.y + n2.position.y) / 2}});
         }
         int count = 3;
         for (auto edge : edges) {
@@ -71,3 +72,4 @@ void P2DofMap::CreateMiddlePoints(const Mesh &mesh) {
         elementNodesId_.push_back(localNodes);
     }
 }
+} // namespace fem

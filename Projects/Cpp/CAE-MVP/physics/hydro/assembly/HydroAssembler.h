@@ -47,12 +47,12 @@ class HydroAssembler2D {
 
   private:
     const HydroProblem &problem_;
-    const Mesh &mesh_;
-    const TaylorHoodDofMap &dofMap_;
+    const mesh::Mesh &mesh_;
+    const fem::TaylorHoodDofMap &dofMap_;
 
   public:
-    HydroAssembler2D(const HydroProblem &problem, const Mesh &mesh,
-                     const TaylorHoodDofMap &dofMap);
+    HydroAssembler2D(const HydroProblem &problem, const mesh::Mesh &mesh,
+                     const fem::TaylorHoodDofMap &dofMap);
     HydroGlobalSystem AssembleGlobalSystem();
     void UpdateForce(HydroGlobalSystem &global, double currTime);
     void UpdateConvection(HydroGlobalSystem &global,
@@ -60,30 +60,30 @@ class HydroAssembler2D {
 
   private:
     Eigen::Matrix<double, 12, 12> MakeLocalConvection(
-        const TriangleP2 &p2, const std::array<Point2D, 3> &vertices,
+        const fem::TriangleP2 &p2, const std::array<geometry::Point2D, 3> &vertices,
         const Eigen::Matrix<double, 12, 1>& transportVelocity) const;
 
     Eigen::Matrix<double, 12, 1>
-    MakeLocalForce(const TriangleP2 &p2, const std::array<Point2D, 3> &vertices,
+    MakeLocalForce(const fem::TriangleP2 &p2, const std::array<geometry::Point2D, 3> &vertices,
                    double time) const;
     void AddToGlobal(HydroGlobalSystem &global, const HydroLocalSystem &local,
                      const std::array<int, 15> &dofs, int numVelocityDofs,
                      Triplets &triplets) const;
-    HydroLocalSystem MakeLocalSystem(const TriangleP1 &p1, const TriangleP2 &p2,
-                                     const std::array<Point2D, 3> &vertices,
+    HydroLocalSystem MakeLocalSystem(const fem::TriangleP1 &p1, const fem::TriangleP2 &p2,
+                                     const std::array<geometry::Point2D, 3> &vertices,
                                      double time) const;
-    std::array<TriangleQuadraturePoint, 7>
-    MakeConvectionQuadraturePoints() const;
-    std::array<TriangleQuadraturePoint, 6> MakeQuadraturePoints() const;
-    std::array<EdgeQuadraturePoint, 3> MakeEdgeQuadraturePoints() const;
+    // std::array<TriangleQuadraturePoint, 7>
+    // MakeConvectionQuadraturePoints() const;
+    // std::array<TriangleQuadraturePoint, 6> MakeQuadraturePoints() const;
+    // std::array<EdgeQuadraturePoint, 3> MakeEdgeQuadraturePoints() const;
 
     Eigen::Matrix<double, 6, 1>
-    MakeLocalTraction(const BoundaryEdge &edge,
+    MakeLocalTraction(const mesh::BoundaryEdge &edge,
                       const HydroBoundaryCondition &condition,
                       double time) const;
 
     void
-    AddTractionToGlobal(HydroGlobalSystem &global, const BoundaryEdge &edge,
+    AddTractionToGlobal(HydroGlobalSystem &global, const mesh::BoundaryEdge &edge,
                         const Eigen::Matrix<double, 6, 1> &localForce) const;
 
     // обход по граничным ребрам

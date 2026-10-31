@@ -1,13 +1,13 @@
 #pragma once
+#include "BoundaryId.h"
+#include "MeshTypes2D.h"
+#include "geometry/GeometryTypes2D.h"
+#include <cmath>
 #include <fstream>
 #include <string>
 #include <utility>
 #include <vector>
-#include <cmath>
-#include "BoundaryId.h"
-#include "MeshTypes2D.h"
-#include "geometry/GeometryTypes2D.h"
-
+namespace mesh {
 class Mesh {
   private:
     std::vector<Node> nodes_;
@@ -27,9 +27,8 @@ class Mesh {
 
     const Node &NodeById(int id) const;
     const Element &ElementById(int id) const;
-    
-    int NodeIdByBoundaryEdge(const BoundaryEdge &edge) const ;
 
+    int NodeIdByBoundaryEdge(const BoundaryEdge &edge) const;
 
     int NumNodes() const;
     int NumEl() const;
@@ -38,7 +37,8 @@ class Mesh {
     int NodeIdFromEl(int elId, std::size_t i) const;
     int NumNodesInEl(std::size_t elId) const;
 
-    Point2D OutwardNormal(const BoundaryEdge &edge) const;
+    geometry::Point2D OutwardNormal(const BoundaryEdge &edge) const;
 
     friend std::ostream &operator<<(std::ostream &stream, const Mesh &m);
 };
+} // namespace mesh

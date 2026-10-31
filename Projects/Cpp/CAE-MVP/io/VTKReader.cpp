@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 
-Mesh VTKReader::ReadUstructuredGrid(const std::string &filename) {
+mesh::Mesh VTKReader::ReadUstructuredGrid(const std::string &filename) {
     std::ifstream in(filename);
     try {
         CheckHeaderUstructuredGrid(in, filename);
@@ -11,7 +11,7 @@ Mesh VTKReader::ReadUstructuredGrid(const std::string &filename) {
         std::cerr << e.what() << std::endl;
         throw e;
     }
-    Mesh mesh;
+    mesh::Mesh mesh;
     std::string token;
     std::vector<std::vector<int>> cells;
     std::vector<int> cellTypes;
@@ -64,7 +64,7 @@ Mesh VTKReader::ReadUstructuredGrid(const std::string &filename) {
             }
         }
 
-        mesh.AddElement(Element{{cells[i][0], cells[i][1], cells[i][2]}});
+        mesh.AddElement(mesh::Element{{cells[i][0], cells[i][1], cells[i][2]}});
     }
     return mesh;
 }
@@ -118,7 +118,7 @@ void VTKReader::ProcessCells(std::istream &in,
     }
 }
 
-void VTKReader::ProcessPoints(std::istream &in, Mesh &mesh) {
+void VTKReader::ProcessPoints(std::istream &in, mesh::Mesh &mesh) {
     int N = 0;
     std::string dataType;
     if (!(in >> N >> dataType)) {
@@ -133,7 +133,7 @@ void VTKReader::ProcessPoints(std::istream &in, Mesh &mesh) {
             std::abs(z) > 1e-10) {
             throw std::runtime_error("Mesh must lie in the XY plane");
         }
-        mesh.AddNode(Node{x, y});
+        mesh.AddNode(mesh::Node{x, y});
     }
 }
 

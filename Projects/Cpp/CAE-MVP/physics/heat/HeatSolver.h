@@ -12,7 +12,7 @@
 class HeatSolver {
   private:
     const HeatProblem &problem_;
-    const Mesh &mesh_;
+    const mesh::Mesh &mesh_;
     Eigen::VectorXd solution_;
   
   public:

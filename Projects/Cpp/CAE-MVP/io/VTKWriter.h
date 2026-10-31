@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
-
+#include <Eigen/Dense>
 #include "mesh/Mesh2D.h"
 #include "geometry/GeometryTypes2D.h"
 
 class VTKWriter {
   public:
-    static void WriteUstructuredGrid(const Mesh &mesh,
+    static void WriteUstructuredGrid(const mesh::Mesh &mesh,
                                      const std::string &filename) {
         std::ofstream out(filename);
 
@@ -39,7 +39,7 @@ class VTKWriter {
             out << "5\n";
         }
     }
-    static void saveSolution(const Mesh &mesh, const Eigen::VectorXd &solution,
+    static void saveSolution(const mesh::Mesh &mesh, const Eigen::VectorXd &solution,
                              const std::string &filename) {
         if (solution.size() != mesh.NumNodes()) {
             throw std::runtime_error(
@@ -64,7 +64,7 @@ class VTKWriter {
 
         for (std::size_t nodeId = 0;
              nodeId < static_cast<std::size_t>(mesh.NumNodes()); ++nodeId) {
-            const Node &node = mesh.NodeById(nodeId);
+            const mesh::Node &node = mesh.NodeById(nodeId);
 
             out << node.position.x << " " << node.position.y << " " << 0.0
                 << "\n";

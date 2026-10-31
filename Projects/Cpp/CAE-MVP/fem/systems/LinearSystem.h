@@ -1,9 +1,10 @@
 #pragma once
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
+namespace fem {
 struct LinearSystem {
     Eigen::SparseMatrix<double> K;
-    
+
     Eigen::VectorXd F;
 
     LinearSystem() = default;
@@ -17,3 +18,4 @@ struct LinearSystem {
     }
 };
 
+} // namespace fem

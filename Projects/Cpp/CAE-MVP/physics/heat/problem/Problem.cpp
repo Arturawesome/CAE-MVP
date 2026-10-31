@@ -1,6 +1,6 @@
 #include "Problem.h"
 
-HeatProblem::HeatProblem(const Mesh &mesh, double lambda,
+HeatProblem::HeatProblem(const mesh::Mesh &mesh, double lambda,
                          std::function<double(double, double, double)> source)
     : mesh_(mesh), lambda_(lambda), source_(source) {
     std::cout << "HeatProblem::HeatProblem\n";
@@ -14,11 +14,11 @@ double HeatProblem::Lambda() const { return lambda_; }
 double HeatProblem::Source(double x, double y, double z) const {
     return source_(x, y, z);
 }
-double HeatProblem::Source(const Point2D &elementCenter) const {
+double HeatProblem::Source(const geometry::Point2D &elementCenter) const {
     return source_(elementCenter.x, elementCenter.y, 0);
 }
 
-const Mesh &HeatProblem::GetMesh() const { return mesh_; }
+const mesh::Mesh &HeatProblem::GetMesh() const { return mesh_; }
 
 void HeatProblem::AddDirichlet(BoundaryId id, double temprature) {
     HeatBoundaryConditions_.push_back(

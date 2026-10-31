@@ -16,7 +16,7 @@
 #include <sstream>
 #include <stdexcept>
 
-HydroSolver::HydroSolver(const HydroProblem &problem, Mesh &mesh,
+HydroSolver::HydroSolver(const HydroProblem &problem,  mesh::Mesh &mesh,
                          double timeEnd, double dt)
     : problem_(problem), mesh_(mesh), timeEnd_(timeEnd), dt_(dt),
       p2DofMap_(mesh_), taylorHoodDofMap_(mesh_, p2DofMap_) {
@@ -67,7 +67,7 @@ void HydroSolver::Solve(std::string filename) {
         assembler.UpdateForce(globalSystem, currTime);
         assembler.UpdateConvection(globalSystem, previousVelocity);
 
-        LinearSystem system =
+        fem::LinearSystem system =
             BuildTimeSystem(globalSystem, previousVelocity, dt_);
         // Apply Boundary Conditions
         HydroBoundaryAssembler2D boundayAssembler;
@@ -105,7 +105,7 @@ Eigen::VectorXd HydroSolver::MakeInitialVelocity() const {
     return velocity;
 }
 
-LinearSystem
+fem::LinearSystem
 HydroSolver::BuildTimeSystem(const HydroGlobalSystem &global,
                              const Eigen::VectorXd &previousVelocity,
                              double dt) const {
@@ -129,7 +129,7 @@ HydroSolver::BuildTimeSystem(const HydroGlobalSystem &global,
             "HydroSolver: incompatible matrix dimensions");
     }
 
-    LinearSystem system(numDofs);
+    fem::LinearSystem system(numDofs);
     std::vector<Triplet> triplets;
     triplets.reserve(global.mass.nonZeros() + global.viscosity.nonZeros() +
                      2 * global.divergence.nonZeros() +

@@ -1,5 +1,5 @@
 #include "MesherRectangle.h"
-
+namespace mesh {
 MesherRectangle::MesherRectangle(int nx, int ny) : nx_(nx), ny_(ny) {
     if (nx_ < 2 || ny_ < 2) {
         throw std::invalid_argument("MesherRectangle: nx and ny must be >= 2");
@@ -9,21 +9,21 @@ MesherRectangle::MesherRectangle(int nx, int ny) : nx_(nx), ny_(ny) {
 
 int MesherRectangle::getNodeId(int i, int j) { return nx_ * i + j; }
 
-Mesh MesherRectangle::generateMesh(const Rectangle &r) {
+Mesh MesherRectangle::generateMesh(const geometry::Rectangle &r) {
     std::cout << "MesherRectangle: generateMesh\n";
 
     double h = r.Height(), w = r.Width();
     double dx = w / (nx_ - 1), dy = h / (ny_ - 1);
 
     Mesh mesh;
-    Point2D origin = r.Origin();
+    geometry::Point2D origin = r.Origin();
 
     for (int i = 0; i < ny_; i++) {
         for (int j = 0; j < nx_; j++) {
-            mesh.AddNode( {.position = Point2D{dx * j + origin.x, dy * i+ origin.y}});
+            mesh.AddNode({.position = geometry::Point2D{dx * j + origin.x,
+                                                        dy * i + origin.y}});
         }
     }
-
 
     for (int i = 0; i < ny_ - 1; i++) {
         for (int j = 0; j < nx_ - 1; j++) {
@@ -36,13 +36,13 @@ Mesh MesherRectangle::generateMesh(const Rectangle &r) {
             el.nodes_id[1] = n3;
             el.nodes_id[2] = n2;
             mesh.AddElement(el);
-            
+
             el.nodes_id[0] = n0;
             el.nodes_id[1] = n1;
             el.nodes_id[2] = n3;
 
-            mesh.AddElement(el);;
-            
+            mesh.AddElement(el);
+            ;
         }
     }
     // std::cout<<"MesherRectangle: mesh.elements.size() =
@@ -50,7 +50,7 @@ Mesh MesherRectangle::generateMesh(const Rectangle &r) {
     generateBoundaryEdges(mesh);
 
     mesh.CreateBoundaryEdges();
-    
+
     return mesh;
 }
 
@@ -61,22 +61,23 @@ void MesherRectangle::generateBoundaryEdges(Mesh &m) {
 
     for (int j = 0; j < nx_ - 1; ++j) {
         addBoundaryEdge(getNodeId(0, j), getNodeId(0, j + 1),
-                        static_cast<int>(RectangleBoundary::Bottom));
+                        static_cast<int>(geometry::RectangleBoundary::Bottom));
     }
 
     for (int i = 0; i < ny_ - 1; ++i) {
         addBoundaryEdge(getNodeId(i, nx_ - 1), getNodeId(i + 1, nx_ - 1),
-                        static_cast<int>(RectangleBoundary::Right));
+                        static_cast<int>(geometry::RectangleBoundary::Right));
     }
 
     for (int j = nx_ - 1; j > 0; --j) {
         addBoundaryEdge(getNodeId(ny_ - 1, j), getNodeId(ny_ - 1, j - 1),
-                        static_cast<int>(RectangleBoundary::Top));
+                        static_cast<int>(geometry::RectangleBoundary::Top));
     }
 
     for (int i = ny_ - 1; i > 0; --i) {
         addBoundaryEdge(getNodeId(i, 0), getNodeId(i - 1, 0),
-                        static_cast<int>(RectangleBoundary::Left));
+                        static_cast<int>(geometry::RectangleBoundary::Left));
     }
 }
 
+} // namespace mesh

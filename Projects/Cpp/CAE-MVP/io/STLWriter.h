@@ -6,7 +6,7 @@
 
 class STLWriter {
   public:
-    static void Write(const Mesh &mesh, const std::string &filename) {
+    static void Write(const mesh::Mesh &mesh, const std::string &filename) {
         std::ofstream out(filename);
         if (!out.is_open()) {
             throw std::runtime_error("Cannot open file " + filename);
@@ -14,9 +14,9 @@ class STLWriter {
         out << "solid mesh\n";
 
         for (const auto &el : mesh.Elements()) {
-            const Node &a = mesh.NodeById(el.nodes_id[0]);
-            const Node &b = mesh.NodeById(el.nodes_id[1]);
-            const Node &c = mesh.NodeById(el.nodes_id[2]);
+            const mesh::Node &a = mesh.NodeById(el.nodes_id[0]);
+            const mesh::Node &b = mesh.NodeById(el.nodes_id[1]);
+            const mesh::Node &c = mesh.NodeById(el.nodes_id[2]);
 
             out << "  facet normal 0 0 1\n";
             out << "    outer loop\n";

@@ -13,6 +13,18 @@
 #include "io/STLWriter.h"
 #include "io/VTKReader.h"
 #include "io/VTKWriter.h"
+
+#include "geometry/Rectangle.h"
+
+#include "physics/heat/HeatSolver.h"
+#include "physics/heat/problem/Problem.h"
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <stdexcept>
+
+
 #include <cassert>
 #include <iostream>
 
@@ -24,8 +36,9 @@ enum class ChannelHoleBoundary {
     Hole = 5
 };
 
-void TagChannelWithHoleBoundaries(Mesh &mesh, double L, double H,
-                                  Point2D holeCenter, double holeRadius) {
+void TagChannelWithHoleBoundaries( mesh::Mesh &mesh, double L, double H,
+                                  geometry::Point2D holeCenter,
+                                  double holeRadius) {
     using Edge = std::pair<int, int>;
 
     struct PairHash {
@@ -59,8 +72,8 @@ void TagChannelWithHoleBoundaries(Mesh &mesh, double L, double H,
             continue; // не граничное ребро
         }
 
-        const Point2D &p1 = mesh.NodeById(edge.first).position;
-        const Point2D &p2 = mesh.NodeById(edge.second).position;
+        const geometry::Point2D &p1 = mesh.NodeById(edge.first).position;
+        const geometry::Point2D &p2 = mesh.NodeById(edge.second).position;
 
         const double mx = 0.5 * (p1.x + p2.x);
         const double my = 0.5 * (p1.y + p2.y);
@@ -92,7 +105,7 @@ void TagChannelWithHoleBoundaries(Mesh &mesh, double L, double H,
         }
 
         mesh.AddBoundaryEdge(
-            BoundaryEdge{.nodes_id = edge, .boundaryId = id, .elementId = -1});
+            mesh::BoundaryEdge{.nodes_id = edge, .boundaryId = id, .elementId = -1});
     }
 
     // пересобираем boundaryEdges_ уже с корректными id и elementId
@@ -100,6 +113,83 @@ void TagChannelWithHoleBoundaries(Mesh &mesh, double L, double H,
 }
 
 int main() {
+
+    try {
+        // Geometry
+        constexpr double L = 0.06;
+        constexpr double H = 0.02;
+
+        geometry::Rectangle rectangle(H, L);
+
+        //  mesh::Mesh: nx, ny are numbers of nodes
+         mesh::MesherRectangle mesher(61, 21);
+         mesh::Mesh mesh = mesher.generateMesh(rectangle);
+
+        // Heat problem
+        constexpr double lambda = 10.0;
+
+        HeatProblem problem(mesh, lambda, [](double, double, double) {
+            return 0.0; // No heat source
+        });
+
+        // Boundary conditions
+        problem.AddDirichlet(
+            static_cast<BoundaryId>(geometry::RectangleBoundary::Left), 100.0);
+
+        problem.AddDirichlet(
+            static_cast<BoundaryId>(geometry::RectangleBoundary::Right), 200.0);
+
+        problem.AddNeumann(
+            static_cast<BoundaryId>(geometry::RectangleBoundary::Top), 0.0);
+
+        problem.AddNeumann(
+            static_cast<BoundaryId>(geometry::RectangleBoundary::Bottom), 0.0);
+
+        // Solve
+        HeatSolver solver(problem);
+        solver.Solve();
+
+        const auto &solution = solver.Solution();
+
+        // Compare against analytical solution
+        double maxError = 0.0;
+
+        for (int i = 0; i < mesh.NumNodes(); ++i) {
+            const auto &point = mesh.NodeById(i).position;
+
+            const double expected = 100.0 + 100.0 * point.x / L;
+            const double error = std::abs(solution(i) - expected);
+
+            maxError = std::max(maxError, error);
+        }
+
+        std::cout << "Nodes: " << mesh.NumNodes() << '\n';
+        std::cout << "Elements: " << mesh.NumEl() << '\n';
+        std::cout << "Min T: " << solution.minCoeff() << '\n';
+        std::cout << "Max T: " << solution.maxCoeff() << '\n';
+        std::cout << "Max error: " << maxError << '\n';
+
+        constexpr double tolerance = 1e-8;
+
+        if (maxError > tolerance) {
+            throw std::runtime_error(
+                "Heat test failed: analytical solution mismatch");
+        }
+
+        std::cout << "Heat test PASSED\n";
+
+        // Save temperature field for ParaView
+        std::filesystem::create_directories("solutions/heat");
+
+        VTKWriter::saveSolution(mesh, solver.Solution(),
+                                "solutions/heat/temperature.vtk");
+
+        std::cout << "VTK saved: solutions/heat/temperature.vtk\n";
+    }
+    catch (const std::exception &e) {
+        std::cerr << "Error: " << e.what() << '\n';
+        return 1;
+    }
 
     // ================================================
     // Geometry and mesh
@@ -110,13 +200,14 @@ int main() {
 
     // Rectangle rectangle(H, L, Point2D{0.0, 0.0});
 
-    // MesherRectangle mesher(30, 15);
-    // Mesh mesh = mesher.generateMesh(rectangle);
+    //  mesh::MesherRectangle mesher(30, 15);
+    //  mesh::Mesh mesh = mesher.generate mesh::Mesh(rectangle);
 
-    Mesh mesh =
+     mesh::Mesh mesh =
         VTKReader::ReadUstructuredGrid("channel_hole_L006_under800.vtk");
 
-    TagChannelWithHoleBoundaries(mesh, L, H, Point2D{0.03, 0.01}, 0.003);
+    TagChannelWithHoleBoundaries(mesh, L, H, geometry::Point2D{0.03, 0.01},
+                                 0.003);
 
     // ================================================
     // Fluid properties
@@ -175,14 +266,17 @@ int main() {
     // Boundary markers
     // ================================================
 
-    const BoundaryId left = static_cast<BoundaryId>(RectangleBoundary::Left);
+    const BoundaryId left =
+        static_cast<BoundaryId>(geometry::RectangleBoundary::Left);
 
-    const BoundaryId right = static_cast<BoundaryId>(RectangleBoundary::Right);
+    const BoundaryId right =
+        static_cast<BoundaryId>(geometry::RectangleBoundary::Right);
 
-    const BoundaryId top = static_cast<BoundaryId>(RectangleBoundary::Top);
+    const BoundaryId top =
+        static_cast<BoundaryId>(geometry::RectangleBoundary::Top);
 
     const BoundaryId bottom =
-        static_cast<BoundaryId>(RectangleBoundary::Bottom);
+        static_cast<BoundaryId>(geometry::RectangleBoundary::Bottom);
 
     // ================================================
     // Navier–Stokes problem

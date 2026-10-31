@@ -9,17 +9,17 @@
 class HydroBoundaryAssembler2D {
   public:
     HydroBoundaryAssembler2D() = default;
-    void Apply(LinearSystem &system, double currTime,
-               const HydroProblem &problem, const Mesh &mesh,
-               const P2DofMap &p2DofMap, const TaylorHoodDofMap &dofMap) const;
+    void Apply(fem::LinearSystem &system, double currTime,
+               const HydroProblem &problem, const mesh::Mesh &mesh,
+               const fem::P2DofMap &p2DofMap, const fem::TaylorHoodDofMap &dofMap) const;
 
   private:
     std::unordered_map<int, double>
     CollectVelocityDirichlet(double currTime, const HydroProblem &problem,
-                             const Mesh &mesh, const P2DofMap &p2DofMap,
-                             const TaylorHoodDofMap &dofMap) const;
-    void ApplyVelocityDirichlet(LinearSystem &system, double currTime,
-                                const HydroProblem &problem, const Mesh &mesh,
-                                const P2DofMap &p2DofMap,
-                                const TaylorHoodDofMap &dofMap) const;
+                             const mesh::Mesh &mesh, const fem::P2DofMap &p2DofMap,
+                             const fem::TaylorHoodDofMap &dofMap) const;
+    void ApplyVelocityDirichlet(fem::LinearSystem &system, double currTime,
+                                const HydroProblem &problem, const mesh::Mesh &mesh,
+                                const fem::P2DofMap &p2DofMap,
+                                const fem::TaylorHoodDofMap &dofMap) const;
 };

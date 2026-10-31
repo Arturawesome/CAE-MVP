@@ -18,16 +18,23 @@ HeatSolver::HeatSolver(HeatProblem &problem)
 
 void HeatSolver::Solve() {
 
-    // HeatAssembler2D assembler(problem_, mesh_);
-    // LinearSystem system = assembler.Assemble();
-    // HeatBoundaryAssembler2D boundaryAssembler;
-    // boundaryAssembler.Apply(system, problem_, mesh_);
+    HeatAssembler2D assembler(problem_, mesh_);
+    fem::LinearSystem system = assembler.Assemble();
+    HeatBoundaryAssembler2D boundaryAssembler;
+    boundaryAssembler.Apply(system, problem_, mesh_);
+    Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
 
-    // solution_ = system.K.partialPivLu().solve(system.F);
+    solver.compute(system.K);
+    if (solver.info() != Eigen::Success) {
+        throw std::runtime_error("HeatSolver: matrix factorization failed");
+    }
 
-    // if (!solution_.allFinite()) {
-    //     throw std::runtime_error("HeatSolver: solution Contains NaN or Inf");
-    // }
+    solution_ = solver.solve(system.F);
+    ; // system.K.partialPivLu().solve(system.F);
+
+    if (solver.info() != Eigen::Success || !solution_.allFinite()) {
+        throw std::runtime_error("HeatSolver: linear system solving failed");
+    }
 }
 
 const Eigen::VectorXd &HeatSolver::Solution() { return solution_; }

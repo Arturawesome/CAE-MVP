@@ -2,7 +2,7 @@
 #include "Geometry2D.h"
 #include "GeometryTypes2D.h"
 #include <iostream>
-
+namespace geometry {
 enum class RectangleWithHoleBoundary { Bottom = 1, Right, Top, Left, Hole };
 
 class RectangleWithHole : public Geometry2D {
@@ -110,3 +110,5 @@ class RectangleWithHole : public Geometry2D {
     }
     double HoleRadius() const { return holeRadius_; }
 };
+
+} // namespace geometrys

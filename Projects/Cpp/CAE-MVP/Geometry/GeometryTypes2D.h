@@ -1,20 +1,20 @@
 #pragma once
 
+#include "mesh/BoundaryId.h"
 #include <cmath>
 #include <numbers>
 #include <stdexcept>
 #include <variant>
 #include <vector>
-#include "mesh/BoundaryId.h"
 
-
+namespace geometry {
 struct Point2D {
     double x = 0.0;
     double y = 0.0;
 };
 
-
-// set the boundary segment (ALL side of figure, not NODE or edje of element ALL SIDE)
+// set the boundary segment (ALL side of figure, not NODE or edje of element ALL
+// SIDE)
 struct LineSegment2D {
     Point2D a;
     Point2D b;
@@ -23,7 +23,6 @@ struct LineSegment2D {
     }
     double Lenght() const { return std::hypot(b.x - a.x, b.y - a.x); }
 };
-
 
 struct CircleArc2D {
     Point2D center;
@@ -38,8 +37,6 @@ struct CircleArc2D {
     }
     double Lenght() const { return radius * std::abs(endAngle - startAngle); }
 };
-
-
 
 using Curve2D = std::variant<LineSegment2D, CircleArc2D>;
 
@@ -59,7 +56,6 @@ struct BoundaryCurve2D {
         return std::visit([](const auto &curve) { return curve.Lenght(); },
                           curve);
     }
-
 };
 
 // vector of boundaries in our geometry
@@ -68,7 +64,4 @@ struct Contour2D {
     bool isHole = false;
 };
 
-// if (const auto line = std::get_if<LineSegment2D>(&curve)) {
-//     return Point2D{.x = line->a.x + t * (line->b.x - line->a.x),
-//                    .y = line->a.y + t * (line->b.y - line->a.y)};
-// }
+} // namespace geometry

@@ -11,22 +11,22 @@
 class HydroSolver {
   private:
     const HydroProblem &problem_;
-    const Mesh &mesh_;
+    const  mesh::Mesh &mesh_;
     double timeEnd_;
     double dt_;
 
-    P2DofMap p2DofMap_;
-    TaylorHoodDofMap taylorHoodDofMap_;
+    fem::P2DofMap p2DofMap_;
+    fem::TaylorHoodDofMap taylorHoodDofMap_;
     Eigen::VectorXd solution_;
 
   private:
-    LinearSystem BuildTimeSystem(const HydroGlobalSystem &global,
+    fem::LinearSystem BuildTimeSystem(const HydroGlobalSystem &global,
                                  const Eigen::VectorXd &previousVelocity,
                                  double dt) const;
     Eigen::VectorXd MakeInitialVelocity() const;
 
   public:
-    explicit HydroSolver(const HydroProblem &problem, Mesh &mesh,
+    explicit HydroSolver(const HydroProblem &problem,  mesh::Mesh &mesh,
                          double timeEnd, double dt);
     ~HydroSolver() = default;
     void Solve(std::string filename = "solutions/hydro");
