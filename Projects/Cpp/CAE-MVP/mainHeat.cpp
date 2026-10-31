@@ -19,9 +19,9 @@ int main() {
 
         geometry::Rectangle rectangle(H, L);
 
-        // Mesh: nx, ny are numbers of nodes
-        MesherRectangle mesher(61, 21);
-        Mesh mesh = mesher.generateMesh(rectangle);
+        //  mesh::Mesh: nx, ny are numbers of nodes
+         mesh::MesherRectangle mesher(61, 21);
+         mesh::Mesh mesh = mesher.generateMesh(rectangle);
 
         // Heat problem
         constexpr double lambda = 10.0;
