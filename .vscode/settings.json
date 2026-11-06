@@ -1,0 +1,5 @@
+{
+    "cmake.sourceDirectory": "${workspaceFolder}/src",
+    "cmake.buildDirectory": "${workspaceFolder}/src/build",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+}
