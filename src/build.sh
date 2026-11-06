@@ -14,6 +14,8 @@ build_target() {
         all) cmake --build "$BUILD_DIR" --parallel ;;
         heat) cmake --build "$BUILD_DIR" --target cae_heat_app --parallel ;;
         hydro) cmake --build "$BUILD_DIR" --target cae_hydro_app --parallel ;;
+        deform) cmake --build "$BUILD_DIR" --target cae_deform_app --parallel ;;
+
         *) echo "Unknown target: $1" >&2; exit 1 ;;
     esac
 }
@@ -29,11 +31,13 @@ case "$MODE" in
         case "$TARGET" in
             heat) "./cae_heat" ;;
             hydro) "./cae_hydro" ;;
+            deform) "./cae_deform" ;;
             *) echo "For run choose heat or hydro" >&2; exit 1 ;;
         esac
         ;;
     clean)
         cmake -E rm -rf "$BUILD_DIR"
+        rm -f cae_heat cae_hydro cae_deform
         ;;
     leaks)
         case "$TARGET" in

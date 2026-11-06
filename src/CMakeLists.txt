@@ -67,7 +67,8 @@ target_link_libraries(cae_hydro PUBLIC cae_fem cae_io)
 
 # Deforamtion.
 add_library(cae_deform STATIC
-    physics/deformation/problem/Problem.cpp    
+    physics/deformation/problem/Problem.cpp   
+    physics/deformation/Solver.cpp    
 )
 
 target_link_libraries(cae_deform PUBLIC cae_fem)
@@ -75,13 +76,16 @@ target_link_libraries(cae_deform PUBLIC cae_fem)
 # Executable.
 add_executable(cae_heat_app mainHeat.cpp)
 target_link_libraries(cae_heat_app PRIVATE cae_heat cae_io)
-set_target_properties(cae_heat_app PROPERTIES OUTPUT_NAME cae_heat)
+
 
 add_executable(cae_hydro_app mainHydro.cpp)
 target_link_libraries(cae_hydro_app PRIVATE cae_hydro cae_heat)
-set_target_properties(cae_hydro_app PROPERTIES OUTPUT_NAME cae_hydro)
+
 
 add_executable(cae_deform_app mainDeformation.cpp)
-target_link_libraries(cae_deform_app PRIVATE cae_deform cae_io)
-set_target_properties(cae_deform_app PROPERTIES OUTPUT_NAME cae_deform)
+target_link_libraries(cae_deform_app PRIVATE cae_deform)
 
+
+set_target_properties(cae_heat_app PROPERTIES OUTPUT_NAME cae_heat)
+set_target_properties(cae_hydro_app PROPERTIES OUTPUT_NAME cae_hydro)
+set_target_properties(cae_deform_app PROPERTIES OUTPUT_NAME cae_deform)
