@@ -6,7 +6,7 @@ MODE="${1:-build}"
 TARGET="${2:-all}"
 
 configure() {
-    cmake -S . -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Debug
+    cmake -S . -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="$(pwd)"
 }
 
 build_target() {
@@ -27,8 +27,8 @@ case "$MODE" in
         configure
         build_target "$TARGET"
         case "$TARGET" in
-            heat) "./$BUILD_DIR/cae_heat" ;;
-            hydro) "./$BUILD_DIR/cae_hydro" ;;
+            heat) "./cae_heat" ;;
+            hydro) "./cae_hydro" ;;
             *) echo "For run choose heat or hydro" >&2; exit 1 ;;
         esac
         ;;
@@ -37,8 +37,8 @@ case "$MODE" in
         ;;
     leaks)
         case "$TARGET" in
-            heat) leaks -atExit -- "./$BUILD_DIR/cae_heat" ;;
-            hydro) leaks -atExit -- "./$BUILD_DIR/cae_hydro" ;;
+            heat) leaks -atExit -- "./cae_heat" ;;
+            hydro) leaks -atExit -- "./cae_hydro" ;;
             *) echo "For leaks choose heat or hydro" >&2; exit 1 ;;
         esac
         ;;
