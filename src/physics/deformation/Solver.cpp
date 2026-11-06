@@ -1,5 +1,6 @@
 #include "Solver.h"
 #include "physics/deformation/assembly/Assembler.h"
+#include "physics/deformation/assembly/BoundaryAssembler.h"
 #include <iostream>
 
 namespace deformation {
@@ -21,6 +22,7 @@ void Solver::Solve(std::string filename) {
   const int numSteps = static_cast<int>(std::ceil(timeEnd_ / dt_));
 
   Assembler assembler(problem_, mesh_);
+  BoundaryAssembler2D boundaryAssembler(problem_, mesh_);
 
   GlobalSystem global = assembler.AssembleGlobalSystem();
 
@@ -32,11 +34,16 @@ void Solver::Solve(std::string filename) {
   Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
   for (int step = 1; step <= numSteps; ++step) {
     double currTime = step * dt_;
-    assembler.UpdateTimeDependentData(global, currTime);
 
-    // 1. BoundaryAssembler добавляет поверхностные нагрузки.
-    //  2. Solver строит эффективную систему Ньюмарка.
+    assembler.UpdateTimeDependentData(global, currTime);
+    // Добавление поверхностных нагрузок
+    boundaryAssembler.AddTraction(global, currTime);
+
+    // Формирование системы Ньюмарка
+    fem::LinearSystem timeSystem = BuildTimeSystem(/* параметры состояния */);
+
     //  3. BoundaryAssembler накладывает условия Дирихле.
+    boundaryAssembler.ApplyDirichlet(timeSystem, currTime);
     //  4. Решаем систему.
     //  5. Обновляем displacement, velocity, acceleration.
     if (step % 10 == 0) {
