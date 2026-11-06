@@ -14,6 +14,9 @@ private:
   double dt_;
 
   Eigen::VectorXd solution_;
+  Eigen::VectorXd displacement_;
+  Eigen::VectorXd velocity_;
+  Eigen::VectorXd acceleration_;
 
 private:
   fem::LinearSystem BuildTimeSystem() const;

@@ -6,13 +6,13 @@
 
 namespace deformation {
 
-Problem::Problem(double dencity, double modulYoung, double coefPoisson,
+Problem::Problem(double density, double modulYoung, double coefPoisson,
                  VectorField externalForceCallback)
-    : dencity_(dencity), modulYoung_(modulYoung), coefPoisson_(coefPoisson),
+    : density_(density), modulYoung_(modulYoung), coefPoisson_(coefPoisson),
       externalForceCallback_(std::move(externalForceCallback)) {
 
   std::cout << "Deformation: constructor\n";
-  if (dencity_ <= 0 || modulYoung_ <= 0) {
+  if (density_ <= 0 || modulYoung_ <= 0) {
     throw std::invalid_argument(
         "Deformation: modulYoung and density must be postitive");
   }
@@ -21,7 +21,7 @@ Problem::Problem(double dencity, double modulYoung, double coefPoisson,
   }
 }
 
-double Problem::Dencity() const { return dencity_; }
+double Problem::Density() const { return density_; }
 double Problem::ModulYoung() const { return modulYoung_; }
 double Problem::CoefPoisson() const { return coefPoisson_; }
 Eigen::Vector2d Problem::Force(double x, double y, double t) const {

@@ -12,20 +12,20 @@ public:
   using ScalarField = std::function<double(double, double, double)>;
 
 private:
-  double dencity_;
+  double density_;
   double modulYoung_;
   double coefPoisson_;
   VectorField externalForceCallback_;
   std::vector<BoundaryCondition> boundaryConditions_;
 
 public:
-  Problem(double dencity, double modulYoung, double coefPoisson,
+  Problem(double density, double modulYoung, double coefPoisson,
           VectorField externalForceCallback);
   ~Problem() = default;
 
   // getters
 public:
-  double Dencity() const;
+  double Density() const;
   double ModulYoung() const;
   double CoefPoisson() const;
   const std::vector<BoundaryCondition>& BoundaryConditions() const;

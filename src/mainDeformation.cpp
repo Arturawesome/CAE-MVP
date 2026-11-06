@@ -3,6 +3,7 @@
 #include "mesh/generators/MesherRectangle.h"
 #include "physics/deformation/BoundaryCondition.h"
 #include "physics/deformation/Solver.h"
+#include "physics/deformation/assembly/Assembler.h"
 #include "physics/deformation/problem/Problem.h"
 #include <Eigen/Core>
 #include <iostream>
@@ -23,7 +24,7 @@ int main() {
   };
 
   deformation::Problem problem(1000.0, 2e9, 0.3, forces);
-  std::cout << problem.Dencity() << "\n";
+  std::cout << problem.Density() << "\n";
   std::cout << problem.CoefPoisson() << "\n";
   std::cout << problem.Force(1, 1, 1) << "\n";
   std::cout << problem.ModulYoung() << "\n";
@@ -46,6 +47,8 @@ int main() {
       static_cast<BoundaryId>(geometry::RectangleBoundary::Right),
       [](double, double, double) -> Eigen::Vector2d { return {1.0e6, 0.0}; });
 
-  deformation::Solver solver(problem, mesh, 10, 0.1);
+  deformation::Solver solver(problem, mesh, 2, 0.1);
+  solver.Solve();
+
   return 0;
 }

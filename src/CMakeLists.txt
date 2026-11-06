@@ -69,6 +69,8 @@ target_link_libraries(cae_hydro PUBLIC cae_fem cae_io)
 add_library(cae_deform STATIC
     physics/deformation/problem/Problem.cpp   
     physics/deformation/Solver.cpp    
+    physics/deformation/assembly/Assembler.cpp
+    physics/deformation/assembly/BoundaryAssembler.cpp
 )
 
 target_link_libraries(cae_deform PUBLIC cae_fem)

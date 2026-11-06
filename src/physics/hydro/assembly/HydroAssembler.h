@@ -75,10 +75,6 @@ class HydroAssembler2D {
     MakeLocalSystem(const fem::TriangleP1 &p1, const fem::TriangleP2 &p2,
                     const std::array<geometry::Point2D, 3> &vertices,
                     double time) const;
-    // std::array<TriangleQuadraturePoint, 7>
-    // MakeConvectionQuadraturePoints() const;
-    // std::array<TriangleQuadraturePoint, 6> MakeQuadraturePoints() const;
-    // std::array<EdgeQuadraturePoint, 3> MakeEdgeQuadraturePoints() const;
 
     Eigen::Matrix<double, 6, 1>
     MakeLocalTraction(const mesh::BoundaryEdge &edge,
