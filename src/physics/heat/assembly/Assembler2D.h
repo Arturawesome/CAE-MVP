@@ -7,17 +7,23 @@
 #include "physics/heat/problem/Problem.h"
 namespace heat {
 class HeatAssembler2D {
-  private:
-    const HeatProblem &problem_;
-    const mesh::Mesh &mesh_;
+private:
+  const HeatProblem &problem_;
+  const mesh::Mesh &mesh_;
+  unsigned int threadCount_ = 1;
 
-  public:
-    HeatAssembler2D(const HeatProblem &problem, const mesh::Mesh &mesh);
-    fem::LinearSystem Assemble();
+public:
+  HeatAssembler2D(const HeatProblem &problem, const mesh::Mesh &mesh,
+                  unsigned int threadCount);
+  fem::LinearSystem Assemble();
+  fem::LinearSystem AssemblePar();
 
-  private:
-    Eigen::Vector3d MakeLocalF(const fem::TriangleP1 &triangle) const;
-    Eigen::Matrix<double, 3, 3>
-    MakeLocalK(const fem::TriangleP1 &triangle) const;
+private:
+  Eigen::Vector3d MakeLocalF(const fem::TriangleP1 &triangle) const;
+  Eigen::Matrix<double, 3, 3> MakeLocalK(const fem::TriangleP1 &triangle) const;
+
+  void AssembleRange(int begin, int end, int numEl,
+                     std::vector<Eigen::Triplet<double>> &triplets,
+                     std::vector<Eigen::Vector3d> &localForsec);
 };
 } // namespace heat

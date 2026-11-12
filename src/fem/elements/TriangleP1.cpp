@@ -60,7 +60,7 @@ TriangleP1::TriangleP1(const geometry::Point2D &p1, const geometry::Point2D &p2,
 void TriangleP1::CreateGradMatrix(const geometry::Point2D &p1,
                                   const geometry::Point2D &p2,
                                   const geometry::Point2D &p3) {
-    Eigen::MatrixXd triangle = Eigen::MatrixXd::Zero(3, 3);
+    Eigen::Matrix3d triangle;
 
     triangle(0, 0) = 1;
     triangle(0, 1) = p1.x;

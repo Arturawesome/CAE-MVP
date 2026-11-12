@@ -73,7 +73,7 @@ add_library(cae_deform STATIC
     physics/deformation/assembly/BoundaryAssembler.cpp
 )
 
-target_link_libraries(cae_deform PUBLIC cae_fem)
+target_link_libraries(cae_deform PUBLIC cae_fem cae_io)
 
 # Executable.
 add_executable(cae_heat_app mainHeat.cpp)
