@@ -41,6 +41,12 @@ void HydroSolver::Solve(std::string filename) {
   double forceTime = 0.0;
   double convectionTime = 0.0;
 
+  double buildTime = 0.0;
+  double boundaryTime = 0.0;
+  double factorizationTime = 0.0;
+  double linearSolveTime = 0.0;
+  double vtkTime = 0.0;
+
   HydroAssembler2D assembler(problem_, mesh_, taylorHoodDofMap_, numThread_);
 
   // Initial assembly
@@ -74,7 +80,11 @@ void HydroSolver::Solve(std::string filename) {
     seriesWriter.AddFrame(filename, time);
   };
 
+  start = Clock::now();
+
   saveFrame(0, 0.0);
+
+  vtkTime += Duration(Clock::now() - start).count();
 
   Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
 
@@ -100,31 +110,54 @@ void HydroSolver::Solve(std::string filename) {
     convectionTime += Duration(Clock::now() - start).count();
 
     // Build time system
+    start = Clock::now();
+
     fem::LinearSystem system =
         BuildTimeSystem(globalSystem, previousVelocity, dt_);
 
+    buildTime += Duration(Clock::now() - start).count();
+
     // Apply boundary conditions
-    HydroBoundaryAssembler2D boundayAssembler;
+    start = Clock::now();
 
-    boundayAssembler.Apply(system, currTime, problem_, mesh_, p2DofMap_,
-                           taylorHoodDofMap_);
+    HydroBoundaryAssembler2D boundaryAssembler;
 
-    // Solve linear system
+    boundaryAssembler.Apply(system, currTime, problem_, mesh_, p2DofMap_,
+                            taylorHoodDofMap_);
+
+    boundaryTime += Duration(Clock::now() - start).count();
+
+    // LU factorization
+    start = Clock::now();
+
     solver.compute(system.K);
+
+    factorizationTime += Duration(Clock::now() - start).count();
 
     if (solver.info() != Eigen::Success) {
       throw std::runtime_error("HydroSolver: LU factorization failed");
     }
 
+    // Linear solve
+    start = Clock::now();
+
     solution_ = solver.solve(system.F);
 
-    if (solver.info() != Eigen::Success) {
+    linearSolveTime += Duration(Clock::now() - start).count();
+
+    if (solver.info() != Eigen::Success || !solution_.allFinite()) {
       throw std::runtime_error("HydroSolver: linear solve failed");
     }
 
+    // VTK output
     if (step % 2 == 0) {
+      start = Clock::now();
+
       saveFrame(step, currTime);
-      std::cout << "step = " << step << "\n";
+
+      vtkTime += Duration(Clock::now() - start).count();
+
+      std::cout << "step = " << step << '\n';
     }
   }
 
@@ -134,6 +167,11 @@ void HydroSolver::Solve(std::string filename) {
 
   const double totalAssemblyTime = assemblyTime + forceTime + convectionTime;
 
+  const double otherTime =
+      totalTime -
+      (assemblyTime + forceTime + convectionTime + buildTime + boundaryTime +
+       factorizationTime + linearSolveTime + vtkTime);
+
   std::cout << "\n========== HYDRO PERFORMANCE ==========\n";
 
   std::cout << std::fixed << std::setprecision(3);
@@ -142,15 +180,18 @@ void HydroSolver::Solve(std::string filename) {
   std::cout << "Elements: " << mesh_.NumEl() << '\n';
   std::cout << "Time steps: " << numSteps << '\n';
 
-  std::cout << "\nAssembly times:\n";
-  std::cout << "  Initial:    " << assemblyTime << " ms\n";
-  std::cout << "  Force:      " << forceTime << " ms\n";
-  std::cout << "  Convection: " << convectionTime << " ms\n";
+  std::cout << "\nAssembly:\n";
+  std::cout << "  Initial:      " << assemblyTime << " ms\n";
+  std::cout << "  Force:        " << forceTime << " ms\n";
+  std::cout << "  Convection:   " << convectionTime << " ms\n";
 
-  std::cout << "\nTotal assembly: " << totalAssemblyTime << " ms\n";
-
-  std::cout << "Assembly fraction: " << 100.0 * totalAssemblyTime / totalTime
-            << " %\n";
+  std::cout << "\nOther operations:\n";
+  std::cout << "  Build system: " << buildTime << " ms\n";
+  std::cout << "  Boundary:     " << boundaryTime << " ms\n";
+  std::cout << "  LU compute:   " << factorizationTime << " ms\n";
+  std::cout << "  LU solve:     " << linearSolveTime << " ms\n";
+  std::cout << "  VTK output:   " << vtkTime << " ms\n";
+  std::cout << "  Unmeasured:   " << otherTime << " ms\n";
 
   std::cout << "\nTOTAL SOLVE TIME: " << totalTime << " ms\n";
 

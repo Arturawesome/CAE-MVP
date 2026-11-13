@@ -11,7 +11,6 @@ HydroAssembler2D::HydroAssembler2D(const HydroProblem &problem,
   }
 }
 
-
 void HydroAssembler2D::UpdateForcePar(HydroGlobalSystem &global,
                                       double currTime) {
   int numEl = mesh_.NumEl();
@@ -24,8 +23,8 @@ void HydroAssembler2D::UpdateForcePar(HydroGlobalSystem &global,
   futures.reserve(taskCount);
 
   for (size_t i = 0; i < taskCount; ++i) {
-    const std::size_t begin = i * numEl / numThread_;
-    const std::size_t end = (i + 1) * numEl / numThread_;
+    const std::size_t begin = i * numEl / taskCount;
+    const std::size_t end = (i + 1) * numEl / taskCount;
     std::packaged_task<LocalForces()> task([this, begin, end, currTime]() {
       return AssembleRangeForce(begin, end, currTime);
     });
@@ -128,7 +127,6 @@ void HydroAssembler2D::AssembleRangeConvection(
     }
   }
 }
-
 
 Eigen::Matrix<double, 12, 1> HydroAssembler2D::MakeLocalForce(
     const fem::TriangleP2 &p2, const std::array<geometry::Point2D, 3> &vertices,
@@ -335,7 +333,6 @@ void HydroAssembler2D::AssembleRange(
     }
   }
 }
-
 
 void HydroAssembler2D::AddToGlobal(HydroGlobalSystem &global,
                                    const HydroLocalSystem &local,

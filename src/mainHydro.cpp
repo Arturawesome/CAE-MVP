@@ -220,7 +220,7 @@ int main() {
   // Solver
   // ================================================
 
-  hydro::HydroSolver solver(hydroTask, mesh, timeEnd, dt, 10);
+  hydro::HydroSolver solver(hydroTask, mesh, timeEnd, dt, 5);
 
   solver.Solve("solutions/hydro/ns_channel");
 
