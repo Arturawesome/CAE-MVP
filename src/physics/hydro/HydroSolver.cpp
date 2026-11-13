@@ -5,16 +5,16 @@
 #include "io/VTKSeriesWriter.h"
 #include "physics/hydro/assembly/HydroAssembler.h"
 #include "physics/hydro/assembly/HydroBoundaryAssembler.h"
-
 #include <Eigen/SparseLU>
-
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+
 namespace hydro {
 HydroSolver::HydroSolver(const HydroProblem &problem, mesh::Mesh &mesh,
                          double timeEnd, double dt, size_t numThread)
@@ -26,26 +26,41 @@ HydroSolver::HydroSolver(const HydroProblem &problem, mesh::Mesh &mesh,
   if (dt_ <= 0.0 || timeEnd_ <= 0.0) {
     throw std::invalid_argument("HydroSolver: invalid time parameters");
   }
-  if (numThread_ <= 0.0) {
+  if (numThread_ == 0.0) {
     throw std::invalid_argument("HydroSolver: invalid numThread parameters");
   }
 }
 
 void HydroSolver::Solve(std::string filename) {
+  using Clock = std::chrono::steady_clock;
+  using Duration = std::chrono::duration<double, std::milli>;
+
+  const auto totalStart = Clock::now();
+
+  double assemblyTime = 0.0;
+  double forceTime = 0.0;
+  double convectionTime = 0.0;
 
   HydroAssembler2D assembler(problem_, mesh_, taylorHoodDofMap_, numThread_);
 
-  // auto globalSystem = assembler.AssembleGlobalSystem();
+  // Initial assembly
+  auto start = Clock::now();
 
   auto globalSystem = assembler.AssembleGlobalSystemPar();
+
+  assemblyTime = Duration(Clock::now() - start).count();
+
   const int numSteps = static_cast<int>(std::ceil(timeEnd_ / dt_));
+
   auto currVelocity = MakeInitialVelocity();
 
   solution_.head(currVelocity.size()) = currVelocity;
+
   const std::filesystem::path outputDir = filename;
   std::filesystem::create_directories(outputDir);
 
   VTKSeriesWriter seriesWriter(outputDir);
+
   const auto saveFrame = [&](int step, double time) {
     std::ostringstream stream;
 
@@ -58,43 +73,90 @@ void HydroSolver::Solve(std::string filename) {
 
     seriesWriter.AddFrame(filename, time);
   };
+
   saveFrame(0, 0.0);
 
   Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
+
   for (int step = 1; step <= numSteps; ++step) {
+
     double currTime = step * dt_;
 
-    // assembler.UpdateTraction(globalSystem, currTime);
-
-    // build Time system
     const Eigen::VectorXd previousVelocity =
         solution_.head(globalSystem.mass.rows());
-    assembler.UpdateForce(globalSystem, currTime);
-    assembler.UpdateConvection(globalSystem, previousVelocity);
 
+    // Update force
+    start = Clock::now();
+
+    assembler.UpdateForcePar(globalSystem, currTime);
+
+    forceTime += Duration(Clock::now() - start).count();
+
+    // Update convection
+    start = Clock::now();
+
+    assembler.UpdateConvectionPar(globalSystem, previousVelocity);
+
+    convectionTime += Duration(Clock::now() - start).count();
+
+    // Build time system
     fem::LinearSystem system =
         BuildTimeSystem(globalSystem, previousVelocity, dt_);
-    // Apply Boundary Conditions
+
+    // Apply boundary conditions
     HydroBoundaryAssembler2D boundayAssembler;
+
     boundayAssembler.Apply(system, currTime, problem_, mesh_, p2DofMap_,
                            taylorHoodDofMap_);
 
+    // Solve linear system
     solver.compute(system.K);
+
     if (solver.info() != Eigen::Success) {
       throw std::runtime_error("HydroSolver: LU factorization failed");
     }
+
     solution_ = solver.solve(system.F);
 
     if (solver.info() != Eigen::Success) {
       throw std::runtime_error("HydroSolver: linear solve failed");
     }
+
     if (step % 2 == 0) {
       saveFrame(step, currTime);
       std::cout << "step = " << step << "\n";
     }
   }
+
   seriesWriter.WriteSeries();
+
+  const double totalTime = Duration(Clock::now() - totalStart).count();
+
+  const double totalAssemblyTime = assemblyTime + forceTime + convectionTime;
+
+  std::cout << "\n========== HYDRO PERFORMANCE ==========\n";
+
+  std::cout << std::fixed << std::setprecision(3);
+
+  std::cout << "Threads: " << numThread_ << '\n';
+  std::cout << "Elements: " << mesh_.NumEl() << '\n';
+  std::cout << "Time steps: " << numSteps << '\n';
+
+  std::cout << "\nAssembly times:\n";
+  std::cout << "  Initial:    " << assemblyTime << " ms\n";
+  std::cout << "  Force:      " << forceTime << " ms\n";
+  std::cout << "  Convection: " << convectionTime << " ms\n";
+
+  std::cout << "\nTotal assembly: " << totalAssemblyTime << " ms\n";
+
+  std::cout << "Assembly fraction: " << 100.0 * totalAssemblyTime / totalTime
+            << " %\n";
+
+  std::cout << "\nTOTAL SOLVE TIME: " << totalTime << " ms\n";
+
+  std::cout << "=======================================\n";
 }
+
 Eigen::VectorXd HydroSolver::MakeInitialVelocity() const {
   const int numNodes = p2DofMap_.NumP2Nodes();
   Eigen::VectorXd velocity = Eigen::VectorXd::Zero(2 * numNodes);

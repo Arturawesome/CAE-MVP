@@ -11,40 +11,103 @@ HydroAssembler2D::HydroAssembler2D(const HydroProblem &problem,
   }
 }
 
-void HydroAssembler2D::UpdateForce(HydroGlobalSystem &global, double currTime) {
+
+void HydroAssembler2D::UpdateForcePar(HydroGlobalSystem &global,
+                                      double currTime) {
   int numEl = mesh_.NumEl();
   global.force.setZero();
-  for (int elId = 0; elId < numEl; ++elId) {
+
+  const int taskCount = std::min(static_cast<int>(numThread_), numEl);
+  std::vector<std::jthread> threads;
+  std::vector<std::future<LocalForces>> futures;
+  threads.reserve(taskCount);
+  futures.reserve(taskCount);
+
+  for (size_t i = 0; i < taskCount; ++i) {
+    const std::size_t begin = i * numEl / numThread_;
+    const std::size_t end = (i + 1) * numEl / numThread_;
+    std::packaged_task<LocalForces()> task([this, begin, end, currTime]() {
+      return AssembleRangeForce(begin, end, currTime);
+    });
+    futures.emplace_back(task.get_future());
+    threads.emplace_back(std::move(task));
+  }
+
+  for (std::size_t i = 0; i < taskCount; ++i) {
+    LocalForces forces = futures[i].get();
+    const int begin = static_cast<int>(i * numEl / taskCount);
+    for (std::size_t j = 0; j < forces.size(); ++j) {
+      int elId = begin + static_cast<int>(j);
+      const auto dofs = dofMap_.ElementDofs(elId);
+      for (int k = 0; k < 12; ++k) {
+        global.force(dofs[k]) += forces[j](k);
+      }
+    }
+  }
+
+  AssembleTraction(global, currTime);
+}
+
+std::vector<Eigen::Matrix<double, 12, 1>>
+HydroAssembler2D::AssembleRangeForce(int begin, int end,
+                                     double currTime) const {
+
+  LocalForces forces;
+  forces.reserve(end - begin);
+  for (int elId = begin; elId < end; ++elId) {
     std::array<geometry::Point2D, 3> vertices;
     for (int i = 0; i < 3; ++i) {
       vertices[i] = mesh_.NodeById(mesh_.NodeIdFromEl(elId, i)).position;
     }
     fem::TriangleP2 TriangleP2(vertices[0], vertices[1], vertices[2], elId);
-    auto localForce = MakeLocalForce(TriangleP2, vertices, currTime);
-    for (int i = 0; i < 12; ++i) {
-      const int globalI = dofMap_.ElementDofs(elId)[i];
-      global.force(globalI) += localForce(i);
-    }
+    forces.emplace_back(MakeLocalForce(TriangleP2, vertices, currTime));
   }
-  AssembleTraction(global, currTime);
+
+  return forces;
 }
-void HydroAssembler2D::UpdateConvection(
+void HydroAssembler2D::UpdateConvectionPar(
     HydroGlobalSystem &global, const Eigen::VectorXd &transportVelocity) const {
   if (transportVelocity.size() != dofMap_.numVelocityDofs()) {
     throw std::invalid_argument(
         "HydroAssembler2D: invalid transport velocity size");
   }
 
-  std::vector<Eigen::Triplet<double>> triplets;
-  triplets.reserve(mesh_.NumEl() * 12 * 12);
+  std::vector<Eigen::Triplet<double>> triplets(mesh_.NumEl() * 12 * 12);
+  std::vector<std::future<void>> futures;
+  futures.reserve(numThread_);
+  int numEl = mesh_.NumEl();
 
-  for (int elId = 0; elId < mesh_.NumEl(); ++elId) {
+  for (size_t i = 0; i < numThread_; ++i) {
+    const std::size_t begin = i * numEl / numThread_;
+    const std::size_t end = (i + 1) * numEl / numThread_;
+    futures.emplace_back(
+        std::async(std::launch::async,
+                   [begin, end, numEl, &triplets, &transportVelocity, this]() {
+                     AssembleRangeConvection(static_cast<int>(begin),
+                                             static_cast<int>(end), numEl,
+                                             triplets, transportVelocity);
+                   }));
+  }
+  for (auto &future : futures) {
+    future.get();
+  }
+
+  global.convection.setFromTriplets(triplets.begin(), triplets.end());
+  global.convection.makeCompressed();
+}
+
+void HydroAssembler2D::AssembleRangeConvection(
+    int begin, int end, int numEl,
+    std::vector<Eigen::Triplet<double>> &triplets,
+    const Eigen::VectorXd &transportVelocity) const {
+
+  for (int elId = begin; elId < std::min(end, numEl); ++elId) {
     std::array<geometry::Point2D, 3> vertices;
     for (int i = 0; i < 3; ++i) {
       vertices[i] = mesh_.NodeById(mesh_.NodeIdFromEl(elId, i)).position;
     }
     fem::TriangleP2 TriangleP2(vertices[0], vertices[1], vertices[2], elId);
-    const auto &dofs = dofMap_.ElementDofs(elId);
+    const auto dofs = dofMap_.ElementDofs(elId);
 
     Eigen::Matrix<double, 12, 1> localVelocity;
 
@@ -56,13 +119,16 @@ void HydroAssembler2D::UpdateConvection(
         MakeLocalConvection(TriangleP2, vertices, localVelocity);
     for (int i = 0; i < 12; i++) {
       for (int j = 0; j < 12; ++j) {
-        triplets.emplace_back(dofs[i], dofs[j], localConvection(i, j));
+        const std::size_t index =
+            static_cast<std::size_t>(elId) * 12 * 12 + i * 12 + j;
+
+        triplets[index] =
+            Eigen::Triplet<double>(dofs[i], dofs[j], localConvection(i, j));
       }
     }
   }
-  global.convection.setFromTriplets(triplets.begin(), triplets.end());
-  global.convection.makeCompressed();
 }
+
 
 Eigen::Matrix<double, 12, 1> HydroAssembler2D::MakeLocalForce(
     const fem::TriangleP2 &p2, const std::array<geometry::Point2D, 3> &vertices,
@@ -178,6 +244,7 @@ void HydroAssembler2D::AddTractionToGlobal(
     global.force(globIdV) += localForce(2 * i + 1);
   }
 }
+
 HydroGlobalSystem HydroAssembler2D::AssembleGlobalSystemPar() {
   HydroGlobalSystem global(dofMap_.numVelocityDofs(),
                            dofMap_.numPressureDofs());
@@ -217,7 +284,7 @@ HydroGlobalSystem HydroAssembler2D::AssembleGlobalSystemPar() {
   global.divergence.makeCompressed();
 
   for (int elId = 0; elId < numEl; ++elId) {
-    const auto &dofs = dofMap_.ElementDofs(elId);
+    const auto dofs = dofMap_.ElementDofs(elId);
 
     for (int i = 0; i < 12; ++i) {
       global.force(dofs[i]) += localForces[elId](i);
@@ -269,44 +336,6 @@ void HydroAssembler2D::AssembleRange(
   }
 }
 
-HydroGlobalSystem HydroAssembler2D::AssembleGlobalSystem() {
-
-  HydroGlobalSystem global(dofMap_.numVelocityDofs(),
-                           dofMap_.numPressureDofs());
-
-  int numEl = mesh_.NumEl();
-  Triplets triplets;
-  triplets.massTriplets.reserve(numEl * 12 * 12);
-  triplets.viscosityTriplets.reserve(numEl * 12 * 12);
-  triplets.divergenceTriplets.reserve(numEl * 3 * 12);
-
-  for (int elId = 0; elId < numEl; ++elId) {
-    std::array<geometry::Point2D, 3> vertices;
-
-    for (int i = 0; i < 3; ++i) {
-      vertices[i] = mesh_.NodeById(mesh_.NodeIdFromEl(elId, i)).position;
-    }
-
-    fem::TriangleP1 TriangleP1(vertices[0], vertices[1], vertices[2], elId);
-    fem::TriangleP2 TriangleP2(vertices[0], vertices[1], vertices[2], elId);
-    HydroLocalSystem local =
-        MakeLocalSystem(TriangleP1, TriangleP2, vertices, 0);
-    AddToGlobal(global, local, dofMap_.ElementDofs(elId),
-                dofMap_.numVelocityDofs(), triplets);
-  }
-
-  global.mass.setFromTriplets(triplets.massTriplets.begin(),
-                              triplets.massTriplets.end());
-  global.viscosity.setFromTriplets(triplets.viscosityTriplets.begin(),
-                                   triplets.viscosityTriplets.end());
-  global.divergence.setFromTriplets(triplets.divergenceTriplets.begin(),
-                                    triplets.divergenceTriplets.end());
-
-  global.mass.makeCompressed();
-  global.viscosity.makeCompressed();
-  global.divergence.makeCompressed();
-  return global;
-}
 
 void HydroAssembler2D::AddToGlobal(HydroGlobalSystem &global,
                                    const HydroLocalSystem &local,

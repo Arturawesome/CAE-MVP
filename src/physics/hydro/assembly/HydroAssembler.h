@@ -44,6 +44,9 @@ struct Triplets {
 };
 
 class HydroAssembler2D {
+  using LocalForce = Eigen::Matrix<double, 12, 1>;
+  using LocalForces = std::vector<LocalForce>;
+  
 
 private:
   const HydroProblem &problem_;
@@ -54,15 +57,25 @@ private:
 public:
   HydroAssembler2D(const HydroProblem &problem, const mesh::Mesh &mesh,
                    const fem::TaylorHoodDofMap &dofMap, size_t numThread = 1);
-  HydroGlobalSystem AssembleGlobalSystem();
+
+  
   HydroGlobalSystem AssembleGlobalSystemPar();
-  void UpdateForce(HydroGlobalSystem &global, double currTime);
-  void UpdateConvection(HydroGlobalSystem &global,
-                        const Eigen::VectorXd &transportVelocity) const;
+
+  
+  void UpdateForcePar(HydroGlobalSystem &global, double currTime);
+
+
+  void UpdateConvectionPar(HydroGlobalSystem &global,
+                           const Eigen::VectorXd &transportVelocity) const;
 
 private:
+  std::vector<Eigen::Matrix<double, 12, 1>> AssembleRangeForce(int begin, int end, double currTime) const;
   void AssembleRange(int begin, int end, int numEl, Triplets &triplets,
                      std::vector<Eigen::Matrix<double, 12, 1>> &localForsec);
+
+  void AssembleRangeConvection(int begin, int end, int numEl,
+                               std::vector<Eigen::Triplet<double>> &triplets,
+                               const Eigen::VectorXd &transportVelocity) const;
 
   Eigen::Matrix<double, 12, 12> MakeLocalConvection(
       const fem::TriangleP2 &p2,
@@ -73,14 +86,15 @@ private:
   MakeLocalForce(const fem::TriangleP2 &p2,
                  const std::array<geometry::Point2D, 3> &vertices,
                  double time) const;
+
   void AddToGlobal(HydroGlobalSystem &global, const HydroLocalSystem &local,
                    const std::array<int, 15> &dofs, int numVelocityDofs,
                    Triplets &triplets) const;
+
   HydroLocalSystem
   MakeLocalSystem(const fem::TriangleP1 &p1, const fem::TriangleP2 &p2,
                   const std::array<geometry::Point2D, 3> &vertices,
                   double time) const;
-
 
   Eigen::Matrix<double, 6, 1>
   MakeLocalTraction(const mesh::BoundaryEdge &edge,
