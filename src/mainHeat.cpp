@@ -44,30 +44,28 @@ void RunHeat(int numThread = 1) {
         static_cast<BoundaryId>(geometry::RectangleBoundary::Bottom), 0.0);
 
     // Solve
-    heat::HeatSolver solver(problem, numThread);
+    heat::HeatSolver solver(problem, numThread, heat::EigenMethod::SIMPLICAL_LDLT);
     solver.Solve();
 
     const auto &solution = solver.Solution();
 
-    // // Compare against analytical solution
-    // double maxError = 0.0;
+    // Compare against analytical solution
+    double maxError = 0.0;
 
-    // for (int i = 0; i < mesh.NumNodes(); ++i) {
-    //   const auto &point = mesh.NodeById(i).position;
-    //   const double expected = 100.0 + 100.0 * point.x / L;
-    //   const double error = std::abs(solution(i) - expected);
+    for (int i = 0; i < mesh.NumNodes(); ++i) {
+      const auto &point = mesh.NodeById(i).position;
+      const double expected = 100.0 + 100.0 * point.x / L;
+      const double error = std::abs(solution(i) - expected);
 
-    //   maxError = std::max(maxError, error);
-    // }
+      maxError = std::max(maxError, error);
+    }
 
+    constexpr double tolerance = 1e-8;
 
-
-    // constexpr double tolerance = 1e-8;
-
-    // if (maxError > tolerance) {
-    //   throw std::runtime_error(
-    //       "Heat test failed: analytical solution mismatch");
-    // }
+    if (maxError > tolerance) {
+      throw std::runtime_error(
+          "Heat test failed: analytical solution mismatch");
+    }
 
     std::cout << "Heat test PASSED\n";
 

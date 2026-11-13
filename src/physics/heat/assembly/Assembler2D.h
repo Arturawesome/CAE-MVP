@@ -16,7 +16,6 @@ public:
   HeatAssembler2D(const HeatProblem &problem, const mesh::Mesh &mesh,
                   unsigned int threadCount);
   fem::LinearSystem Assemble();
-  fem::LinearSystem AssemblePar();
 
 private:
   Eigen::Vector3d MakeLocalF(const fem::TriangleP1 &triangle) const;

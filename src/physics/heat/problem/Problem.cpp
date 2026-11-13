@@ -4,7 +4,7 @@ HeatProblem::HeatProblem(const mesh::Mesh &mesh, double lambda,
                          std::function<double(double, double, double)> source)
     : mesh_(mesh), lambda_(lambda), source_(source) {
     std::cout << "HeatProblem::HeatProblem\n";
-    if (lambda_ <= 0) {
+    if (lambda_ <= 0 || ! std::isfinite(lambda_)) {
         throw std::invalid_argument("HeatProblem: lambda must be positive\n");
     }
 }
