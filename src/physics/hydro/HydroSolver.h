@@ -14,6 +14,7 @@ class HydroSolver {
     const mesh::Mesh &mesh_;
     double timeEnd_;
     double dt_;
+    size_t numThread_ = 1;
 
     fem::P2DofMap p2DofMap_;
     fem::TaylorHoodDofMap taylorHoodDofMap_;
@@ -27,7 +28,7 @@ class HydroSolver {
 
   public:
     explicit HydroSolver(const HydroProblem &problem, mesh::Mesh &mesh,
-                         double timeEnd, double dt);
+                         double timeEnd, double dt, size_t numThread = 1);
     ~HydroSolver() = default;
     void Solve(std::string filename = "solutions/hydro");
     const Eigen::VectorXd &Solution();
