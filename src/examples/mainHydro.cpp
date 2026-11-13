@@ -120,8 +120,8 @@ int main() {
   //  mesh::MesherRectangle mesher(30, 15);
   //  mesh::Mesh mesh = mesher.generate mesh::Mesh(rectangle);
 
-  mesh::Mesh mesh =
-      VTKReader::ReadUstructuredGrid("channel_hole_L006_under800.vtk");
+  mesh::Mesh mesh = VTKReader::ReadUstructuredGrid(
+      "src/examples/channel_hole_L006_under800.vtk");
 
   TagChannelWithHoleBoundaries(mesh, L, H, geometry::Point2D{0.03, 0.01},
                                0.003);
