@@ -1,6 +1,6 @@
 #include "Assembler2D.h"
+#include <future>
 #include <thread>
-
 namespace heat {
 HeatAssembler2D::HeatAssembler2D(const HeatProblem &problem,
                                  const mesh::Mesh &mesh,
@@ -17,18 +17,22 @@ fem::LinearSystem HeatAssembler2D::Assemble() {
 
   std::vector<Eigen::Vector3d> localForces(numEl);
 
-  std::vector<std::jthread> threads;
-  threads.reserve(threadCount_);
+  // std::vector<std::jthread> threads;
+  // threads.reserve(threadCount_);
+  std::vector<std::future<void>> futures;
+  futures.reserve(threadCount_);
   for (size_t i = 0; i < threadCount_; ++i) {
     const std::size_t begin = i * numEl / threadCount_;
     const std::size_t end = (i + 1) * numEl / threadCount_;
-    threads.emplace_back([begin, end, numEl, &triplets, &localForces, this]() {
-      AssembleRange(begin, end, numEl, triplets, localForces);
-    });
+    futures.emplace_back(
+        std::async(std::launch::async,
+                   [begin, end, numEl, &triplets, &localForces, this]() {
+                     AssembleRange(begin, end, numEl, triplets, localForces);
+                   }));
   }
 
-  for (auto &thread : threads) {
-    thread.join();
+  for (auto &future : futures) {
+    future.get();
   }
   for (int elId = 0; elId < numEl; ++elId) {
     for (int i = 0; i < 3; ++i) {

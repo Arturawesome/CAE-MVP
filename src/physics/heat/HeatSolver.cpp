@@ -13,6 +13,10 @@ HeatSolver::HeatSolver(HeatProblem &problem, unsigned int threadCount,
                        EigenMethod method)
     : problem_(problem), mesh_(problem.GetMesh()), threadCount_(threadCount),
       method_(method) {
+  if (threadCount_ == 0) {
+    throw std::invalid_argument(
+        "HeatAssembler2D: threadCount must be positive");
+  }
 
   std::cout << "HeatSolver::HeatSolver\n";
   int numNodes = mesh_.NumNodes();
