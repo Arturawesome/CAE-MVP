@@ -90,3 +90,28 @@ target_link_libraries(cae_deform_app PRIVATE cae_deform)
 set_target_properties(cae_heat_app PROPERTIES OUTPUT_NAME cae_heat)
 set_target_properties(cae_hydro_app PROPERTIES OUTPUT_NAME cae_hydro)
 set_target_properties(cae_deform_app PROPERTIES OUTPUT_NAME cae_deform)
+# Optional Qt Widgets GUI; builds when Qt6 Widgets is installed.
+option(CAE_BUILD_GUI "Build the Qt Widgets GUI" ON)
+if(CAE_BUILD_GUI)
+    find_package(Qt6 QUIET COMPONENTS Widgets)
+    if(Qt6Widgets_FOUND)
+        add_executable(cae_gui
+            gui/main.cpp
+            gui/mainwindow.h
+            gui/mainwindow.cpp
+            gui/mainwindow.ui
+            gui/meshview.h
+            gui/meshview.cpp
+            app/ProjectController.h
+            app/ProjectController.cpp
+        )
+        set_target_properties(cae_gui PROPERTIES AUTOMOC ON AUTOUIC ON)
+        target_include_directories(cae_gui PRIVATE
+            "${CMAKE_CURRENT_SOURCE_DIR}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/gui"
+        )
+        target_link_libraries(cae_gui PRIVATE Qt6::Widgets cae_io)
+    else()
+        message(STATUS "Qt6 Widgets not found: skipping cae_gui")
+    endif()
+endif()
