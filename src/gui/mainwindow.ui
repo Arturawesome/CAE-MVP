@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1234</width>
-    <height>864</height>
+    <width>1610</width>
+    <height>754</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,14 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
-     <widget class="MeshView" name="viewMesh"/>
+     <widget class="MeshView" name="viewMesh">
+      <property name="minimumSize">
+       <size>
+        <width>400</width>
+        <height>0</height>
+       </size>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -25,7 +32,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1234</width>
+     <width>1610</width>
      <height>30</height>
     </rect>
    </property>
@@ -47,12 +54,63 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockProjectPanel">
+   <property name="minimumSize">
+    <size>
+     <width>180</width>
+     <height>0</height>
+    </size>
+   </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockProject"/>
+   <widget class="QWidget" name="dockProject">
+    <widget class="QTreeWidget" name="treeProject">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>201</width>
+       <height>181</height>
+      </rect>
+     </property>
+     <attribute name="headerVisible">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Project tree</string>
+      </property>
+     </column>
+     <item>
+      <property name="text">
+       <string>Physics</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Heat Transfer</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Fluid Dynamic</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Solid Mechanics</string>
+       </property>
+      </item>
+     </item>
+    </widget>
+   </widget>
   </widget>
   <widget class="QDockWidget" name="dockPropertiesPanel">
+   <property name="minimumSize">
+    <size>
+     <width>180</width>
+     <height>0</height>
+    </size>
+   </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>

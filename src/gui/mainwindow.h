@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTreeWidgetItem>
 #include "app/ProjectController.h"
 
 QT_BEGIN_NAMESPACE
@@ -21,6 +22,8 @@ public:
 private slots:
     void on_actionOpenVTK_triggered();
     void on_actionSaveVTK_triggered();
+
+    void on_treeProject_itemClicked(QTreeWidgetItem *item, int column);
 
 private:
     ProjectController project_;

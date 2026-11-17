@@ -45,7 +45,21 @@ void MainWindow::on_actionOpenVTK_triggered() {
         QMessageBox::critical(this, "VTK load error", QString::fromUtf8(error.what()));
     }
 
-    statusBar()->showMessage(filename);
+
 }
 
 void MainWindow::on_actionSaveVTK_triggered() {}
+
+void MainWindow::on_treeProject_itemClicked(QTreeWidgetItem *item, int column) {
+
+        if (item->text(0) == "Heat Transfer") {
+            qDebug() << "Heat Transfer selected";
+        }
+        else if (item->text(0) == "Fluid Dynamics") {
+            qDebug() << "Fluid Dynamics selected";
+        }
+        else if (item->text(0) == "Solid Mechanics") {
+            qDebug() << "Solid Mechanics selected";
+        }
+
+}
