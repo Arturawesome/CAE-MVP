@@ -1,6 +1,7 @@
 #include "ProjectController.h"
 
 #include "io/VTKReader.h"
+#include <stdexcept>
 
 void ProjectController::LoadMesh(const std::string &filename)
 {
@@ -14,5 +15,5 @@ void ProjectController::LoadMesh(const std::string &filename)
 }
 const mesh::Mesh &ProjectController::GetMesh() const
 {
-    return mesh_;
+    return mesh_.value();
 }

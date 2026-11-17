@@ -11,14 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    connect(ui->actionOpenVTK, &QAction::triggered, this,  &MainWindow::on_actionOpenVTK_triggered);
 
-    connect(ui->actionSaveVTK, &QAction::triggered, this, [this]() {
-        QString filename = QFileDialog::getSaveFileName(this,
-                                                        "Save VTK mesh",
-                                                        "",
-                                                        "VTK files (*.vtk)");
-    });
 }
 
 MainWindow::~MainWindow()
@@ -39,6 +32,8 @@ void MainWindow::on_actionOpenVTK_triggered() {
     try {
         project_.LoadMesh(filename.toStdString());
         const mesh::Mesh &mesh = project_.GetMesh();
+        ui->viewMesh->SetMesh(mesh);
+
         statusBar()->showMessage(
             QString("%1 — %2 nodes, %3 triangles, %4 boundary edges")
                 .arg(QFileInfo(filename).fileName())

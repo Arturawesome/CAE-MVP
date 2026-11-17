@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "app/ProjectController.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -22,7 +23,7 @@ private slots:
     void on_actionSaveVTK_triggered();
 
 private:
-
+    ProjectController project_;
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H
