@@ -25,6 +25,8 @@ private slots:
 
     void on_treeProject_itemClicked(QTreeWidgetItem *item, int column);
 
+
+
 private:
     ProjectController project_;
     Ui::MainWindow *ui;

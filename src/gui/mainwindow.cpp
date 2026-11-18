@@ -54,12 +54,16 @@ void MainWindow::on_treeProject_itemClicked(QTreeWidgetItem *item, int column) {
 
         if (item->text(0) == "Heat Transfer") {
             qDebug() << "Heat Transfer selected";
+            ui->stackedProperties->setCurrentWidget(ui->pageHeat);
         }
         else if (item->text(0) == "Fluid Dynamics") {
             qDebug() << "Fluid Dynamics selected";
+            ui->stackedProperties->setCurrentWidget(ui->pageHydro);
         }
         else if (item->text(0) == "Solid Mechanics") {
             qDebug() << "Solid Mechanics selected";
+            ui->stackedProperties->setCurrentWidget(ui->pageDeformation);
         }
-
 }
+
+
