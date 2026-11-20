@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTreeWidgetItem>
 #include "app/ProjectController.h"
+#include <QThread>
+#include <QPointer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,6 +30,7 @@ private slots:
 
 
 private:
+    QPointer<QThread> loadThead_;
     ProjectController project_;
     Ui::MainWindow *ui;
 };

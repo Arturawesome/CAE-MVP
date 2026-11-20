@@ -104,6 +104,9 @@ if(CAE_BUILD_GUI)
             gui/meshview.cpp
             app/ProjectController.h
             app/ProjectController.cpp
+
+            app/FileLoader.h
+            app/FileLoader.cpp
         )
         set_target_properties(cae_gui PROPERTIES AUTOMOC ON AUTOUIC ON)
         target_include_directories(cae_gui PRIVATE

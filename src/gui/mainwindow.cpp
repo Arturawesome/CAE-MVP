@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "app/FileLoader.h"
 
 #include <QFileDialog>
 #include <QStatusBar>
@@ -16,10 +17,19 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    if (loadThead_) {
+        loadThead_->quit();
+        loadThead_->wait();
+    }
+
     delete ui;
 }
 
 void MainWindow::on_actionOpenVTK_triggered() {
+    if (loadThead_) {
+        return; // loading in porcerss
+    }
+
     QString filename = QFileDialog::getOpenFileName(
         this,
         "Open VTK Mesh",
@@ -27,25 +37,47 @@ void MainWindow::on_actionOpenVTK_triggered() {
         "VTK files (*.vtk)"
         );
 
-    if (filename.isEmpty())
+    if (filename.isEmpty()) {
         return;
-    try {
-        project_.LoadMesh(filename.toStdString());
-        const mesh::Mesh &mesh = project_.GetMesh();
-        ui->viewMesh->SetMesh(mesh);
-
-        statusBar()->showMessage(
-            QString("%1 — %2 nodes, %3 triangles, %4 boundary edges")
-                .arg(QFileInfo(filename).fileName())
-                .arg(mesh.NumNodes())
-                .arg(mesh.NumEl())
-                .arg(mesh.NumBoundEdges()));
-
-    } catch (const std::exception& error){
-        QMessageBox::critical(this, "VTK load error", QString::fromUtf8(error.what()));
     }
 
 
+    auto *thread = new QThread(this);
+    auto *worker = new FileLoader(filename);
+
+    ui->actionOpenVTK->setEnabled(false);
+
+    loadThead_ = thread;
+    worker->moveToThread(thread);
+
+    connect(thread, &QThread::started, worker, &FileLoader::Load);
+
+    connect(worker, &FileLoader::Finished, this, [this](MeshPtr loaded) {
+        project_.SetMesh(std::move(*loaded));
+        const mesh::Mesh &mesh = project_.GetMesh();
+        ui->viewMesh->SetMesh(mesh);
+        statusBar()->showMessage(QString(" %1 nodes, %2 triangles, %3 boundary edges")
+                                     .arg(mesh.NumNodes())
+                                     .arg(mesh.NumEl())
+                                     .arg(mesh.NumBoundEdges()));
+    });
+
+    connect(worker, &FileLoader::Error, this, [this](const QString &message) {
+        QMessageBox::critical(this, "Load error", message);
+    });
+
+
+    connect(worker, &FileLoader::Finished, thread, &QThread::quit);
+    connect(worker, &FileLoader::Error, thread, &QThread::quit);
+
+    connect(thread, &QThread::finished, worker, &QObject::deleteLater);
+    connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+    connect(thread, &QThread::finished, this, [this]() {
+        loadThead_ = nullptr;
+        ui->actionOpenVTK->setEnabled(true);
+    });
+    statusBar()->showMessage("Loading mesh...");
+    thread->start();
 }
 
 void MainWindow::on_actionSaveVTK_triggered() {}
