@@ -2,6 +2,7 @@
 #include "mesh/Mesh2D.h"
 #include <QString>
 #include <QObject>
+#include <memory>
 
 using MeshPtr = std::shared_ptr<mesh::Mesh>;
 
